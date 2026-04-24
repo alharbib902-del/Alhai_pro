@@ -8,7 +8,15 @@ import '../core/services/zatca/zatca_qr_service.dart';
 
 /// ويدجت عرض QR Code متوافق مع ZATCA
 ///
-/// يعرض QR Code مع بيانات الفاتورة الضريبية وفق معيار ZATCA
+/// يعرض QR Code مع بيانات الفاتورة الضريبية وفق معيار ZATCA.
+///
+/// Sprint 1 / P0-05: callers that have the original stored TLV (e.g. fetched
+/// from `invoices.zatca_qr`) should pass it via [storedQrData] — that is the
+/// exact bytes ZATCA accepted at clearance. Without [storedQrData] the widget
+/// falls back to regenerating from `sellerName`/`vatNumber`/`timestamp`/
+/// `totalWithVat`/`vatAmount`; any subsequent DB migration that rewrites
+/// those columns (e.g. v45 invoice 100× cleanup) would silently drift the
+/// regenerated QR away from what the portal actually holds.
 class ZatcaQrWidget extends StatelessWidget {
   final String sellerName;
   final String? vatNumber;
@@ -16,6 +24,11 @@ class ZatcaQrWidget extends StatelessWidget {
   final double totalWithVat;
   final double vatAmount;
   final double size;
+
+  /// Optional: the exact TLV base64 string that was persisted on first
+  /// issuance (e.g. `invoices.zatcaQr`). When provided and non-empty it
+  /// bypasses regeneration so the displayed QR matches what ZATCA received.
+  final String? storedQrData;
 
   const ZatcaQrWidget({
     super.key,
@@ -25,6 +38,7 @@ class ZatcaQrWidget extends StatelessWidget {
     required this.totalWithVat,
     required this.vatAmount,
     this.size = 140,
+    this.storedQrData,
   });
 
   @override
@@ -34,13 +48,17 @@ class ZatcaQrWidget extends StatelessWidget {
     if (vat == null || !ZatcaQrService.isValidVatNumber(vat)) {
       return _buildMissingVatCard(context, isDark);
     }
-    final qrData = ZatcaQrService.generateQrData(
-      sellerName: sellerName,
-      vatNumber: vat,
-      timestamp: timestamp,
-      totalWithVat: totalWithVat,
-      vatAmount: vatAmount,
-    );
+    // Prefer the stored TLV if available; fall back to live regeneration.
+    final stored = storedQrData;
+    final qrData = (stored != null && stored.isNotEmpty)
+        ? stored
+        : ZatcaQrService.generateQrData(
+            sellerName: sellerName,
+            vatNumber: vat,
+            timestamp: timestamp,
+            totalWithVat: totalWithVat,
+            vatAmount: vatAmount,
+          );
 
     return Semantics(
       label: 'ZATCA QR Code - $sellerName',

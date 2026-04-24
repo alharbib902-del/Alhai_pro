@@ -35,6 +35,9 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
   SalesTableData? _order;
   List<SaleItemsTableData> _items = [];
   StoresTableData? _store;
+  // Sprint 1 / P0-05: the stored ZATCA QR from invoices.zatca_qr, used to
+  // avoid regenerating the QR from potentially-drifted sale columns.
+  InvoicesTableData? _invoice;
   bool _isLoading = true;
   String? _error;
   bool _isPrinting = false;
@@ -53,8 +56,14 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
     try {
       final order = await _db.salesDao.getSaleById(widget.saleId);
       List<SaleItemsTableData> items = [];
+      InvoicesTableData? invoice;
       if (order != null) {
         items = await _db.saleItemsDao.getItemsBySaleId(widget.saleId);
+        // Sprint 1 / P0-05: fetch the associated invoice row so we can
+        // display the QR TLV that was persisted at clearance time instead
+        // of regenerating from sale columns (which may have been rewritten
+        // by a later migration, e.g. the v45 invoice 100× cleanup).
+        invoice = await _db.invoicesDao.getBySaleId(widget.saleId);
       }
       // Load store data for ZATCA QR
       final storeId = ref.read(currentStoreIdProvider);
@@ -67,6 +76,7 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
           _order = order;
           _items = items;
           _store = store;
+          _invoice = invoice;
           _isLoading = false;
         });
       }
@@ -668,6 +678,8 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
           totalWithVat: order.total / 100.0,
           vatAmount: order.tax / 100.0,
           size: 120,
+          // Sprint 1 / P0-05: prefer the stored TLV over live regeneration.
+          storedQrData: _invoice?.zatcaQr,
         ),
       ),
     );

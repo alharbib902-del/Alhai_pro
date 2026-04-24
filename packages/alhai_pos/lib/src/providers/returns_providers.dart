@@ -121,14 +121,17 @@ Future<String> createReturn(
     }
   }
 
-  // إضافة للطابور المزامنة
+  // Sprint 1 / P0-10: sync payload must match remote schema — total_refund
+  // is int cents in DB (line 84) but was being sent as SAR on the wire.
+  // Same 100× drift pattern as shifts/cash_movements.
+  final totalRefundCents = (totalRefund * 100).round();
   await db.syncQueueDao.enqueue(
     id: _uuid.v4(),
     tableName: 'returns',
     recordId: id,
     operation: 'CREATE',
     payload:
-        '{"id":"$id","sale_id":"$saleId","store_id":"$storeId","total_refund":$totalRefund,"reason":"$reason","refund_method":"$refundMethod"}',
+        '{"id":"$id","sale_id":"$saleId","store_id":"$storeId","total_refund":$totalRefundCents,"reason":"$reason","refund_method":"$refundMethod"}',
     idempotencyKey: 'return_create_$id',
   );
 

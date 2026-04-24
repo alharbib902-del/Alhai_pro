@@ -32,6 +32,8 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
   final _db = GetIt.I<AppDatabase>();
   SalesTableData? _order;
   StoresTableData? _store;
+  // Sprint 1 / P0-05: persisted ZATCA TLV — prefer this over regenerating.
+  InvoicesTableData? _invoice;
   bool _isLoading = true;
   String? _error;
   bool _isPrinting = false;
@@ -54,6 +56,12 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
     });
     try {
       final order = await _db.salesDao.getSaleById(widget.orderId);
+      // Sprint 1 / P0-05: load associated invoice so the QR widget can
+      // display the exact TLV that was sent to ZATCA at clearance.
+      InvoicesTableData? invoice;
+      if (order != null) {
+        invoice = await _db.invoicesDao.getBySaleId(widget.orderId);
+      }
       // Load store data for ZATCA QR
       final storeId = ref.read(currentStoreIdProvider);
       StoresTableData? store;
@@ -64,6 +72,7 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
         setState(() {
           _order = order;
           _store = store;
+          _invoice = invoice;
           if (order != null) {
             // Build payment splits from order data
             _splits = _buildSplits(order);
@@ -551,6 +560,8 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
             totalWithVat: order.total / 100.0,
             vatAmount: order.tax / 100.0,
             size: 140,
+            // Sprint 1 / P0-05: stored TLV > live regeneration.
+            storedQrData: _invoice?.zatcaQr,
           ),
         ],
       ),

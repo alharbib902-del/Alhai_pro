@@ -38,7 +38,26 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
   bool _isLoading = true;
   String? _error;
   String? _selectedOrderId;
+  // Sprint 1 / P0-05: invoice for the currently-selected order, used so the
+  // reprint QR matches the TLV that ZATCA received — lazily loaded on tap.
+  InvoicesTableData? _selectedInvoice;
   bool _isPrinting = false;
+
+  Future<void> _selectOrder(String orderId) async {
+    if (_selectedOrderId == orderId) return;
+    setState(() {
+      _selectedOrderId = orderId;
+      _selectedInvoice = null; // clear stale invoice while fetching
+    });
+    try {
+      final invoice = await _db.invoicesDao.getBySaleId(orderId);
+      if (!mounted || _selectedOrderId != orderId) return;
+      setState(() => _selectedInvoice = invoice);
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Load invoice for reprint');
+      // Keep _selectedInvoice null — widget falls back to live regeneration.
+    }
+  }
 
   @override
   void initState() {
@@ -289,7 +308,7 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
         '${order.createdAt.day}/${order.createdAt.month}/${order.createdAt.year}';
 
     return InkWell(
-      onTap: () => setState(() => _selectedOrderId = order.id),
+      onTap: () => _selectOrder(order.id),
       borderRadius: BorderRadius.circular(12),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
@@ -555,6 +574,10 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
               totalWithVat: order.total / 100.0,
               vatAmount: order.tax / 100.0,
               size: 100,
+              // Sprint 1 / P0-05: stored TLV > live regeneration. The
+              // selected invoice is fetched lazily in _selectOrder; null
+              // until loaded, in which case the widget regenerates.
+              storedQrData: _selectedInvoice?.zatcaQr,
             ),
           ),
           const SizedBox(height: AlhaiSpacing.md),

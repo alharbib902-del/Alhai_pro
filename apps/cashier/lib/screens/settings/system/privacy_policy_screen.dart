@@ -150,6 +150,13 @@ class PrivacyPolicyScreen extends ConsumerWidget {
                         _PolicyBullet(
                           'العمل بدون إنترنت: التطبيق يعمل 100% بدون اتصال؛ المزامنة الاختيارية مع السحابة تتم عبر اتصال HTTPS مُؤمَّن.',
                         ),
+                        // Sprint 1 / P0-02 + PDPL Article 29: extra-KSA data
+                        // transfer disclosure. The specific AWS region will
+                        // be verified from the Supabase dashboard and the
+                        // bullet updated to name it precisely.
+                        _PolicyBullet(
+                          'موقع الخوادم: عند مزامنة بياناتك مع السحابة، تُخزَّن على بنية Supabase المستضافة لدى AWS في إحدى مراكز بيانات الشرق الأوسط. سنُحدِّث هذا القسم لتحديد المنطقة الدقيقة فور تأكيدها من لوحة الإعدادات.',
+                        ),
                       ],
                     ),
                     const SizedBox(height: AlhaiSpacing.md),

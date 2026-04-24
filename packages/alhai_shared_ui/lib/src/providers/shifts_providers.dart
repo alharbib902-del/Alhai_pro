@@ -120,14 +120,18 @@ final openShiftActionProvider =
           ),
         );
 
-        // إضافة لطابور المزامنة
+        // Sprint 1 / P0-10: sync payload must ship int cents to match the
+        // remote schema. The caller supplies SAR doubles; the local DAO
+        // already stores cents (line 117). Without this conversion the
+        // remote row stored SAR while local stored cents → 100× drift.
+        final openingCashCents = (openingCash * 100).round();
         await db.syncQueueDao.enqueue(
           id: _uuid.v4(),
           tableName: 'shifts',
           recordId: id,
           operation: 'CREATE',
           payload:
-              '{"id":"$id","store_id":"$storeId","cashier_id":"$cashierId","status":"open","opening_cash":$openingCash}',
+              '{"id":"$id","store_id":"$storeId","cashier_id":"$cashierId","status":"open","opening_cash":$openingCashCents}',
           idempotencyKey: 'shift_open_$id',
         );
 
@@ -188,14 +192,22 @@ final closeShiftActionProvider =
           notes: notes,
         );
 
-        // إضافة لطابور المزامنة - تحديث حالة الوردية إلى مغلقة
+        // Sprint 1 / P0-10: every monetary field in this payload is SAR on
+        // the wire today but int cents in both local DB and remote schema.
+        // Convert at the boundary. Counts (total_sales, total_refunds) are
+        // plain integers — leave them unconverted.
+        final closingCashCents = (closingCash * 100).round();
+        final expectedCashCents = (expectedCash * 100).round();
+        final differenceCents = (difference * 100).round();
+        final totalSalesAmountCents = (totalSalesAmount * 100).round();
+        final totalRefundsAmountCents = (totalRefundsAmount * 100).round();
         await db.syncQueueDao.enqueue(
           id: _uuid.v4(),
           tableName: 'shifts',
           recordId: shiftId,
           operation: 'UPDATE',
           payload:
-              '{"id":"$shiftId","status":"closed","closing_cash":$closingCash,"expected_cash":$expectedCash,"difference":$difference,"total_sales":$totalSales,"total_sales_amount":$totalSalesAmount,"total_refunds":$totalRefunds,"total_refunds_amount":$totalRefundsAmount}',
+              '{"id":"$shiftId","status":"closed","closing_cash":$closingCashCents,"expected_cash":$expectedCashCents,"difference":$differenceCents,"total_sales":$totalSales,"total_sales_amount":$totalSalesAmountCents,"total_refunds":$totalRefunds,"total_refunds_amount":$totalRefundsAmountCents}',
           idempotencyKey: 'shift_close_$shiftId',
         );
 
@@ -262,14 +274,17 @@ final addCashMovementProvider =
           ),
         );
 
-        // إضافة لطابور المزامنة - حركة نقدية جديدة
+        // Sprint 1 / P0-10: same SAR→cents pattern as the shift open/close
+        // payloads above. The insertCashMovement call on line 258 already
+        // converts; the sync payload was sending the unconverted SAR value.
+        final amountCents = (amount * 100).round();
         await db.syncQueueDao.enqueue(
           id: _uuid.v4(),
           tableName: 'cash_movements',
           recordId: movementId,
           operation: 'CREATE',
           payload:
-              '{"id":"$movementId","shift_id":"$shiftId","store_id":"$storeId","type":"$type","amount":$amount}',
+              '{"id":"$movementId","shift_id":"$shiftId","store_id":"$storeId","type":"$type","amount":$amountCents}',
           idempotencyKey: 'cash_movement_$movementId',
         );
 

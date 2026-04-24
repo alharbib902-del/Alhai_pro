@@ -36,6 +36,8 @@ class MockTransactionsDao extends Mock implements TransactionsDao {}
 
 class MockOrdersDao extends Mock implements OrdersDao {}
 
+class MockInvoicesDao extends Mock implements InvoicesDao {}
+
 class MockAuditLogDao extends Mock implements AuditLogDao {}
 
 class MockCategoriesDao extends Mock implements CategoriesDao {}
@@ -215,6 +217,7 @@ MockAppDatabase setupMockDatabase({
   MockSyncQueueDao? syncQueueDao,
   MockTransactionsDao? transactionsDao,
   MockOrdersDao? ordersDao,
+  MockInvoicesDao? invoicesDao,
   MockAuditLogDao? auditLogDao,
   MockCategoriesDao? categoriesDao,
   MockLoyaltyDao? loyaltyDao,
@@ -253,6 +256,14 @@ MockAppDatabase setupMockDatabase({
     () => db.transactionsDao,
   ).thenReturn(transactionsDao ?? MockTransactionsDao());
   when(() => db.ordersDao).thenReturn(ordersDao ?? MockOrdersDao());
+  final effectiveInvoicesDao = invoicesDao ?? MockInvoicesDao();
+  when(() => db.invoicesDao).thenReturn(effectiveInvoicesDao);
+  // Sprint 1 / P0-05: default stub — no invoice means the widget falls
+  // back to live QR regeneration (matches pre-fix behaviour). Tests that
+  // specifically exercise the stored-TLV path can override.
+  when(
+    () => effectiveInvoicesDao.getBySaleId(any()),
+  ).thenAnswer((_) async => null);
   when(() => db.auditLogDao).thenReturn(auditLogDao ?? MockAuditLogDao());
   when(() => db.categoriesDao).thenReturn(categoriesDao ?? MockCategoriesDao());
   when(() => db.loyaltyDao).thenReturn(loyaltyDao ?? MockLoyaltyDao());
