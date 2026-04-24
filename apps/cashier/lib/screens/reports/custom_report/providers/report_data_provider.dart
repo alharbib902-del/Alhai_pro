@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_it/get_it.dart';
 import 'package:alhai_database/alhai_database.dart';
+import 'package:alhai_reports/alhai_reports.dart' show PaymentAggregator;
 
 import '../../../../core/services/sentry_service.dart';
 import 'report_config_notifier.dart';
@@ -133,7 +134,15 @@ class ReportDataRepository {
     DateTimeRange range,
   ) async {
     final sales = await _db.salesDao.getAllSales(storeId);
-    final filtered = sales.where((o) => _inRange(o.createdAt, range)).toList();
+    // Sprint 1 / P0-16: only count completed/paid sales — voided/refunded
+    // rows must not inflate revenue totals or chart segments.
+    final filtered = sales
+        .where(
+          (o) =>
+              _inRange(o.createdAt, range) &&
+              (o.status == 'completed' || o.status == 'paid'),
+        )
+        .toList();
 
     return _groupByKey(
       config.groupBy,
@@ -155,9 +164,16 @@ class ReportDataRepository {
     final Map<String, _GroupItem> grouped = {};
     for (final product in products) {
       final key = product.categoryId ?? 'uncategorized';
-      // C-4 Session 3: product.price is int cents; convert before
-      // multiplying by stockQty (double units) so value carries SAR.
-      final lineValue = (product.price / 100.0) * product.stockQty;
+      // Sprint 1 / P0-17: inventory valuation must use cost basis, not the
+      // retail price. The previous code multiplied stock by `product.price`
+      // (sell price), which inflated balance-sheet inventory assets by the
+      // markup percentage — a real accounting error. We now use
+      // `product.costPrice`; rows with a null cost (legacy entries before
+      // cost tracking) contribute zero rather than the misleading sell
+      // price. Sprint 2 — `add_inventory` will require unit_cost on every
+      // movement, closing the null-cost gap going forward.
+      final unitCostCents = product.costPrice ?? 0;
+      final lineValue = (unitCostCents / 100.0) * product.stockQty;
       final existing = grouped[key];
       if (existing != null) {
         grouped[key] = _GroupItem(
@@ -214,25 +230,36 @@ class ReportDataRepository {
     final sales = await _db.salesDao.getAllSales(storeId);
     final filtered = sales.where((o) => _inRange(o.createdAt, range)).toList();
 
-    final Map<String, double> byMethod = {};
-    final Map<String, int> countByMethod = {};
-    for (final order in filtered) {
-      // C-4 Session 3: sales.total is int cents; convert at boundary so
-      // byMethod (double SAR) does not display 100×.
-      final method = order.paymentMethod;
-      byMethod[method] = (byMethod[method] ?? 0) + order.total / 100.0;
-      countByMethod[method] = (countByMethod[method] ?? 0) + 1;
-    }
+    // Sprint 1 / P0-16: route through PaymentAggregator so mixed sales
+    // are bucketed by their actual cash/card/credit splits (not by a
+    // single paymentMethod string), and voided/refunded sales are
+    // excluded — same change as payment_reports_screen, kept consistent
+    // here so payment-method reports can't disagree across screens.
+    final breakdown = PaymentAggregator.aggregate(filtered);
 
-    return byMethod.entries
-        .map(
-          (e) => {
-            'label': e.key,
-            'value': e.value,
-            'count': countByMethod[e.key] ?? 0,
-          },
-        )
-        .toList();
+    final rows = <Map<String, dynamic>>[];
+    if (breakdown.cashCount > 0 || breakdown.cashCents > 0) {
+      rows.add({
+        'label': 'cash',
+        'value': breakdown.cashSar,
+        'count': breakdown.cashCount,
+      });
+    }
+    if (breakdown.cardCount > 0 || breakdown.cardCents > 0) {
+      rows.add({
+        'label': 'card',
+        'value': breakdown.cardSar,
+        'count': breakdown.cardCount,
+      });
+    }
+    if (breakdown.creditCount > 0 || breakdown.creditCents > 0) {
+      rows.add({
+        'label': 'credit',
+        'value': breakdown.creditSar,
+        'count': breakdown.creditCount,
+      });
+    }
+    return rows;
   }
 
   List<Map<String, dynamic>> _groupByKey(

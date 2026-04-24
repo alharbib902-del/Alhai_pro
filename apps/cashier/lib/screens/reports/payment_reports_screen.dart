@@ -13,6 +13,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
+import 'package:alhai_reports/alhai_reports.dart' show PaymentAggregator;
 import 'package:alhai_design_system/alhai_design_system.dart'
     show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
@@ -103,41 +104,28 @@ class _PaymentReportsScreenState extends ConsumerState<PaymentReportsScreen> {
         },
       );
 
-      // Keep the list as-is — SQL already performed the range filter.
-      final filtered = orders;
-
-      double cash = 0, card = 0, credit = 0;
-      int cashC = 0, cardC = 0, creditC = 0;
-
-      for (final order in filtered) {
-        // sales.total is int cents (C-4 schema). Convert at aggregation
-        // boundary so the double accumulators carry SAR, not cents.
-        final amount = order.total / 100.0;
-        final method = order.paymentMethod;
-        if (method == 'cash') {
-          cash += amount;
-          cashC++;
-        } else if (method == 'card' || method == 'mada') {
-          // P2 #2 (2026-04-24): 'mada' (Saudi domestic debit network) is
-          // grouped with 'card' for reporting purposes since both represent
-          // electronic card transactions. If a finer breakdown is needed
-          // in the future, fork `_madaTotal`/`_madaCount` here.
-          card += amount;
-          cardC++;
-        } else {
-          credit += amount;
-          creditC++;
-        }
-      }
+      // Sprint 1 / P0-16: aggregate via the shared PaymentAggregator instead
+      // of the inline loop this used to carry. The old loop bucketed every
+      // sale into a single method based on `paymentMethod`, so a 100 SAR
+      // mixed sale (50 cash + 50 card) was attributed entirely to one
+      // bucket — pie charts and totals shown to managers were wrong.
+      // The new path:
+      //  • reads `cashAmount` / `cardAmount` / `creditAmount` int cents
+      //    columns directly when populated → real per-tender breakdown.
+      //  • filters `status != 'completed'` (voided / refunded sales no
+      //    longer inflate revenue).
+      //  • falls back to the old paymentMethod-string bucketing only for
+      //    legacy single-tender rows where the split columns are zero.
+      final breakdown = PaymentAggregator.aggregate(orders);
 
       if (mounted) {
         setState(() {
-          _cashTotal = cash;
-          _cardTotal = card;
-          _creditTotal = credit;
-          _cashCount = cashC;
-          _cardCount = cardC;
-          _creditCount = creditC;
+          _cashTotal = breakdown.cashSar;
+          _cardTotal = breakdown.cardSar;
+          _creditTotal = breakdown.creditSar;
+          _cashCount = breakdown.cashCount;
+          _cardCount = breakdown.cardCount;
+          _creditCount = breakdown.creditCount;
           _isLoading = false;
         });
       }

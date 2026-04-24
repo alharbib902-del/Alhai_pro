@@ -27,6 +27,7 @@ export 'src/utils/csv_export_helper.dart';
 
 // ─── Services ─────────────────────────────────────────────────
 export 'src/services/reports_service.dart';
+export 'src/services/payment_aggregator.dart';
 
 // ─── Providers ────────────────────────────────────────────────
 export 'src/providers/reports_providers.dart';

@@ -552,7 +552,10 @@ class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
           ),
           Text(
             // C-4 Session 3: sales.total is int cents.
-            '${(order.total / 100.0).toStringAsFixed(0)} ${l10n.sar}',
+            // Sprint 1 / P0-16: 2-decimal format so 46.50 SAR doesn't
+            // round-display as "47" — that misled cashiers reconciling
+            // against printed receipts.
+            '${(order.total / 100.0).toStringAsFixed(2)} ${l10n.sar}',
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w800,
