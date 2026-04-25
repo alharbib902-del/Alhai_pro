@@ -941,6 +941,14 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
               '(diff=${balanceDiff.toStringAsFixed(2)} SAR)',
           createdBy: user?.id,
           items: returnItemCompanions,
+          // Sprint 1 / P0-14 escape hatch: exchange currently links the
+          // return to the just-created sale (createdSaleId), not the
+          // customer's original purchase. The new sale's total is often
+          // smaller than the refund amount, so the max-refund guard
+          // would falsely reject every exchange. Wave 3b reworks this
+          // flow to pick + reference the original sale; the bypass
+          // disappears at that point.
+          skipMaxRefundCheck: true,
         );
       }
 

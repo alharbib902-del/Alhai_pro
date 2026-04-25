@@ -107,6 +107,23 @@ class ReturnsDao extends DatabaseAccessor<AppDatabase> with _$ReturnsDaoMixin {
     });
   }
 
+  /// Sum of all completed (non-deleted) refunds against a given sale, in
+  /// int cents. Used by the createReturn pre-flight check to prevent
+  /// double-refunds (P0-14): a 1000 SAR sale must not be refundable for
+  /// 500 + 500 + 500. Sums across the entire history of the sale, not
+  /// just the current shift, since ZATCA portal records lifetime totals.
+  Future<int> sumRefundedCentsBySaleId(String saleId) async {
+    final result = await customSelect(
+      'SELECT COALESCE(SUM(total_refund), 0) AS total FROM returns '
+      "WHERE sale_id = ? AND status = 'completed' AND deleted_at IS NULL",
+      variables: [Variable.withString(saleId)],
+    ).getSingle();
+    final total = result.data['total'];
+    if (total == null) return 0;
+    if (total is int) return total;
+    return (total as num).toInt();
+  }
+
   /// مجموع المرتجعات النقدية فقط خلال فترة الوردية
   /// يُستخدم لحساب النقد المتوقع في الدرج
   Future<double> getCashRefundsTotalForPeriod(
