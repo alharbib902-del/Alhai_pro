@@ -20,6 +20,7 @@ export 'src/security/otp_service.dart';
 export 'src/security/security_logger.dart';
 export 'src/security/login_rate_limiter.dart';
 export 'src/security/foreground_lock_service.dart';
+export 'src/security/permissions.dart';
 
 // Services
 export 'src/services/whatsapp_otp_service.dart';

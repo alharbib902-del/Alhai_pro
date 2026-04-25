@@ -8,7 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
-import 'package:alhai_core/alhai_core.dart' show UserRole;
+import 'package:alhai_core/alhai_core.dart' show User, UserRole;
 import 'package:cashier/screens/products/edit_price_screen.dart';
 
 import '../../helpers/test_helpers.dart';
@@ -218,11 +218,22 @@ void main() {
         tester.view.devicePixelRatio = 1.0;
         suppressOverflowErrors();
 
+        // Wave 9 (P0-02/28): screen now reads `currentUserProvider`
+        // (full User) and routes through Permissions, not the
+        // userRoleProvider shortcut. Override the user directly.
         await tester.pumpWidget(
           createTestWidget(
             const EditPriceScreen(productId: 'prod-1'),
             overrides: [
-              userRoleProvider.overrideWithValue(UserRole.storeOwner),
+              currentUserProvider.overrideWithValue(
+                User(
+                  id: 'owner-1',
+                  phone: '+966500000000',
+                  name: 'Store Owner',
+                  role: UserRole.storeOwner,
+                  createdAt: DateTime(2025),
+                ),
+              ),
             ],
           ),
         );

@@ -14,7 +14,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
-import 'package:alhai_core/alhai_core.dart' show UserRole;
+// Wave 9 (P0-02): UserRole import dropped after migrating to Permissions.
 import 'package:alhai_design_system/alhai_design_system.dart'
     show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
@@ -99,11 +99,15 @@ class _UsersPermissionsScreenState
     // + login pattern. A 'manager' role doesn't exist in UserRole yet;
     // widen this check if/when it's added.
     // Cf. D:\alhai_reports\_analysis\01_TRUE_P0.md § P0-02.
+    // Wave 9 (P0-02): Permissions.canViewOtherUserPii covers admin
+    // roles; the self-view branch stays here because PII visibility for
+    // one's own row is a separate gate (you always see your own).
+    // Server-side: column-level REVOKE on users.email/phone enforces
+    // this regardless of how the call is made — see
+    // 20260425_v81_wave9_admin_writes_pii_rls.sql.
     final currentUser = ref.read(currentUserProvider);
-    final role = currentUser?.role;
     final canSeePii =
-        role == UserRole.storeOwner ||
-        role == UserRole.superAdmin ||
+        Permissions.canViewOtherUserPii(currentUser) ||
         user.id == currentUser?.id;
 
     showModalBottomSheet(

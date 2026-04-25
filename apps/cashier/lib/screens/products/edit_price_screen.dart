@@ -12,7 +12,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:get_it/get_it.dart';
-import 'package:alhai_core/alhai_core.dart' show Money, UserRole;
+import 'package:alhai_core/alhai_core.dart' show Money;
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
@@ -54,12 +54,14 @@ class _EditPriceScreenState extends ConsumerState<EditPriceScreen> {
     super.initState();
     // P1 #7 (2026-04-24): check edit-price permission as early as possible
     // so the UI can render with the correct state on first frame.
+    // Wave 9 (P0-02/28): route through Permissions instead of inline role
+    // comparison. The named gate makes the intent obvious and means a
+    // future role addition only updates Permissions.canEditSalePrice.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      final role = ref.read(userRoleProvider);
+      final user = ref.read(currentUserProvider);
       setState(() {
-        _canEditPrice =
-            role == UserRole.storeOwner || role == UserRole.superAdmin;
+        _canEditPrice = Permissions.canEditSalePrice(user);
       });
     });
     _loadProduct();

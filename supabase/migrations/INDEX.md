@@ -29,6 +29,7 @@ All database migrations for the Alhai POS system, listed in chronological order.
 | 2026-04-04 | `20260404_v26_fix_rls_policies.sql` | Replace blanket RLS with store-scoped policies |
 | 2026-04-04 | `20260404_v27_create_remaining_tables.sql` | Create inventory_movements, accounts, transactions, held_invoices, favorites, whatsapp_messages |
 | 2026-04-04 | `20260404_v28_create_missing_rpcs.sql` | Create check_cashier_by_phone, get_my_stores, get_store_categories, get_store_products RPCs + delivery webhook trigger |
+| 2026-04-25 | `20260425_v81_wave9_admin_writes_pii_rpc.sql` | Wave 9 (P0-02 + P0-28): admin-only writes for transactions.adjustment + inventory_movements.{adjust,wastage,stock_take} + get_user_pii RPC |
 
 ## Naming Convention
 
