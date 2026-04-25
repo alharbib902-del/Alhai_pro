@@ -8,6 +8,7 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_it/get_it.dart';
+import 'package:drift/drift.dart' show Variable;
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_reports/alhai_reports.dart' show PaymentAggregator;
 
@@ -119,29 +120,25 @@ class ReportDataRepository {
     );
   }
 
-  /// Helper shared by `_sales` / `_customers` / `_payments` to apply the
-  /// same inclusive start / exclusive end+1day window. P1 #5 (2026-04-24):
-  /// previously inlined three times with a subtle bug — `isAfter(start)`
-  /// dropped rows exactly on `start`. Canonicalized to `!isBefore(start)`.
-  bool _inRange(DateTime date, DateTimeRange range) {
-    final end = range.end.add(const Duration(days: 1));
-    return !date.isBefore(range.start) && date.isBefore(end);
-  }
-
   Future<List<Map<String, dynamic>>> _sales(
     String storeId,
     ReportConfig config,
     DateTimeRange range,
   ) async {
-    final sales = await _db.salesDao.getAllSales(storeId);
-    // Sprint 1 / P0-16: only count completed/paid sales — voided/refunded
-    // rows must not inflate revenue totals or chart segments.
+    // Wave 8 (P0-33): push the date filter to SQL. The previous path
+    // pulled `getAllSales` (1000-row silent ceiling) then filtered in
+    // Dart — a long-history store missed older rows entirely. The
+    // status filter still happens client-side because the grouping API
+    // wants the rows, not just totals; here the row count is bounded by
+    // the report's range so 5000 is a safer ceiling than the unbounded
+    // store-wide call we used to make.
+    final sales = await _db.salesDao.getSalesByDateRange(
+      storeId,
+      range.start,
+      range.end.add(const Duration(days: 1)),
+    );
     final filtered = sales
-        .where(
-          (o) =>
-              _inRange(o.createdAt, range) &&
-              (o.status == 'completed' || o.status == 'paid'),
-        )
+        .where((o) => o.status == 'completed' || o.status == 'paid')
         .toList();
 
     return _groupByKey(
@@ -211,31 +208,52 @@ class ReportDataRepository {
     ReportConfig config,
     DateTimeRange range,
   ) async {
-    final customers = await _db.customersDao.getAllCustomers(storeId);
-    final filtered =
-        customers.where((c) => _inRange(c.createdAt, range)).toList();
+    // Wave 8 (P0-33): push the date filter to SQL. `getAllCustomers`
+    // capped at 500 rows hid older signups in long-tenured stores; the
+    // direct query bounds the result by the report range instead.
+    final endExclusive = range.end.add(const Duration(days: 1));
+    final rows = await _db
+        .customSelect(
+          'SELECT id, name, created_at FROM customers '
+          'WHERE store_id = ? AND created_at >= ? AND created_at < ? '
+          'ORDER BY created_at',
+          variables: [
+            Variable.withString(storeId),
+            Variable.withDateTime(range.start),
+            Variable.withDateTime(endExclusive),
+          ],
+        )
+        .get();
 
-    return _groupByKey(
-      config.groupBy,
-      filtered
-          .map((c) => _GroupItem(date: c.createdAt, value: 0, quantity: 1))
-          .toList(),
-    );
+    final filtered = rows
+        .map(
+          (r) => _GroupItem(
+            date:
+                DateTime.tryParse(r.data['created_at'].toString()) ??
+                DateTime.now(),
+            value: 0,
+            quantity: 1,
+          ),
+        )
+        .toList();
+
+    return _groupByKey(config.groupBy, filtered);
   }
 
   Future<List<Map<String, dynamic>>> _payments(
     String storeId,
     DateTimeRange range,
   ) async {
-    final sales = await _db.salesDao.getAllSales(storeId);
-    final filtered = sales.where((o) => _inRange(o.createdAt, range)).toList();
-
-    // Sprint 1 / P0-16: route through PaymentAggregator so mixed sales
-    // are bucketed by their actual cash/card/credit splits (not by a
-    // single paymentMethod string), and voided/refunded sales are
-    // excluded — same change as payment_reports_screen, kept consistent
-    // here so payment-method reports can't disagree across screens.
-    final breakdown = PaymentAggregator.aggregate(filtered);
+    // Wave 8 (P0-33): SQL aggregation directly — same per-tender semantics
+    // as PaymentAggregator.aggregate, but no row materialisation and no
+    // 1000/5000-row truncation hazard. payment_reports_screen uses the
+    // same path; reports cannot disagree.
+    final raw = await _db.salesDao.aggregatePaymentBreakdownRaw(
+      storeId,
+      from: range.start,
+      to: range.end.add(const Duration(days: 1)),
+    );
+    final breakdown = PaymentAggregator.fromRaw(raw);
 
     final rows = <Map<String, dynamic>>[];
     if (breakdown.cashCount > 0 || breakdown.cashCents > 0) {

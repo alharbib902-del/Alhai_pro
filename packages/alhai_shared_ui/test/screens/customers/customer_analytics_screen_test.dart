@@ -63,6 +63,19 @@ void main() {
     when(() => mockDb.customersDao).thenReturn(mockCustomersDao);
     when(() => mockDb.accountsDao).thenReturn(mockAccountsDao);
 
+    // Wave 8 (P0-33): screen now reads counts via SQL aggregates,
+    // not row fetches. Default to zero so tests don't have to wire
+    // every stub when they only care about a single state.
+    when(
+      () => mockCustomersDao.getCustomersCount(
+        any(),
+        activeOnly: any(named: 'activeOnly'),
+      ),
+    ).thenAnswer((_) async => 0);
+    when(
+      () => mockAccountsDao.getTotalReceivable(any()),
+    ).thenAnswer((_) async => 0.0);
+
     final getIt = GetIt.instance;
     if (getIt.isRegistered<AppDatabase>()) {
       getIt.unregister<AppDatabase>();
@@ -90,9 +103,14 @@ void main() {
       _setLargeViewport(tester);
       addTearDown(() => tester.view.resetPhysicalSize());
 
-      final completer = Completer<List<CustomersTableData>>();
+      // Wave 8 (P0-33): the screen's first await is now the SQL count,
+      // not the row fetch. Hold its future to pin the loading state.
+      final completer = Completer<int>();
       when(
-        () => mockCustomersDao.getAllCustomers(any()),
+        () => mockCustomersDao.getCustomersCount(
+          any(),
+          activeOnly: any(named: 'activeOnly'),
+        ),
       ).thenAnswer((_) => completer.future);
 
       await tester.pumpWidget(_buildTestWidget());
@@ -100,7 +118,7 @@ void main() {
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
 
-      completer.complete(<CustomersTableData>[]);
+      completer.complete(0);
       await tester.pumpAndSettle();
     });
 
@@ -108,9 +126,12 @@ void main() {
       _setLargeViewport(tester);
       addTearDown(() => tester.view.resetPhysicalSize());
 
-      final completer = Completer<List<CustomersTableData>>();
+      final completer = Completer<int>();
       when(
-        () => mockCustomersDao.getAllCustomers(any()),
+        () => mockCustomersDao.getCustomersCount(
+          any(),
+          activeOnly: any(named: 'activeOnly'),
+        ),
       ).thenAnswer((_) => completer.future);
 
       await tester.pumpWidget(_buildTestWidget());
@@ -119,7 +140,7 @@ void main() {
       expect(find.byType(Scaffold), findsWidgets);
       expect(find.byType(AppBar), findsOneWidget);
 
-      completer.complete(<CustomersTableData>[]);
+      completer.complete(0);
       await tester.pumpAndSettle();
     });
 
@@ -128,7 +149,10 @@ void main() {
       addTearDown(() => tester.view.resetPhysicalSize());
 
       when(
-        () => mockCustomersDao.getAllCustomers(any()),
+        () => mockCustomersDao.getCustomersCount(
+          any(),
+          activeOnly: any(named: 'activeOnly'),
+        ),
       ).thenThrow(Exception('Database error'));
 
       await tester.pumpWidget(_buildTestWidget());

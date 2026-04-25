@@ -8,8 +8,15 @@ import 'package:get_it/get_it.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiSpacing;
+import 'package:alhai_shared_ui/alhai_shared_ui.dart' show SilentLimitBadge;
 import 'package:uuid/uuid.dart';
 import '../../utils/pdf_font_helper.dart';
+
+/// Wave 8 (P0-33): list size for the debts report. Beyond this the list
+/// shows a `SilentLimitBadge`; the summary total above it always reflects
+/// the SQL aggregate so the headline number is correct regardless of the
+/// list-page count.
+const int _kDebtsPageLimit = 500;
 
 /// شاشة تقرير الديون
 class DebtsReportScreen extends ConsumerStatefulWidget {
@@ -23,6 +30,7 @@ class _DebtsReportScreenState extends ConsumerState<DebtsReportScreen> {
   bool _isLoading = true;
   List<Map<String, dynamic>> _debts = [];
   double _totalDebts = 0;
+  int _accountsRowCount = 0;
   String _sortBy = 'amount';
 
   @override
@@ -41,7 +49,18 @@ class _DebtsReportScreenState extends ConsumerState<DebtsReportScreen> {
     }
 
     final db = GetIt.I<AppDatabase>();
-    final accounts = await db.accountsDao.getReceivableAccounts(storeId);
+
+    // Wave 8 (P0-33): pull the aggregate total straight from SQL so the
+    // headline number stays correct even when the store has more debtors
+    // than `_kDebtsPageLimit` (the list below is page-bounded; the badge
+    // surfaces that). Previously the total was a `fold` over the bounded
+    // list, so a 700-debtor store silently understated the total by
+    // however much the bottom 200 rows held.
+    final totalReceivable = await db.accountsDao.getTotalReceivable(storeId);
+    final accounts = await db.accountsDao.getReceivableAccounts(
+      storeId,
+      limit: _kDebtsPageLimit,
+    );
 
     if (mounted) {
       setState(() {
@@ -58,10 +77,8 @@ class _DebtsReportScreenState extends ConsumerState<DebtsReportScreen> {
             )
             .toList();
 
-        _totalDebts = _debts.fold(
-          0.0,
-          (sum, d) => sum + (d['balance'] as double),
-        );
+        _totalDebts = totalReceivable;
+        _accountsRowCount = accounts.length;
         _sortDebts();
         _isLoading = false;
       });
@@ -183,6 +200,14 @@ class _DebtsReportScreenState extends ConsumerState<DebtsReportScreen> {
                       ),
                     ],
                   ),
+                ),
+
+                // Wave 8 (P0-33): warn the user when the list page hit
+                // its ceiling — the headline total above is still correct
+                // (SQL aggregate), but the rows below are truncated.
+                SilentLimitBadge(
+                  rowCount: _accountsRowCount,
+                  limit: _kDebtsPageLimit,
                 ),
 
                 // Debts list

@@ -14126,6 +14126,17 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get silentLimitBadgeTitle => 'Display limit reached';
+
+  @override
+  String silentLimitBadgeMessage(int limit) {
+    return 'Showing $limit rows. More data may be hidden — refine filters to see the full result.';
+  }
+
+  @override
+  String get silentLimitBadgeAction => 'Refine filters';
+
+  @override
   String get splitReceiptTitle => 'Split Receipt';
 
   @override

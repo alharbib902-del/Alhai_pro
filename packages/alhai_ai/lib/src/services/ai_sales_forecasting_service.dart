@@ -310,9 +310,16 @@ class AiSalesForecastingService {
   ) async {
     final now = DateTime.now();
     final weekAgo = now.subtract(const Duration(days: 7));
-    final sales = await _db.salesDao.getSalesByDateRange(storeId, weekAgo, now);
-
-    double weeklyRevenue = sales.fold<double>(0, (sum, s) => sum + s.total);
+    // Wave 8 (P0-33): SQL aggregate for the weekly total so high-volume
+    // stores aren't silently truncated by the row-limited fetch we used
+    // before. Returns SAR (double) — the rest of the simulation works
+    // in SAR already.
+    final stats = await _db.salesDao.getSalesStats(
+      storeId,
+      startDate: weekAgo,
+      endDate: now,
+    );
+    double weeklyRevenue = stats.total;
 
     // إذا لا توجد بيانات كافية، نستخدم قيمة افتراضية
     if (weeklyRevenue < 100) {

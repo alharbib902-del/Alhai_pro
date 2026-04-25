@@ -188,6 +188,14 @@ class _CustomerAccountsScreenState
                       child: _buildSummaryStats(isDark, l10n),
                     ),
                     const SizedBox(height: AlhaiSpacing.sm),
+                    // Wave 8 (P0-33): tell the user when the account
+                    // page is full — debtors past row 500 won't show
+                    // here. Default limit matches getReceivableAccounts
+                    // (500), which is what `_loadAccounts` calls.
+                    SilentLimitBadge(
+                      rowCount: _allAccounts.length,
+                      limit: 500,
+                    ),
                     Expanded(
                       child: _filteredAccounts.isEmpty
                           ? _buildEmptyState(isDark, l10n)

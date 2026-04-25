@@ -19,11 +19,24 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
   String? _todayTotalCacheKey;
 
   /// الحصول على جميع المبيعات للمتجر (باستثناء المحذوفة)
-  Future<List<SalesTableData>> getAllSales(String storeId, {int limit = 1000}) {
+  ///
+  /// Wave 8 (P0-33): [offset] added so callers can paginate. The default
+  /// [limit] of 1000 is preserved as a safety ceiling — when a UI hits
+  /// `result.length == limit` it should surface a `SilentLimitBadge`
+  /// (alhai_shared_ui) and let the user widen filters or page through.
+  /// For aggregate use cases (sums, counts), prefer the SQL-aggregating
+  /// methods on this DAO ([getSalesStats], [aggregatePaymentBreakdownRaw],
+  /// [getSalesCount]) — they don't materialise rows so they don't have
+  /// any silent-truncation hazard.
+  Future<List<SalesTableData>> getAllSales(
+    String storeId, {
+    int limit = 1000,
+    int offset = 0,
+  }) {
     return (select(salesTable)
           ..where((s) => s.storeId.equals(storeId) & s.deletedAt.isNull())
           ..orderBy([(s) => OrderingTerm.desc(s.createdAt)])
-          ..limit(limit))
+          ..limit(limit, offset: offset))
         .get();
   }
 
@@ -115,11 +128,18 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
   }
 
   /// الحصول على مبيعات الفترة (باستثناء المحذوفة)
+  ///
+  /// Wave 8 (P0-33): [offset] added for pagination. See [getAllSales]
+  /// for the silent-truncation guidance — same hazard applies here when
+  /// the date range is wide enough to exceed [limit] (default 5000).
+  /// Aggregate callers should use [aggregatePaymentBreakdownRaw],
+  /// [getSalesStats], or [getSalesCount] instead of materialising rows.
   Future<List<SalesTableData>> getSalesByDateRange(
     String storeId,
     DateTime startDate,
     DateTime endDate, {
     int limit = 5000,
+    int offset = 0,
   }) {
     return (select(salesTable)
           ..where(
@@ -130,7 +150,7 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
                 s.createdAt.isSmallerOrEqualValue(endDate),
           )
           ..orderBy([(s) => OrderingTerm.desc(s.createdAt)])
-          ..limit(limit))
+          ..limit(limit, offset: offset))
         .get();
   }
 
@@ -827,6 +847,101 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
     return _centsSumToSar(result.data['total']);
   }
 
+  /// Aggregate the cash / card / credit payment breakdown for a store
+  /// using a single SQL query — no Dart-side row materialisation.
+  ///
+  /// Sprint 1 / Wave 8 (P0-33): the legacy path called [getSalesByDateRange]
+  /// with a 5000-row silent limit and let `PaymentAggregator.aggregate` walk
+  /// the rows in Dart. A store with >5000 sales in the window returned a
+  /// truncated breakdown and reports were silently wrong. This method
+  /// computes the same buckets (cashCents / cardCents / creditCents +
+  /// per-tender counts + included/excluded counts) entirely in SQL, so the
+  /// result is correct regardless of row count and the wire pulls a single
+  /// row.
+  ///
+  /// Semantics match `PaymentAggregator.aggregate` exactly:
+  /// * Only `status IN ('completed', 'paid')` rows count toward the sums.
+  /// * Multi-tender rows (any of cash/card/credit_amount > 0) are summed
+  ///   from the split columns directly, so a 100 SAR sale split 50/50
+  ///   contributes 50 to each side instead of all-or-nothing on
+  ///   payment_method.
+  /// * Legacy single-tender rows (all three split columns null/zero) fall
+  ///   back to the `payment_method` string with the same buckets the
+  ///   aggregator uses (cash, card+mada, anything-else→credit).
+  ///
+  /// [from] is inclusive, [to] is exclusive. Pass null for an unbounded
+  /// store-wide aggregate.
+  Future<RawPaymentBreakdown> aggregatePaymentBreakdownRaw(
+    String storeId, {
+    DateTime? from,
+    DateTime? to,
+  }) async {
+    var whereClause = 'store_id = ? AND deleted_at IS NULL';
+    final variables = <Variable>[Variable.withString(storeId)];
+
+    if (from != null) {
+      whereClause += ' AND created_at >= ?';
+      variables.add(Variable.withDateTime(from));
+    }
+    if (to != null) {
+      whereClause += ' AND created_at < ?';
+      variables.add(Variable.withDateTime(to));
+    }
+
+    // Per-tender CASE expressions match PaymentAggregator semantics.
+    // The `is_multi_tender` predicate gates split-column sums; the
+    // negated branch handles legacy single-tender rows. Counts are
+    // per-tender (a mixed sale increments cashCount AND cardCount), same
+    // as the in-memory aggregator.
+    const completedFilter = "status IN ('completed', 'paid')";
+    const isMultiTender =
+        '(COALESCE(cash_amount, 0) > 0 OR COALESCE(card_amount, 0) > 0 OR COALESCE(credit_amount, 0) > 0)';
+    const isLegacy =
+        '(COALESCE(cash_amount, 0) = 0 AND COALESCE(card_amount, 0) = 0 AND COALESCE(credit_amount, 0) = 0)';
+
+    final sql =
+        '''
+SELECT
+  COALESCE(SUM(CASE WHEN $completedFilter THEN total END), 0) AS total_cents,
+  COUNT(CASE WHEN $completedFilter THEN 1 END) AS included_count,
+  COUNT(CASE WHEN NOT ($completedFilter) THEN 1 END) AS excluded_count,
+  COALESCE(SUM(CASE WHEN $completedFilter AND $isMultiTender THEN COALESCE(cash_amount, 0) END), 0)
+    + COALESCE(SUM(CASE WHEN $completedFilter AND $isLegacy AND payment_method = 'cash' THEN total END), 0)
+    AS cash_cents,
+  COALESCE(SUM(CASE WHEN $completedFilter AND $isMultiTender THEN COALESCE(card_amount, 0) END), 0)
+    + COALESCE(SUM(CASE WHEN $completedFilter AND $isLegacy AND payment_method IN ('card', 'mada') THEN total END), 0)
+    AS card_cents,
+  COALESCE(SUM(CASE WHEN $completedFilter AND $isMultiTender THEN COALESCE(credit_amount, 0) END), 0)
+    + COALESCE(SUM(CASE WHEN $completedFilter AND $isLegacy AND payment_method NOT IN ('cash', 'card', 'mada') THEN total END), 0)
+    AS credit_cents,
+  COUNT(CASE WHEN $completedFilter AND ((cash_amount IS NOT NULL AND cash_amount > 0) OR ($isLegacy AND payment_method = 'cash')) THEN 1 END) AS cash_count,
+  COUNT(CASE WHEN $completedFilter AND ((card_amount IS NOT NULL AND card_amount > 0) OR ($isLegacy AND payment_method IN ('card', 'mada'))) THEN 1 END) AS card_count,
+  COUNT(CASE WHEN $completedFilter AND ((credit_amount IS NOT NULL AND credit_amount > 0) OR ($isLegacy AND payment_method NOT IN ('cash', 'card', 'mada'))) THEN 1 END) AS credit_count
+FROM sales
+WHERE $whereClause
+''';
+
+    final row = await customSelect(sql, variables: variables).getSingle();
+    int readInt(String key) {
+      final v = row.data[key];
+      if (v is int) return v;
+      if (v is double) return v.round();
+      return 0;
+    }
+
+    return RawPaymentBreakdown(
+      cashCents: readInt('cash_cents'),
+      cardCents: readInt('card_cents'),
+      creditCents: readInt('credit_cents'),
+      totalCents: readInt('total_cents'),
+      cashCount: readInt('cash_count'),
+      cardCount: readInt('card_count'),
+      creditCount: readInt('credit_count'),
+      includedCount: readInt('included_count'),
+      excludedCount: readInt('excluded_count'),
+    );
+  }
+
   /// C-4 Session 3: sales.total is int cents; API exposes SAR doubles.
   /// Use this when reading money columns from raw customSelect rows.
   double _toDouble(dynamic value) {
@@ -911,4 +1026,46 @@ class PaymentMethodStats {
     required this.count,
     required this.total,
   });
+}
+
+/// SQL-aggregated payment breakdown — raw int cents straight from a single
+/// `aggregatePaymentBreakdownRaw` query.
+///
+/// Lives in alhai_database (vs. alhai_reports' `PaymentBreakdown`) so DAOs
+/// can return it without a circular dependency. Convert to the richer
+/// `PaymentBreakdown` (with SAR getters) via `PaymentAggregator.fromRaw`.
+class RawPaymentBreakdown {
+  final int cashCents;
+  final int cardCents;
+  final int creditCents;
+  final int totalCents;
+  final int cashCount;
+  final int cardCount;
+  final int creditCount;
+  final int includedCount;
+  final int excludedCount;
+
+  const RawPaymentBreakdown({
+    required this.cashCents,
+    required this.cardCents,
+    required this.creditCents,
+    required this.totalCents,
+    required this.cashCount,
+    required this.cardCount,
+    required this.creditCount,
+    required this.includedCount,
+    required this.excludedCount,
+  });
+
+  static const empty = RawPaymentBreakdown(
+    cashCents: 0,
+    cardCents: 0,
+    creditCents: 0,
+    totalCents: 0,
+    cashCount: 0,
+    cardCount: 0,
+    creditCount: 0,
+    includedCount: 0,
+    excludedCount: 0,
+  );
 }

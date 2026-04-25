@@ -7158,6 +7158,16 @@
       }
     }
   },
+  "silentLimitBadgeTitle": "تم بلوغ الحد الأقصى للعرض",
+  "silentLimitBadgeMessage": "تم عرض {limit} صف. قد توجد بيانات إضافية مخفية — ضيِّق الفلاتر للحصول على نتائج كاملة.",
+  "@silentLimitBadgeMessage": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "silentLimitBadgeAction": "تضييق الفلاتر",
   "splitReceiptTitle": "إيصال الدفع المجزأ",
   "paymentBreakdown": "تفاصيل الدفع",
   "zatcaQrTitle": "رمز QR للفوترة الإلكترونية",

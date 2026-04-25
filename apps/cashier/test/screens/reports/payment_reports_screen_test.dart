@@ -19,19 +19,17 @@ void main() {
   setUp(() {
     salesDao = MockSalesDao();
 
-    // P1 #1/#2/#3 (2026-04-24): screen now pushes date filter down to SQL via
-    // `getSalesByDateRange`. Default stub for both entry points.
+    // Wave 8 (P0-33): screen now uses a single SQL aggregate
+    // (`aggregatePaymentBreakdownRaw`) instead of pulling rows then
+    // folding in Dart. Default stub returns the empty breakdown so
+    // tests don't have to spell it out.
     when(
-      () => salesDao.getSalesByDateRange(
+      () => salesDao.aggregatePaymentBreakdownRaw(
         any(),
-        any(),
-        any(),
-        limit: any(named: 'limit'),
+        from: any(named: 'from'),
+        to: any(named: 'to'),
       ),
-    ).thenAnswer((_) async => <SalesTableData>[]);
-    when(
-      () => salesDao.getAllSales(any(), limit: any(named: 'limit')),
-    ).thenAnswer((_) async => <SalesTableData>[]);
+    ).thenAnswer((_) async => RawPaymentBreakdown.empty);
 
     final db = setupMockDatabase(salesDao: salesDao);
     setupTestGetIt(mockDb: db);
@@ -59,15 +57,15 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      final completer = Completer<List<SalesTableData>>();
-      // Default filter is 'today' → dates are non-null → the screen calls
-      // `getSalesByDateRange`, not `getAllSales`. Hold its future.
+      // Wave 8 (P0-33): the screen now awaits the SQL aggregate, not
+      // a row-list fetch. Hold its future to keep the loading state
+      // visible while we assert.
+      final completer = Completer<RawPaymentBreakdown>();
       when(
-        () => salesDao.getSalesByDateRange(
+        () => salesDao.aggregatePaymentBreakdownRaw(
           any(),
-          any(),
-          any(),
-          limit: any(named: 'limit'),
+          from: any(named: 'from'),
+          to: any(named: 'to'),
         ),
       ).thenAnswer((_) => completer.future);
 
@@ -76,7 +74,7 @@ void main() {
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
 
-      completer.complete(<SalesTableData>[]);
+      completer.complete(RawPaymentBreakdown.empty);
 
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();

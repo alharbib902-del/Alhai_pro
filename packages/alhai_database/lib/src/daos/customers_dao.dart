@@ -11,11 +11,20 @@ class CustomersDao extends DatabaseAccessor<AppDatabase>
     with _$CustomersDaoMixin {
   CustomersDao(super.db);
 
-  Future<List<CustomersTableData>> getAllCustomers(String storeId) {
+  /// Wave 8 (P0-33): [limit] and [offset] are now params (previously a
+  /// hardcoded `limit(500)` with no escape hatch). Callers that need an
+  /// unbounded count must switch to [getCustomersCount] (SQL aggregate)
+  /// or paginate with [getCustomersPaginated]. UI lists hitting the
+  /// limit should surface a `SilentLimitBadge` (alhai_shared_ui).
+  Future<List<CustomersTableData>> getAllCustomers(
+    String storeId, {
+    int limit = 500,
+    int offset = 0,
+  }) {
     return (select(customersTable)
           ..where((c) => c.storeId.equals(storeId))
           ..orderBy([(c) => OrderingTerm.asc(c.name)])
-          ..limit(500))
+          ..limit(limit, offset: offset))
         .get();
   }
 

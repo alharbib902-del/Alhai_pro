@@ -98,7 +98,11 @@ void main() {
 
       final completer = Completer<List<AccountsTableData>>();
       when(
-        () => mockAccountsDao.getReceivableAccounts(any()),
+        () => mockAccountsDao.getReceivableAccounts(
+          any(),
+          limit: any(named: 'limit'),
+          offset: any(named: 'offset'),
+        ),
       ).thenAnswer((_) => completer.future);
 
       await tester.pumpWidget(_buildTestWidget());
@@ -115,7 +119,11 @@ void main() {
       addTearDown(() => tester.view.resetPhysicalSize());
 
       when(
-        () => mockAccountsDao.getReceivableAccounts(any()),
+        () => mockAccountsDao.getReceivableAccounts(
+          any(),
+          limit: any(named: 'limit'),
+          offset: any(named: 'offset'),
+        ),
       ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(_buildTestWidget());
@@ -130,7 +138,11 @@ void main() {
       addTearDown(() => tester.view.resetPhysicalSize());
 
       when(
-        () => mockAccountsDao.getReceivableAccounts(any()),
+        () => mockAccountsDao.getReceivableAccounts(
+          any(),
+          limit: any(named: 'limit'),
+          offset: any(named: 'offset'),
+        ),
       ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(_buildTestWidget());
@@ -145,7 +157,11 @@ void main() {
       addTearDown(() => tester.view.resetPhysicalSize());
 
       when(
-        () => mockAccountsDao.getReceivableAccounts(any()),
+        () => mockAccountsDao.getReceivableAccounts(
+          any(),
+          limit: any(named: 'limit'),
+          offset: any(named: 'offset'),
+        ),
       ).thenThrow(Exception('Database error'));
 
       await tester.pumpWidget(_buildTestWidget());
@@ -159,7 +175,11 @@ void main() {
       addTearDown(() => tester.view.resetPhysicalSize());
 
       when(
-        () => mockAccountsDao.getReceivableAccounts(any()),
+        () => mockAccountsDao.getReceivableAccounts(
+          any(),
+          limit: any(named: 'limit'),
+          offset: any(named: 'offset'),
+        ),
       ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(_buildTestWidget());

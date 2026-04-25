@@ -87,36 +87,24 @@ class _PaymentReportsScreenState extends ConsumerState<PaymentReportsScreen> {
         rangeEnd = _customRange!.end.add(const Duration(days: 1));
       }
 
-      // Phase 5 §5.4 — trace payment-reports data load.
-      final orders = await tracePerformance(
+      // Wave 8 (P0-33): pull the aggregate straight from SQL — no Dart-side
+      // row materialisation, no silent 5000-row truncation that the previous
+      // `getSalesByDateRange + PaymentAggregator.aggregate` chain carried.
+      // Same per-tender semantics (multi-tender split columns first, legacy
+      // payment_method string fallback) — see PaymentAggregator.fromRaw.
+      final breakdown = await tracePerformance(
         name: 'loadPaymentReports',
         operation: 'db.query',
         data: {'date_filter': _dateFilter},
         body: () async {
-          if (rangeStart != null && rangeEnd != null) {
-            return _db.salesDao.getSalesByDateRange(
-              storeId,
-              rangeStart,
-              rangeEnd,
-            );
-          }
-          return _db.salesDao.getAllSales(storeId);
+          final raw = await _db.salesDao.aggregatePaymentBreakdownRaw(
+            storeId,
+            from: rangeStart,
+            to: rangeEnd,
+          );
+          return PaymentAggregator.fromRaw(raw);
         },
       );
-
-      // Sprint 1 / P0-16: aggregate via the shared PaymentAggregator instead
-      // of the inline loop this used to carry. The old loop bucketed every
-      // sale into a single method based on `paymentMethod`, so a 100 SAR
-      // mixed sale (50 cash + 50 card) was attributed entirely to one
-      // bucket — pie charts and totals shown to managers were wrong.
-      // The new path:
-      //  • reads `cashAmount` / `cardAmount` / `creditAmount` int cents
-      //    columns directly when populated → real per-tender breakdown.
-      //  • filters `status != 'completed'` (voided / refunded sales no
-      //    longer inflate revenue).
-      //  • falls back to the old paymentMethod-string bucketing only for
-      //    legacy single-tender rows where the split columns are zero.
-      final breakdown = PaymentAggregator.aggregate(orders);
 
       if (mounted) {
         setState(() {

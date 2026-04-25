@@ -140,8 +140,16 @@ setupMockGetIt() {
   ).thenAnswer((_) async => <UsersTableData>[]);
 
   when(
-    () => mockAccountsDao.getReceivableAccounts(any()),
+    () => mockAccountsDao.getReceivableAccounts(
+      any(),
+      limit: any(named: 'limit'),
+      offset: any(named: 'offset'),
+    ),
   ).thenAnswer((_) async => <AccountsTableData>[]);
+  // Wave 8 (P0-33): SQL-aggregated total for the debts-report headline.
+  when(
+    () => mockAccountsDao.getTotalReceivable(any()),
+  ).thenAnswer((_) async => 0.0);
 
   // Register in GetIt
   final getIt = GetIt.instance;

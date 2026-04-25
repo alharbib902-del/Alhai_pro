@@ -14118,6 +14118,17 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
+  String get silentLimitBadgeTitle => 'تم بلوغ الحد الأقصى للعرض';
+
+  @override
+  String silentLimitBadgeMessage(int limit) {
+    return 'تم عرض $limit صف. قد توجد بيانات إضافية مخفية — ضيِّق الفلاتر للحصول على نتائج كاملة.';
+  }
+
+  @override
+  String get silentLimitBadgeAction => 'تضييق الفلاتر';
+
+  @override
   String get splitReceiptTitle => 'إيصال الدفع المجزأ';
 
   @override

@@ -334,7 +334,11 @@ MockAppDatabase setupMockDatabase({
   // SalesDao
   final effectiveSalesDao = salesDao ?? db.salesDao;
   when(
-    () => effectiveSalesDao.getAllSales(any(), limit: any(named: 'limit')),
+    () => effectiveSalesDao.getAllSales(
+      any(),
+      limit: any(named: 'limit'),
+      offset: any(named: 'offset'),
+    ),
   ).thenAnswer((_) async => <SalesTableData>[]);
   when(
     () => effectiveSalesDao.getSaleById(any()),
@@ -350,6 +354,16 @@ MockAppDatabase setupMockDatabase({
       cashierId: any(named: 'cashierId'),
     ),
   ).thenAnswer((_) async => <SalesTableData>[]);
+  // Wave 8 (P0-33): default stub for the SQL aggregate so screens that
+  // load it on first frame (payment_reports_screen, custom_report) don't
+  // throw 'type Null is not a subtype of Future<RawPaymentBreakdown>'.
+  when(
+    () => effectiveSalesDao.aggregatePaymentBreakdownRaw(
+      any(),
+      from: any(named: 'from'),
+      to: any(named: 'to'),
+    ),
+  ).thenAnswer((_) async => RawPaymentBreakdown.empty);
 
   // SaleItemsDao
   final effectiveSaleItemsDao = saleItemsDao ?? db.saleItemsDao;
@@ -362,6 +376,28 @@ MockAppDatabase setupMockDatabase({
   when(
     () => effectiveCustomersDao.getActiveCustomers(any()),
   ).thenAnswer((_) async => <CustomersTableData>[]);
+  // Wave 8 (P0-33): SQL aggregates for customers/accounts that several
+  // analytics + reports screens now lean on. Defaults to zero/empty so
+  // the screens render without per-test wiring.
+  when(
+    () => effectiveCustomersDao.getCustomersCount(
+      any(),
+      activeOnly: any(named: 'activeOnly'),
+    ),
+  ).thenAnswer((_) async => 0);
+
+  // AccountsDao
+  final effectiveAccountsDao = accountsDao ?? db.accountsDao;
+  when(
+    () => effectiveAccountsDao.getReceivableAccounts(
+      any(),
+      limit: any(named: 'limit'),
+      offset: any(named: 'offset'),
+    ),
+  ).thenAnswer((_) async => <AccountsTableData>[]);
+  when(
+    () => effectiveAccountsDao.getTotalReceivable(any()),
+  ).thenAnswer((_) async => 0.0);
 
   // SyncQueueDao
   final effectiveSyncQueueDao = syncQueueDao ?? db.syncQueueDao;

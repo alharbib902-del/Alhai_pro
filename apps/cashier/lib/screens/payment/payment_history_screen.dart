@@ -169,6 +169,11 @@ class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
                       child: _buildSummaryStats(isDark, l10n),
                     ),
                     const SizedBox(height: AlhaiSpacing.sm),
+                    // Wave 8 (P0-33): warn the cashier when the bounded
+                    // fetch hit its ceiling — older payments may be
+                    // missing from this view. Refining the search input
+                    // is the closest thing this screen has to a filter.
+                    SilentLimitBadge(rowCount: _allOrders.length),
                     Expanded(
                       child: _filteredOrders.isEmpty
                           ? _buildEmptyState(isDark, l10n)

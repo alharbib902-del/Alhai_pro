@@ -21,7 +21,17 @@ class AccountsDao extends DatabaseAccessor<AppDatabase>
   }
 
   /// الحصول على حسابات العملاء (الديون)
-  Future<List<AccountsTableData>> getReceivableAccounts(String storeId) {
+  ///
+  /// Wave 8 (P0-33): [limit] and [offset] are now params (previously a
+  /// hardcoded `limit(500)` with no escape hatch). For total receivables
+  /// use [getTotalReceivable] (SQL aggregate, no truncation hazard).
+  /// Paginated lists should pair this with [getAccountsCount] and a
+  /// `SilentLimitBadge` when `result.length == limit`.
+  Future<List<AccountsTableData>> getReceivableAccounts(
+    String storeId, {
+    int limit = 500,
+    int offset = 0,
+  }) {
     return (select(accountsTable)
           ..where(
             (a) =>
@@ -30,7 +40,7 @@ class AccountsDao extends DatabaseAccessor<AppDatabase>
                 a.deletedAt.isNull(),
           )
           ..orderBy([(a) => OrderingTerm.asc(a.name)])
-          ..limit(500))
+          ..limit(limit, offset: offset))
         .get();
   }
 

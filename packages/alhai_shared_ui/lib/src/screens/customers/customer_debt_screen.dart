@@ -9,6 +9,7 @@ import '../../core/utils/currency_formatter.dart';
 import '../../providers/sync_providers.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import '../../widgets/common/app_empty_state.dart';
+import '../../widgets/common/silent_limit_badge.dart';
 
 /// Customer Debt Management Screen
 class CustomerDebtScreen extends ConsumerStatefulWidget {
@@ -26,6 +27,7 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
   String? _loadError;
 
   List<AccountsTableData> _debtors = [];
+  int _accountsRawCount = 0;
 
   double get _totalDebt => _debtors.fold(0.0, (sum, d) => sum + d.balance);
   int get _overdueCount => _debtors.where((d) {
@@ -79,6 +81,9 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
       if (mounted) {
         setState(() {
           _debtors = debtors;
+          // Wave 8 (P0-33): track the raw fetch size so the badge can
+          // surface silent truncation at the DAO ceiling.
+          _accountsRawCount = accounts.length;
           _isLoading = false;
         });
       }
@@ -190,6 +195,15 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
         children: [
           // Summary cards - responsive layout
           _buildSummaryCards(l10n, colorScheme),
+
+          // Wave 8 (P0-33): warn when the page hit its ceiling. Headline
+          // numbers above are folded over the bounded list; if you need
+          // the true totals, switch to the SQL-aggregating helpers
+          // (getTotalReceivable / getAccountsCount).
+          SilentLimitBadge(
+            rowCount: _accountsRawCount,
+            limit: 500,
+          ),
 
           // Debts list
           Expanded(

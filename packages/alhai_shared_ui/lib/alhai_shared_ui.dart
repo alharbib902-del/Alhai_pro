@@ -144,6 +144,7 @@ export 'src/widgets/common/shimmer_loading.dart';
 export 'src/widgets/common/skeleton_loader.dart';
 export 'src/widgets/common/smart_animations.dart';
 export 'src/widgets/common/smart_offline_banner.dart';
+export 'src/widgets/common/silent_limit_badge.dart';
 export 'src/widgets/common/sync_status_indicator.dart';
 export 'src/widgets/common/undo_system.dart';
 export 'src/widgets/common/user_feedback.dart';

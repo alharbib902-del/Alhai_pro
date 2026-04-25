@@ -196,4 +196,30 @@ class PaymentAggregator {
       excludedCount: excluded,
     );
   }
+
+  /// Build a [PaymentBreakdown] from a SQL-aggregated [RawPaymentBreakdown]
+  /// without ever materialising sales rows in Dart.
+  ///
+  /// Sprint 1 / Wave 8 (P0-33): the legacy path passed a (silently-truncated)
+  /// `getSalesByDateRange` result to [aggregate]. For stores with thousands
+  /// of sales in the window, the report was wrong by however much the
+  /// truncation cost. Use [salesDao.aggregatePaymentBreakdownRaw] →
+  /// [fromRaw] for an in-database aggregate that doesn't have the hazard.
+  ///
+  /// The two paths produce identical breakdowns for the same input set —
+  /// both rely on the same multi-tender-vs-legacy semantics, just expressed
+  /// in SQL CASE branches instead of Dart switch arms.
+  static PaymentBreakdown fromRaw(RawPaymentBreakdown raw) {
+    return PaymentBreakdown(
+      cashCents: raw.cashCents,
+      cardCents: raw.cardCents,
+      creditCents: raw.creditCents,
+      totalCents: raw.totalCents,
+      cashCount: raw.cashCount,
+      cardCount: raw.cardCount,
+      creditCount: raw.creditCount,
+      includedCount: raw.includedCount,
+      excludedCount: raw.excludedCount,
+    );
+  }
 }

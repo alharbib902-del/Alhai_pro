@@ -201,5 +201,186 @@ void main() {
       expect(stats.maxSale, 150.0);
       expect(stats.minSale, 50.0);
     });
+
+    // ─── Wave 8 (P0-33): aggregatePaymentBreakdownRaw ────────────────
+    group('aggregatePaymentBreakdownRaw', () {
+      test('empty store returns zeroed RawPaymentBreakdown', () async {
+        final raw = await db.salesDao.aggregatePaymentBreakdownRaw('store-1');
+        expect(raw.totalCents, 0);
+        expect(raw.cashCents, 0);
+        expect(raw.cardCents, 0);
+        expect(raw.creditCents, 0);
+        expect(raw.includedCount, 0);
+        expect(raw.excludedCount, 0);
+      });
+
+      test('legacy single-tender rows bucket by payment_method', () async {
+        await db.salesDao.insertSale(
+          makeSale(id: 's-cash', total: 100.0, paymentMethod: 'cash'),
+        );
+        await db.salesDao.insertSale(
+          makeSale(
+            id: 's-card',
+            receiptNo: 'R-CARD',
+            total: 200.0,
+            paymentMethod: 'card',
+          ),
+        );
+        await db.salesDao.insertSale(
+          makeSale(
+            id: 's-mada',
+            receiptNo: 'R-MADA',
+            total: 50.0,
+            paymentMethod: 'mada',
+          ),
+        );
+        await db.salesDao.insertSale(
+          makeSale(
+            id: 's-credit',
+            receiptNo: 'R-CRED',
+            total: 75.0,
+            paymentMethod: 'credit',
+          ),
+        );
+
+        final raw = await db.salesDao.aggregatePaymentBreakdownRaw('store-1');
+        expect(raw.cashCents, 10000);  // 100 SAR
+        expect(raw.cardCents, 25000);  // 200 + 50 (mada groups with card)
+        expect(raw.creditCents, 7500); // 75 SAR
+        expect(raw.totalCents, 42500);
+        expect(raw.cashCount, 1);
+        expect(raw.cardCount, 2);  // card + mada
+        expect(raw.creditCount, 1);
+        expect(raw.includedCount, 4);
+        expect(raw.excludedCount, 0);
+      });
+
+      test('multi-tender rows split across buckets', () async {
+        // 100 SAR mixed sale: 60 cash + 40 card.
+        await db.salesDao.insertSale(
+          SalesTableCompanion.insert(
+            id: 's-mixed',
+            storeId: 'store-1',
+            receiptNo: 'R-MIX',
+            cashierId: 'cashier-1',
+            subtotal: 10000,
+            total: 10000,
+            paymentMethod: 'mixed',
+            cashAmount: const Value(6000),
+            cardAmount: const Value(4000),
+            createdAt: DateTime(2025, 6, 15, 10),
+          ),
+        );
+
+        final raw = await db.salesDao.aggregatePaymentBreakdownRaw('store-1');
+        expect(raw.cashCents, 6000);
+        expect(raw.cardCents, 4000);
+        expect(raw.creditCents, 0);
+        expect(raw.totalCents, 10000);
+        // Per-tender counts: same sale increments both.
+        expect(raw.cashCount, 1);
+        expect(raw.cardCount, 1);
+        expect(raw.includedCount, 1);
+      });
+
+      test('voided / refunded sales excluded from sums', () async {
+        await db.salesDao.insertSale(
+          makeSale(id: 's-paid', total: 100.0, paymentMethod: 'cash'),
+        );
+        await db.salesDao.insertSale(
+          makeSale(
+            id: 's-void',
+            receiptNo: 'R-VOID',
+            total: 500.0,
+            paymentMethod: 'cash',
+            status: 'voided',
+          ),
+        );
+        await db.salesDao.insertSale(
+          makeSale(
+            id: 's-ref',
+            receiptNo: 'R-REF',
+            total: 300.0,
+            paymentMethod: 'cash',
+            status: 'refunded',
+          ),
+        );
+
+        final raw = await db.salesDao.aggregatePaymentBreakdownRaw('store-1');
+        expect(raw.cashCents, 10000);  // only the 100 SAR completed sale
+        expect(raw.totalCents, 10000);
+        expect(raw.includedCount, 1);
+        expect(raw.excludedCount, 2);
+      });
+
+      test('date range filters apply', () async {
+        await db.salesDao.insertSale(
+          makeSale(
+            id: 'old',
+            total: 100.0,
+            createdAt: DateTime(2025, 1, 15),
+          ),
+        );
+        await db.salesDao.insertSale(
+          makeSale(
+            id: 'new',
+            receiptNo: 'R-NEW',
+            total: 200.0,
+            createdAt: DateTime(2025, 6, 15),
+          ),
+        );
+
+        final raw = await db.salesDao.aggregatePaymentBreakdownRaw(
+          'store-1',
+          from: DateTime(2025, 6, 1),
+          to: DateTime(2025, 6, 30),
+        );
+        expect(raw.totalCents, 20000);
+        expect(raw.includedCount, 1);
+      });
+
+      test('paid status counts the same as completed', () async {
+        await db.salesDao.insertSale(
+          makeSale(
+            id: 's-paid',
+            total: 75.0,
+            paymentMethod: 'cash',
+            status: 'paid',
+          ),
+        );
+
+        final raw = await db.salesDao.aggregatePaymentBreakdownRaw('store-1');
+        expect(raw.cashCents, 7500);
+        expect(raw.includedCount, 1);
+      });
+    });
+
+    // ─── Wave 8 (P0-33): pagination via offset on getAllSales ────────
+    test('getAllSales accepts offset for pagination', () async {
+      for (var i = 0; i < 5; i++) {
+        await db.salesDao.insertSale(
+          makeSale(
+            id: 'sale-$i',
+            receiptNo: 'REC-$i',
+            createdAt: DateTime(2025, 6, 15, i),
+          ),
+        );
+      }
+
+      final firstPage = await db.salesDao.getAllSales(
+        'store-1',
+        limit: 2,
+      );
+      final secondPage = await db.salesDao.getAllSales(
+        'store-1',
+        limit: 2,
+        offset: 2,
+      );
+      expect(firstPage, hasLength(2));
+      expect(secondPage, hasLength(2));
+      // Order is desc by createdAt — firstPage[0] is sale-4 (latest).
+      expect(firstPage.first.id, 'sale-4');
+      expect(secondPage.first.id, 'sale-2');
+    });
   });
 }

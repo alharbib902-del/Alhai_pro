@@ -7298,6 +7298,16 @@
       }
     }
   },
+  "silentLimitBadgeTitle": "Display limit reached",
+  "silentLimitBadgeMessage": "Showing {limit} rows. More data may be hidden — refine filters to see the full result.",
+  "@silentLimitBadgeMessage": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "silentLimitBadgeAction": "Refine filters",
   "splitReceiptTitle": "Split Receipt",
   "paymentBreakdown": "Payment Breakdown",
   "zatcaQrTitle": "ZATCA QR",

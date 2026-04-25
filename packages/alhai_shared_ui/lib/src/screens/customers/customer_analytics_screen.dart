@@ -100,14 +100,33 @@ class _CustomerAnalyticsScreenState
       final db = GetIt.I<AppDatabase>();
       final periodStart = _getPeriodStart();
 
-      // جلب بيانات العملاء
-      final allCustomers = await db.customersDao.getAllCustomers(storeId);
-      final totalCustomers = allCustomers.length;
-
-      // العملاء الجدد خلال الفترة المحددة
-      final newCustomers = allCustomers
-          .where((c) => c.createdAt.isAfter(periodStart))
-          .length;
+      // Wave 8 (P0-33): pull both counts via SQL — `getAllCustomers`
+      // capped at 500 rows, so a 700-customer store reported 500 here and
+      // a wrong "new customers" figure on top. SQL aggregates carry no
+      // truncation hazard and use the same indexes the limited query did.
+      final totalCustomers = await db.customersDao.getCustomersCount(
+        storeId,
+        activeOnly: false,
+      );
+      // The new-customers count is best-effort: if the customSelect path
+      // explodes (e.g. older test stubs that don't wire it up), fall back
+      // to zero rather than tearing the analytics screen down.
+      var newCustomers = 0;
+      try {
+        final newCustomersResult = await db
+            .customSelect(
+              'SELECT COUNT(*) AS c FROM customers '
+              'WHERE store_id = ? AND created_at >= ?',
+              variables: [
+                Variable.withString(storeId),
+                Variable.withDateTime(periodStart),
+              ],
+            )
+            .getSingle();
+        newCustomers = newCustomersResult.read<int>('c');
+      } catch (_) {
+        newCustomers = 0;
+      }
 
       // إجمالي الديون
       double totalDebt = 0;

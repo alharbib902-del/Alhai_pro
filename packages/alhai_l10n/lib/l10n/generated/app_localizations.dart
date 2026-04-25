@@ -26192,6 +26192,24 @@ abstract class AppLocalizations {
   /// **'لا توجد مبيعات مؤهَّلة في آخر {days} يوم'**
   String noEligibleSalesFound(int days);
 
+  /// No description provided for @silentLimitBadgeTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم بلوغ الحد الأقصى للعرض'**
+  String get silentLimitBadgeTitle;
+
+  /// No description provided for @silentLimitBadgeMessage.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم عرض {limit} صف. قد توجد بيانات إضافية مخفية — ضيِّق الفلاتر للحصول على نتائج كاملة.'**
+  String silentLimitBadgeMessage(int limit);
+
+  /// No description provided for @silentLimitBadgeAction.
+  ///
+  /// In ar, this message translates to:
+  /// **'تضييق الفلاتر'**
+  String get silentLimitBadgeAction;
+
   /// No description provided for @splitReceiptTitle.
   ///
   /// In ar, this message translates to:
