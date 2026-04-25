@@ -7,7 +7,9 @@ import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_sync/alhai_sync.dart';
 import 'package:alhai_zatca/alhai_zatca.dart' as zatca;
 
+import '../models/receipt_settings.dart';
 import 'receipt_pdf_generator.dart';
+import 'receipt_settings_repository.dart';
 import 'zatca_invoice_mapper.dart';
 import 'zatca_service.dart';
 
@@ -585,6 +587,22 @@ class InvoiceService {
       final latest = await _db.invoicesDao.getById(invoiceId);
       final qrOverride = latest?.zatcaQr;
 
+      // P0-31: load per-store receipt settings (header/footer text +
+      // show toggles + paper width). Falls back silently to defaults
+      // on any read failure — receipt printing must never block on a
+      // misconfigured settings row.
+      ReceiptSettings? receiptSettings;
+      try {
+        receiptSettings = await ReceiptSettingsRepository(_db)
+            .loadForStore(sale.storeId);
+      } catch (e) {
+        if (kDebugMode) {
+          debugPrint(
+            '[InvoiceService] receipt-settings load failed (using defaults): $e',
+          );
+        }
+      }
+
       // توليد PDF
       final pdfBytes = await ReceiptPdfGenerator.generate(
         sale: sale,
@@ -592,6 +610,7 @@ class InvoiceService {
         store: store,
         cashierName: cashierName,
         qrOverride: qrOverride,
+        settings: receiptSettings,
       );
 
       // أرشفة في Supabase Storage (إذا متاح)

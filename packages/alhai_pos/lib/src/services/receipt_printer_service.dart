@@ -6,7 +6,9 @@ import 'package:printing/printing.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:get_it/get_it.dart';
+import '../models/receipt_settings.dart';
 import 'receipt_pdf_generator.dart';
+import 'receipt_settings_repository.dart';
 
 /// خدمة طباعة الإيصالات
 ///
@@ -71,12 +73,17 @@ class ReceiptPrinterService {
     StoreInfo store = StoreInfo.defaultStore,
   }) async {
     try {
+      // P0-31: load per-store receipt settings. Falls back to defaults
+      // on any read failure — printing must never block on settings.
+      final settings = await _loadSettingsOrDefaults(sale.storeId);
+
       // توليد PDF
       final pdfBytes = await ReceiptPdfGenerator.generate(
         sale: sale,
         items: items,
         store: store,
         cashierName: cashierName,
+        settings: settings,
       );
 
       // عرض dialog الطباعة/المعاينة
@@ -85,7 +92,10 @@ class ReceiptPrinterService {
       try {
         await Printing.layoutPdf(
           name: 'فاتورة ${sale.receiptNo}',
-          format: const PdfPageFormat(80 * PdfPageFormat.mm, double.infinity),
+          format: PdfPageFormat(
+            settings.paperWidthMm * PdfPageFormat.mm,
+            double.infinity,
+          ),
           onLayout: (_) => pdfBytes,
         );
       } catch (printError) {
@@ -127,11 +137,15 @@ class ReceiptPrinterService {
 
       final items = await db.saleItemsDao.getItemsBySaleId(saleId);
 
+      // P0-31: same settings load + fallback as printSaleData.
+      final settings = await _loadSettingsOrDefaults(sale.storeId);
+
       final pdfBytes = await ReceiptPdfGenerator.generate(
         sale: sale,
         items: items,
         store: store,
         cashierName: cashierName,
+        settings: settings,
       );
 
       await Printing.sharePdf(
@@ -147,6 +161,21 @@ class ReceiptPrinterService {
           ),
         );
       }
+    }
+  }
+
+  /// P0-31: load receipt settings for [storeId] with a defensive
+  /// fallback. Receipt printing must never abort because the settings
+  /// row is missing, malformed, or the DB is in an unexpected state —
+  /// the cashier still needs to hand the customer a receipt. On any
+  /// failure we log and return [ReceiptSettings.defaults].
+  static Future<ReceiptSettings> _loadSettingsOrDefaults(String storeId) async {
+    try {
+      final db = GetIt.I<AppDatabase>();
+      return ReceiptSettingsRepository(db).loadForStore(storeId);
+    } catch (e) {
+      debugPrint('[ReceiptPrinterService] settings load failed: $e');
+      return ReceiptSettings.defaults;
     }
   }
 }

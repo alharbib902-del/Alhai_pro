@@ -7,6 +7,7 @@ import 'package:pdf/widgets.dart' as pw;
 
 import 'package:alhai_core/alhai_core.dart' show StoreSettings;
 import 'package:alhai_database/alhai_database.dart';
+import '../models/receipt_settings.dart';
 import 'zatca_service.dart';
 
 /// Currency symbol used throughout the receipt
@@ -71,6 +72,19 @@ class ReceiptPdfGenerator {
   /// back to a freshly-generated Phase-1 TLV (legacy path; safe because
   /// stores that haven't onboarded for Phase-2 still need the simplified
   /// QR for cashier compliance).
+  ///
+  /// [settings]: P0-31 — per-store receipt customisation. When null the
+  /// generator uses [ReceiptSettings.defaults] (every show-toggle on,
+  /// no custom header/footer) — keeps existing call sites that haven't
+  /// been migrated working unchanged. Pre-fix the receipt_settings
+  /// screen wrote 7 keys to the `settings` table and this generator
+  /// ignored every one of them; now the screen flows through
+  /// [ReceiptSettingsRepository] and the values land here.
+  ///
+  /// Note on [paperWidth] vs [settings.paperWidthMm]: when both are
+  /// passed, `settings.paperWidthMm` wins. The bare [paperWidth]
+  /// parameter is preserved so legacy call sites (and tests) that
+  /// hard-code a width still compile.
   static Future<Uint8List> generate({
     required SalesTableData sale,
     required List<SaleItemsTableData> items,
@@ -79,13 +93,19 @@ class ReceiptPdfGenerator {
     double paperWidth = 80, // mm
     String? note,
     String? qrOverride,
+    ReceiptSettings? settings,
   }) async {
     await _loadFonts();
 
+    final cfg = settings ?? ReceiptSettings.defaults;
     final pdf = pw.Document(
       theme: pw.ThemeData.withFont(base: _regularFont, bold: _boldFont),
     );
-    final pageWidth = paperWidth * PdfPageFormat.mm;
+    // Settings paper width takes precedence — receipt_settings screen
+    // is the source of truth. Falls back to the legacy parameter for
+    // call sites that haven't migrated yet.
+    final effectiveWidthMm = settings != null ? cfg.paperWidthMm : paperWidth;
+    final pageWidth = effectiveWidthMm * PdfPageFormat.mm;
 
     // توليد QR Code بيانات ZATCA
     // C-4 Session 3: sale.total / sale.tax are int cents; ZATCA expects SAR.
@@ -113,9 +133,20 @@ class ReceiptPdfGenerator {
             crossAxisAlignment: pw.CrossAxisAlignment.center,
             children: [
               // ═══════════════════════════════
+              // CUSTOM HEADER (P0-31) — printed above the store info
+              // when the operator set one. Empty string means "no
+              // custom header" so the standard layout starts with the
+              // store name as before.
+              // ═══════════════════════════════
+              if (cfg.headerText.isNotEmpty) ...[
+                _centeredBoldText(cfg.headerText, 11),
+                pw.SizedBox(height: 4),
+              ],
+
+              // ═══════════════════════════════
               // HEADER - معلومات المتجر
               // ═══════════════════════════════
-              _buildHeader(store),
+              _buildHeader(store, showAddress: cfg.showStoreAddress),
               _divider(),
 
               // ═══════════════════════════════
@@ -125,8 +156,8 @@ class ReceiptPdfGenerator {
               pw.SizedBox(height: 4),
               _infoRow('رقم الفاتورة', sale.receiptNo),
               _infoRow('التاريخ', dateFormat.format(sale.createdAt)),
-              _infoRow('الكاشير', cashierName),
-              if (sale.customerName != null)
+              if (cfg.showCashierName) _infoRow('الكاشير', cashierName),
+              if (cfg.showCustomerName && sale.customerName != null)
                 _infoRow('العميل', sale.customerName!),
               _divider(),
 
@@ -177,10 +208,18 @@ class ReceiptPdfGenerator {
 
               // ═══════════════════════════════
               // FOOTER - التذييل
+              // P0-31: custom footer text replaces the default
+              // "شكراً لزيارتكم!" line when the operator set one.
+              // The "Powered by Alhai POS" branding line stays
+              // — branding is intentionally not user-customisable.
               // ═══════════════════════════════
               pw.SizedBox(height: 4),
-              _centeredText('شكراً لزيارتكم!', 11),
-              _centeredText('نتطلع لخدمتكم مجدداً', 9),
+              if (cfg.footerText.isNotEmpty) ...[
+                _centeredText(cfg.footerText, 11),
+              ] else ...[
+                _centeredText('شكراً لزيارتكم!', 11),
+                _centeredText('نتطلع لخدمتكم مجدداً', 9),
+              ],
               pw.SizedBox(height: 8),
               _centeredText(
                 'Powered by Alhai POS',
@@ -199,13 +238,17 @@ class ReceiptPdfGenerator {
 
   // ─── HEADER ───────────────────────────────────────
 
-  static pw.Widget _buildHeader(StoreInfo store) {
+  /// P0-31: [showAddress] gates the address line per the operator's
+  /// receipt-settings toggle. Defaults to `true` so legacy callers
+  /// keep their behaviour. Other lines (name/phone/VAT/CR) are
+  /// always shown — they're either branding or compliance-mandated.
+  static pw.Widget _buildHeader(StoreInfo store, {bool showAddress = true}) {
     return pw.Column(
       children: [
         pw.SizedBox(height: 4),
         _centeredBoldText(store.name, 16),
         pw.SizedBox(height: 2),
-        _centeredText(store.address, 9),
+        if (showAddress) _centeredText(store.address, 9),
         _centeredText('هاتف: ${store.phone}', 9),
         _centeredText(
           'الرقم الضريبي: ${ZatcaService.formatVatNumber(store.vatNumber)}',

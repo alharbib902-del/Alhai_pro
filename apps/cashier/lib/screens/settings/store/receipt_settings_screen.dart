@@ -13,6 +13,11 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
+import 'package:alhai_pos/alhai_pos.dart'
+    show
+        ReceiptSettings,
+        ReceiptSettingsRepository,
+        receiptSettingsProvider;
 import 'package:alhai_design_system/alhai_design_system.dart'
     show AlhaiBreakpoints, AlhaiSnackbar, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
@@ -54,6 +59,11 @@ class _ReceiptSettingsScreenState extends ConsumerState<ReceiptSettingsScreen> {
     super.dispose();
   }
 
+  /// P0-31: load via [ReceiptSettingsRepository] instead of poking the
+  /// `settings` table directly. Centralises the key parsing / defaults
+  /// so a future cross-app key unification (Sprint 3) only changes one
+  /// file. Behaviour preserved: every key absent in DB → use the
+  /// model's default for that field.
   Future<void> _loadSettings() async {
     setState(() {
       _isLoading = true;
@@ -62,27 +72,15 @@ class _ReceiptSettingsScreenState extends ConsumerState<ReceiptSettingsScreen> {
     try {
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) return;
-      final settings = await (_db.select(
-        _db.settingsTable,
-      )..where((s) => s.storeId.equals(storeId))).get();
-      for (final s in settings) {
-        switch (s.key) {
-          case 'receipt_header':
-            _headerController.text = s.value;
-          case 'receipt_footer':
-            _footerController.text = s.value;
-          case 'receipt_show_logo':
-            _showLogo = s.value != 'false';
-          case 'receipt_show_customer_name':
-            _showCustomerName = s.value != 'false';
-          case 'receipt_show_cashier_name':
-            _showCashierName = s.value != 'false';
-          case 'receipt_show_store_address':
-            _showStoreAddress = s.value != 'false';
-          case 'receipt_width':
-            _receiptWidth = s.value;
-        }
-      }
+      final settings =
+          await ReceiptSettingsRepository(_db).loadForStore(storeId);
+      _headerController.text = settings.headerText;
+      _footerController.text = settings.footerText;
+      _showLogo = settings.showLogo;
+      _showCustomerName = settings.showCustomerName;
+      _showCashierName = settings.showCashierName;
+      _showStoreAddress = settings.showStoreAddress;
+      _receiptWidth = settings.paperWidth;
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Load receipt settings');
       if (mounted) setState(() => _error = '$e');
@@ -91,38 +89,43 @@ class _ReceiptSettingsScreenState extends ConsumerState<ReceiptSettingsScreen> {
     }
   }
 
-  Future<void> _upsertSetting(String key, String value) async {
-    final storeId = ref.read(currentStoreIdProvider);
-    if (storeId == null) return;
-    final id = 'setting_${storeId}_$key';
-    await _db
-        .into(_db.settingsTable)
-        .insertOnConflictUpdate(
-          SettingsTableCompanion.insert(
-            id: id,
-            storeId: storeId,
-            key: key,
-            value: value,
-            updatedAt: DateTime.now(),
-          ),
-        );
-  }
-
+  /// P0-31: persist via [ReceiptSettingsRepository] (atomic upsert
+  /// across all 7 keys). After save, invalidate the family provider
+  /// so any open receipt previewer / printer picks up the new values
+  /// on its next read instead of holding the stale snapshot.
   Future<void> _saveSettings() async {
+    // P0-31: defence-in-depth role gate. The save button is also
+    // disabled in the UI for non-admins, but the explicit check here
+    // means a future caller (e.g. a deep-link auto-save flow) can't
+    // accidentally bypass the gate. Mirrors the
+    // `Permissions.canEditStoreSettings` server-side intent.
+    final user = ref.read(currentUserProvider);
+    if (!Permissions.canEditStoreSettings(user)) {
+      AlhaiSnackbar.error(
+        context,
+        AppLocalizations.of(context).unauthorizedAction,
+      );
+      return;
+    }
+
     setState(() => _isSaving = true);
     try {
-      final entries = {
-        'receipt_header': _headerController.text,
-        'receipt_footer': _footerController.text,
-        'receipt_show_logo': _showLogo.toString(),
-        'receipt_show_customer_name': _showCustomerName.toString(),
-        'receipt_show_cashier_name': _showCashierName.toString(),
-        'receipt_show_store_address': _showStoreAddress.toString(),
-        'receipt_width': _receiptWidth,
-      };
-      for (final entry in entries.entries) {
-        await _upsertSetting(entry.key, entry.value);
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) {
+        setState(() => _isSaving = false);
+        return;
       }
+      final settings = ReceiptSettings(
+        headerText: _headerController.text,
+        footerText: _footerController.text,
+        showLogo: _showLogo,
+        showCustomerName: _showCustomerName,
+        showCashierName: _showCashierName,
+        showStoreAddress: _showStoreAddress,
+        paperWidth: _receiptWidth,
+      );
+      await ReceiptSettingsRepository(_db).saveForStore(storeId, settings);
+      ref.invalidate(receiptSettingsProvider(storeId));
       if (mounted) {
         final l10n = AppLocalizations.of(context);
         AlhaiSnackbar.success(context, l10n.settingsSaved);
@@ -587,10 +590,15 @@ class _ReceiptSettingsScreenState extends ConsumerState<ReceiptSettingsScreen> {
   }
 
   Widget _buildSaveButton(bool isDark, AppLocalizations l10n) {
+    // P0-31: gate the save button on canEditStoreSettings — cashiers
+    // can view receipt settings (helpful when troubleshooting why a
+    // line is missing) but only admins can persist changes.
+    final user = ref.watch(currentUserProvider);
+    final canEdit = Permissions.canEditStoreSettings(user);
     return SizedBox(
       width: double.infinity,
       child: FilledButton.icon(
-        onPressed: _isSaving ? null : _saveSettings,
+        onPressed: (_isSaving || !canEdit) ? null : _saveSettings,
         icon: _isSaving
             ? const SizedBox(
                 width: 20,
