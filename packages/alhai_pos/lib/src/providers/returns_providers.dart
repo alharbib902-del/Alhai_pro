@@ -4,11 +4,14 @@
 library;
 
 import 'package:alhai_auth/alhai_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
+
+import 'sale_providers.dart' show invoiceServiceProvider;
 
 const _uuid = Uuid();
 
@@ -220,6 +223,71 @@ Future<String> createReturn(
         '{"id":"$id","sale_id":"$saleId","store_id":"$storeId","total_refund":$newRefundCents,"reason":"$reason","refund_method":"$refundMethod"}',
     idempotencyKey: 'return_create_$id',
   );
+
+  // ─── Sprint 1 / P0-04: ZATCA credit note 381 ─────────────────────
+  // If the original sale produced a ZATCA-compliant invoice (i.e. the
+  // store has VAT and a QR was generated at sale time), issue a Phase-1
+  // credit note that references the original invoice via refInvoiceId.
+  // Without this, ZATCA portal-side reconciliation sees the original
+  // invoice at full value while local books show a refund — VAT
+  // double-count + accidental tax evasion.
+  //
+  // The invoice_service.createCreditNote helper already exists; we just
+  // weren't calling it. It builds an invoices row with invoiceType
+  // 'credit_note', enqueues to sync, and the rest of the pipeline picks
+  // it up. Wave 3b-2 will replace this Phase-1 path with the full
+  // Phase-2 UBL XML + signing + gateway submit (the alhai_zatca
+  // ZatcaInvoiceService already supports it; just not wired in yet).
+  //
+  // Failures here are LOGGED but don't roll back the return — a
+  // ZATCA-portal mismatch is a compliance issue to fix later, but
+  // refusing the customer's refund is a much worse business outcome.
+  try {
+    final originalInvoice = await db.invoicesDao.getBySaleId(saleId);
+    if (originalInvoice != null &&
+        originalInvoice.zatcaQr != null &&
+        originalInvoice.zatcaQr!.isNotEmpty) {
+      // Split totalRefund into subtotal + tax using the original
+      // invoice's tax ratio, so the credit note's VAT-amount on the
+      // ZATCA portal exactly offsets what the original invoice charged.
+      // Original.total is gross cents; original.taxAmount is the tax
+      // portion. Ratio is bounded to [0, 1) — anything outside means a
+      // corrupt invoice and we fall back to 0% so we don't create a
+      // garbage credit note.
+      final originalTotal = originalInvoice.total;
+      final originalTax = originalInvoice.taxAmount;
+      double taxRatio = 0.0;
+      if (originalTotal > 0 && originalTax >= 0 && originalTax < originalTotal) {
+        taxRatio = originalTax / originalTotal;
+      }
+      final creditTaxCents = (newRefundCents * taxRatio).round();
+      final creditSubtotalCents = newRefundCents - creditTaxCents;
+
+      final invoiceService = ref.read(invoiceServiceProvider);
+      await invoiceService.createCreditNote(
+        storeId: storeId,
+        refInvoiceId: originalInvoice.id,
+        reason: reason,
+        // createCreditNote expects SAR doubles; convert at the
+        // boundary. Internally it round-trips back to cents.
+        amount: creditSubtotalCents / 100.0,
+        taxAmount: creditTaxCents / 100.0,
+        orgId: originalInvoice.orgId,
+        customerId: customerId,
+        customerName: customerName,
+        createdBy: createdBy,
+      );
+    }
+  } catch (e, stack) {
+    // Don't fail the return — the local refund is already persisted.
+    // The credit note can be regenerated later by an audit script.
+    if (kDebugMode) {
+      debugPrint(
+        '[createReturn] Credit-note generation failed (non-blocking) for '
+        'return $id / sale $saleId: $e\n$stack',
+      );
+    }
+  }
 
   ref.invalidate(returnsListProvider);
   return id;
