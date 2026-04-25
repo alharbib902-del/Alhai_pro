@@ -33,6 +33,7 @@ export 'src/utils/json_validators.dart';
 export 'src/constants/retention_policy.dart';
 
 // Services
+export 'src/services/backup_crypto.dart';
 export 'src/services/database_backup_service.dart';
 export 'src/services/data_validator.dart';
 export 'src/services/db_health_service.dart';

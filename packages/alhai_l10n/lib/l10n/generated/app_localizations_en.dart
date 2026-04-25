@@ -14137,6 +14137,75 @@ class AppLocalizationsEn extends AppLocalizations {
   String get silentLimitBadgeAction => 'Refine filters';
 
   @override
+  String get backupPassphraseTitle => 'Backup passphrase';
+
+  @override
+  String get backupPassphraseHelper =>
+      'Pick a strong passphrase to encrypt the backup. There\'s no recovery path if you forget it.';
+
+  @override
+  String get backupPassphraseLabel => 'Passphrase';
+
+  @override
+  String get backupPassphraseConfirmLabel => 'Confirm passphrase';
+
+  @override
+  String get backupPassphraseTooShort =>
+      'Passphrase must be at least 8 characters';
+
+  @override
+  String get backupPassphraseMismatch => 'Passphrases don\'t match';
+
+  @override
+  String get backupEncryptedNotice =>
+      'The backup is AES-256-GCM encrypted. It can\'t be read without the passphrase — store it somewhere safe.';
+
+  @override
+  String get saveBackupFile => 'Save as file';
+
+  @override
+  String get openBackupFile => 'Open file';
+
+  @override
+  String get backupShareSubject => 'Encrypted backup — Alhai POS';
+
+  @override
+  String get backupCopiedToClipboardMasked =>
+      'Copied — clipboard will auto-clear in 60 seconds';
+
+  @override
+  String get restoreSourcePrompt => 'Choose where the backup is coming from:';
+
+  @override
+  String get restoreOverwriteWarning =>
+      'Current data will be overwritten. This cannot be undone.';
+
+  @override
+  String get restorePassphraseTitle => 'Enter the backup passphrase';
+
+  @override
+  String get restoreBadPassphrase => 'Wrong passphrase or corrupt backup';
+
+  @override
+  String get restoreCorruptBackup => 'File isn\'t a valid Alhai backup';
+
+  @override
+  String get restoreSchemaMismatchTitle => 'Incompatible database version';
+
+  @override
+  String restoreSchemaMismatchBody(int backupVersion, int appVersion) {
+    return 'Backup is at v$backupVersion, app is at v$appVersion. Update or downgrade the app to a matching version before restoring.';
+  }
+
+  @override
+  String get autoBackupHelper => 'Run an auto-backup on the chosen schedule';
+
+  @override
+  String autoBackupLastFiredAt(String when) {
+    return 'Last auto-fire: $when';
+  }
+
+  @override
   String get splitReceiptTitle => 'Split Receipt';
 
   @override

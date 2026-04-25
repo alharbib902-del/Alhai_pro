@@ -79,6 +79,31 @@ dependencies:
   # a no-op until real MP3 files ship.
   just_audio: ^0.9.36
 
+  # Wave 5 — backup file save (replaces clipboard-only export). On Android
+  # `share_plus` opens the system Share sheet which surfaces "Save to
+  # Files / Drive". On iOS the Share sheet exposes Files / iCloud Drive.
+  share_plus: ^10.1.4
+  # Wave 5 — backup restore (open backup file via OS picker). On Android
+  # `file_picker` defers to SAF so the user picks any provider; on iOS
+  # it opens the Document Picker.
+  file_picker: ^8.1.4
+  # Wave 5 — auto-backup scheduler. Wraps Android WorkManager + iOS
+  # BGTaskScheduler under one cross-platform API. Background tasks
+  # registered here run when the OS allows (Doze / app refresh
+  # constraints apply).
+  workmanager: ^0.5.2
+  # Wave 5 — pointycastle is already a transitive dep (used by
+  # supabase_flutter / sqlcipher_flutter_libs); we surface it explicitly
+  # because BackupCrypto in alhai_database depends on AES/GCM/PBKDF2 from
+  # it. Keep the constraint loose to avoid version-locking the rest of
+  # the dependency tree.
+  pointycastle: ^3.7.0
+  # Wave 5 — backup_file_io.dart joins paths and reaches into the temp
+  # directory directly. Both come transitively via Drift / sqlite3, but
+  # naming them explicitly keeps the dependency story honest.
+  path: ^1.8.0
+  path_provider: ^2.1.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

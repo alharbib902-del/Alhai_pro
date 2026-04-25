@@ -32,6 +32,11 @@ dependencies:
   # Already a transitive dep via Drift/Supabase — made explicit for clarity.
   crypto: ^3.0.3
 
+  # Wave 5 — AES-256-GCM + PBKDF2 for `BackupCrypto`. pointycastle is
+  # already a transitive dep (sqlcipher_flutter_libs); making it explicit
+  # so backup encryption isn't tied to a co-incidental version.
+  pointycastle: ^3.7.0
+
 dev_dependencies:
   flutter_lints: ^3.0.1
   flutter_test:

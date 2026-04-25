@@ -14158,6 +14158,77 @@ class AppLocalizationsUr extends AppLocalizations {
   String get silentLimitBadgeAction => 'تضييق الفلاتر';
 
   @override
+  String get backupPassphraseTitle => 'كلمة سر النسخة الاحتياطية';
+
+  @override
+  String get backupPassphraseHelper =>
+      'اختر كلمة سر قوية لتشفير النسخة. لا توجد طريقة لاستعادتها إن نُسيَت.';
+
+  @override
+  String get backupPassphraseLabel => 'كلمة السر';
+
+  @override
+  String get backupPassphraseConfirmLabel => 'تأكيد كلمة السر';
+
+  @override
+  String get backupPassphraseTooShort =>
+      'كلمة السر يجب أن تكون 8 أحرف على الأقل';
+
+  @override
+  String get backupPassphraseMismatch => 'كلمتا السر غير متطابقتين';
+
+  @override
+  String get backupEncryptedNotice =>
+      'النسخة مشفّرة بـ AES-256-GCM. لا يمكن قراءتها بدون كلمة السر — احفظها في مكان آمن.';
+
+  @override
+  String get saveBackupFile => 'حفظ كملف';
+
+  @override
+  String get openBackupFile => 'فتح ملف';
+
+  @override
+  String get backupShareSubject => 'نسخة احتياطية مُشفَّرة - الحاي POS';
+
+  @override
+  String get backupCopiedToClipboardMasked =>
+      'تم النسخ — سيُمسَح من الحافظة بعد 60 ثانية';
+
+  @override
+  String get restoreSourcePrompt => 'اختر مصدر النسخة الاحتياطية:';
+
+  @override
+  String get restoreOverwriteWarning =>
+      'سيتم استبدال البيانات الحالية. لا يمكن التراجع.';
+
+  @override
+  String get restorePassphraseTitle => 'أدخل كلمة سر النسخة';
+
+  @override
+  String get restoreBadPassphrase => 'كلمة السر خاطئة أو الملف تالف';
+
+  @override
+  String get restoreCorruptBackup =>
+      'الملف ليس نسخة احتياطية صالحة من تطبيق الحاي';
+
+  @override
+  String get restoreSchemaMismatchTitle => 'إصدار قاعدة بيانات غير متوافق';
+
+  @override
+  String restoreSchemaMismatchBody(int backupVersion, int appVersion) {
+    return 'النسخة من إصدار $backupVersion، التطبيق على إصدار $appVersion. حدِّث التطبيق أو ارجع لإصدار مطابق قبل الاستعادة.';
+  }
+
+  @override
+  String get autoBackupHelper =>
+      'تفعيل النسخ الاحتياطي التلقائي حسب الجدول المُحدَّد';
+
+  @override
+  String autoBackupLastFiredAt(String when) {
+    return 'آخر تشغيل تلقائي: $when';
+  }
+
+  @override
   String get splitReceiptTitle => 'إيصال الدفع المجزأ';
 
   @override

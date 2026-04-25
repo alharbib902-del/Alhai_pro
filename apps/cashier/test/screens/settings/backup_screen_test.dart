@@ -2,6 +2,7 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cashier/screens/settings/system/backup_screen.dart';
 
 import '../../helpers/test_helpers.dart';
@@ -15,6 +16,11 @@ void main() {
     // The catch block handles errors; shows defaults.
     final db = setupMockDatabase();
     setupTestGetIt(mockDb: db);
+    // Wave 5 (P0-09): the screen now reads the auto-backup OS-fire
+    // telemetry from SharedPreferences inside _loadBackupSettings.
+    // Without a mock store the platform call hangs and pumpAndSettle
+    // never returns. Empty initial values satisfy the read paths.
+    SharedPreferences.setMockInitialValues(<String, Object>{});
   });
 
   tearDown(() => tearDownTestGetIt());

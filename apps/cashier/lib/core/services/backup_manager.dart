@@ -26,7 +26,16 @@ class BackupManager {
   ///
   /// Returns a Map containing every table's rows scoped to [storeId].
   /// Tables without a storeId column are exported in full (settings, etc.).
-  Future<BackupBundle> exportAsJson(String storeId) async {
+  Future<BackupBundle> exportAsJson(String storeId) {
+    // Phase 5 §5.4 — trace full backup export (bulk db.query over ~25 tables).
+    return tracePerformance(
+      name: 'exportBackup',
+      operation: 'db.query',
+      body: () => _exportAsJsonImpl(storeId),
+    );
+  }
+
+  Future<BackupBundle> _exportAsJsonImpl(String storeId) async {
     try {
       final now = DateTime.now();
       final data = <String, dynamic>{};
@@ -157,6 +166,25 @@ class BackupManager {
         [Variable.withString(storeId)],
       );
 
+      // --- ZATCA (Wave 5 / P0-08) ---
+      // Without these the encrypted backup wouldn't carry the e-invoice
+      // chain, the offline queue waiting for clearance, or the dead-letter
+      // log that auditors need to reconcile failed submissions. Restoring
+      // a backup that's missing them silently breaks the cashier's ZATCA
+      // pipeline on the new device.
+      data['invoices'] = await _queryRows(
+        'SELECT * FROM invoices WHERE store_id = ?',
+        [Variable.withString(storeId)],
+      );
+      data['zatca_offline_queue'] = await _queryRows(
+        'SELECT * FROM zatca_offline_queue WHERE store_id = ?',
+        [Variable.withString(storeId)],
+      );
+      data['zatca_dead_letter'] = await _queryRows(
+        'SELECT * FROM zatca_dead_letter WHERE store_id = ?',
+        [Variable.withString(storeId)],
+      );
+
       // --- Loyalty ---
       data['loyalty_points'] = await _queryRows(
         'SELECT * FROM loyalty_points WHERE store_id = ?',
@@ -188,7 +216,14 @@ class BackupManager {
       }
 
       final jsonString = jsonEncode({
-        'version': '1.0.0',
+        // Backup envelope version. Bump when restoreOrder / required
+        // tables change in a way that an older app can't read.
+        'version': '1.1.0',
+        // Wave 5 (P0-08): persist the Drift schema version so import
+        // can refuse a cross-migration restore. AppDatabase.schemaVersion
+        // is a single source of truth; reading it here keeps the gate
+        // honest without a parallel constant.
+        'schemaVersion': _db.schemaVersion,
         'storeId': storeId,
         'createdAt': now.toIso8601String(),
         'tableCount': data.length,
@@ -222,7 +257,17 @@ class BackupManager {
   ///
   /// Runs inside a database transaction so either everything succeeds or
   /// nothing changes. Existing rows with the same primary key are replaced.
-  Future<RestoreReport> importFromJson(String jsonString) async {
+  Future<RestoreReport> importFromJson(String jsonString) {
+    // Phase 5 §5.4 — trace full restore transaction.
+    return tracePerformance(
+      name: 'importBackup',
+      operation: 'db.write',
+      data: {'payload_bytes': jsonString.length},
+      body: () => _importFromJsonImpl(jsonString),
+    );
+  }
+
+  Future<RestoreReport> _importFromJsonImpl(String jsonString) async {
     try {
       final map = jsonDecode(jsonString) as Map<String, dynamic>;
       final version = map['version'] as String? ?? '1.0.0';
@@ -232,11 +277,37 @@ class BackupManager {
         return const RestoreReport(success: false, error: 'Empty backup data');
       }
 
+      // Wave 5 (P0-08): refuse a backup whose Drift schema doesn't
+      // match the running app. Drift's migration graph is forward-only
+      // and a foreign-version backup will either fail mid-restore (FK /
+      // column-shape mismatch leaves a half-restored DB) or, worse,
+      // silently insert into a column that's been semantically repurposed.
+      // Older v1.0.0 backups didn't ship `schemaVersion`; we accept those
+      // with a warning since they predate the gate.
+      final backupSchemaVersion = map['schemaVersion'] as int?;
+      final currentSchemaVersion = _db.schemaVersion;
+      if (backupSchemaVersion != null &&
+          backupSchemaVersion != currentSchemaVersion) {
+        return RestoreReport(
+          success: false,
+          error:
+              'Schema mismatch: backup is at v$backupSchemaVersion, '
+              'app is at v$currentSchemaVersion. Update or downgrade the '
+              'app to match before restoring.',
+        );
+      }
+
       int restoredRows = 0;
       int restoredTables = 0;
 
       await _db.transaction(() async {
-        // Restore order matters for FK constraints — parents first
+        // Restore order matters for FK constraints — parents first.
+        // Wave 5 (P0-08): added invoices + zatca_offline_queue +
+        // zatca_dead_letter so the e-invoicing pipeline survives a
+        // restore. invoices depends on sales (FK on sale_id), so it
+        // sits after sales/sale_items. The two zatca queues only FK
+        // to stores, but ordering them after invoices keeps the audit
+        // trail readable in the order it was generated.
         const restoreOrder = [
           'categories',
           'products',
@@ -264,6 +335,9 @@ class BackupManager {
           'coupons',
           'promotions',
           'held_invoices',
+          'invoices',
+          'zatca_offline_queue',
+          'zatca_dead_letter',
           'loyalty_points',
           'favorites',
           'notifications',
@@ -310,6 +384,11 @@ class BackupManager {
       final map = jsonDecode(jsonString) as Map<String, dynamic>;
       return BackupInfo(
         version: map['version'] as String? ?? '?',
+        // Wave 5 (P0-08): pre-1.1 backups didn't ship schemaVersion;
+        // null means "unknown — the gate will let it through with a
+        // logged warning instead of refusing outright". Newer backups
+        // always carry it.
+        schemaVersion: map['schemaVersion'] as int?,
         storeId: map['storeId'] as String? ?? '?',
         createdAt: DateTime.tryParse(map['createdAt'] as String? ?? ''),
         tableCount: map['tableCount'] as int? ?? 0,
@@ -320,6 +399,12 @@ class BackupManager {
       return null;
     }
   }
+
+  /// Returns the schema version the running app would write into a fresh
+  /// backup. UI can compare this against [BackupInfo.schemaVersion] before
+  /// even calling restore, so the user sees the mismatch in the preview
+  /// dialog instead of as an "import failed" toast after the fact.
+  int get currentSchemaVersion => _db.schemaVersion;
 
   // ===========================================================================
   // HELPERS
@@ -391,9 +476,53 @@ class RestoreReport {
   });
 }
 
+/// Result of a pending-auto-backup catch-up run.
+///
+/// Wave 5 (P0-09): the workmanager isolate can't run the full export
+/// pipeline (no GetIt, no secure storage chain). It only marks "the OS
+/// fired the task at T". The next time the app opens, the screen calls
+/// [BackupManager.runPendingAutoBackup] which checks for the marker and
+/// runs the real backup inside the app's normal isolate.
+class AutoBackupCatchUpReport {
+  /// True if a pending mark was found and the catch-up ran.
+  final bool ran;
+
+  /// True if the catch-up succeeded (or no work was needed).
+  final bool success;
+
+  /// When the OS fired the most-recent task. Null if no mark.
+  final DateTime? scheduledAt;
+
+  /// How many fires accumulated since the last catch-up. Spikes >1
+  /// usually mean the device was off / app wasn't opened for a while.
+  final int pendingCount;
+
+  /// Bundle produced by the catch-up, if [ran] && [success].
+  final BackupBundle? bundle;
+
+  /// Error message when [ran] but !success.
+  final String? error;
+
+  const AutoBackupCatchUpReport({
+    required this.ran,
+    required this.success,
+    this.scheduledAt,
+    this.pendingCount = 0,
+    this.bundle,
+    this.error,
+  });
+
+  static const idle = AutoBackupCatchUpReport(ran: false, success: true);
+}
+
 /// Quick info about a backup file
 class BackupInfo {
   final String version;
+
+  /// Drift schema version embedded in the backup (Wave 5 / P0-08).
+  /// Null on legacy v1.0.0 backups that pre-date the field.
+  final int? schemaVersion;
+
   final String storeId;
   final DateTime? createdAt;
   final int tableCount;
@@ -401,6 +530,7 @@ class BackupInfo {
 
   const BackupInfo({
     required this.version,
+    this.schemaVersion,
     required this.storeId,
     this.createdAt,
     required this.tableCount,

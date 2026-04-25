@@ -7168,6 +7168,43 @@
     }
   },
   "silentLimitBadgeAction": "تضييق الفلاتر",
+  "backupPassphraseTitle": "كلمة سر النسخة الاحتياطية",
+  "backupPassphraseHelper": "اختر كلمة سر قوية لتشفير النسخة. لا توجد طريقة لاستعادتها إن نُسيَت.",
+  "backupPassphraseLabel": "كلمة السر",
+  "backupPassphraseConfirmLabel": "تأكيد كلمة السر",
+  "backupPassphraseTooShort": "كلمة السر يجب أن تكون 8 أحرف على الأقل",
+  "backupPassphraseMismatch": "كلمتا السر غير متطابقتين",
+  "backupEncryptedNotice": "النسخة مشفّرة بـ AES-256-GCM. لا يمكن قراءتها بدون كلمة السر — احفظها في مكان آمن.",
+  "saveBackupFile": "حفظ كملف",
+  "openBackupFile": "فتح ملف",
+  "backupShareSubject": "نسخة احتياطية مُشفَّرة - الحاي POS",
+  "backupCopiedToClipboardMasked": "تم النسخ — سيُمسَح من الحافظة بعد 60 ثانية",
+  "restoreSourcePrompt": "اختر مصدر النسخة الاحتياطية:",
+  "restoreOverwriteWarning": "سيتم استبدال البيانات الحالية. لا يمكن التراجع.",
+  "restorePassphraseTitle": "أدخل كلمة سر النسخة",
+  "restoreBadPassphrase": "كلمة السر خاطئة أو الملف تالف",
+  "restoreCorruptBackup": "الملف ليس نسخة احتياطية صالحة من تطبيق الحاي",
+  "restoreSchemaMismatchTitle": "إصدار قاعدة بيانات غير متوافق",
+  "restoreSchemaMismatchBody": "النسخة من إصدار {backupVersion}، التطبيق على إصدار {appVersion}. حدِّث التطبيق أو ارجع لإصدار مطابق قبل الاستعادة.",
+  "@restoreSchemaMismatchBody": {
+    "placeholders": {
+      "backupVersion": {
+        "type": "int"
+      },
+      "appVersion": {
+        "type": "int"
+      }
+    }
+  },
+  "autoBackupHelper": "تفعيل النسخ الاحتياطي التلقائي حسب الجدول المُحدَّد",
+  "autoBackupLastFiredAt": "آخر تشغيل تلقائي: {when}",
+  "@autoBackupLastFiredAt": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
   "splitReceiptTitle": "إيصال الدفع المجزأ",
   "paymentBreakdown": "تفاصيل الدفع",
   "zatcaQrTitle": "رمز QR للفوترة الإلكترونية",

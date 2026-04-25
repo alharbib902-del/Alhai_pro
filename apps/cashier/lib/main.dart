@@ -39,6 +39,8 @@ import 'dart:async';
 import 'router/cashier_router.dart';
 import 'screens/onboarding/onboarding_screen.dart';
 import 'core/constants/timing.dart';
+import 'core/services/backup_callback.dart';
+import 'core/services/backup_scheduler.dart';
 import 'core/services/sentry_service.dart';
 import 'core/services/clock_validation_service.dart';
 import 'core/services/sound_service.dart';
@@ -258,6 +260,23 @@ void main() {
 
       if (kDebugMode) {
         debugPrint('🔑 Restored storeId: $savedStoreId');
+      }
+
+      // Wave 5 (P0-09): boot the workmanager scheduler before runApp so
+      // any pending OS-fired auto-backup task can mark its dispatcher as
+      // ready. The init must happen on the platform thread (which the
+      // outer `await` chain is already on); doing it after runApp risks
+      // missing the first scheduled fire after install.
+      try {
+        await const BackupScheduler().init(
+          callbackDispatcher: backupCallbackDispatcher,
+        );
+      } catch (e) {
+        // Workmanager is platform-specific; on web it'll throw. Don't
+        // let backup scheduling failures take the cashier down.
+        if (kDebugMode) {
+          debugPrint('[main] BackupScheduler.init skipped: $e');
+        }
       }
 
       addBreadcrumb(message: 'App initialized', category: 'lifecycle');

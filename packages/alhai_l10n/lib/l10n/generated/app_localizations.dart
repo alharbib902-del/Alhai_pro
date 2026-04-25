@@ -26210,6 +26210,126 @@ abstract class AppLocalizations {
   /// **'تضييق الفلاتر'**
   String get silentLimitBadgeAction;
 
+  /// No description provided for @backupPassphraseTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'كلمة سر النسخة الاحتياطية'**
+  String get backupPassphraseTitle;
+
+  /// No description provided for @backupPassphraseHelper.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر كلمة سر قوية لتشفير النسخة. لا توجد طريقة لاستعادتها إن نُسيَت.'**
+  String get backupPassphraseHelper;
+
+  /// No description provided for @backupPassphraseLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'كلمة السر'**
+  String get backupPassphraseLabel;
+
+  /// No description provided for @backupPassphraseConfirmLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'تأكيد كلمة السر'**
+  String get backupPassphraseConfirmLabel;
+
+  /// No description provided for @backupPassphraseTooShort.
+  ///
+  /// In ar, this message translates to:
+  /// **'كلمة السر يجب أن تكون 8 أحرف على الأقل'**
+  String get backupPassphraseTooShort;
+
+  /// No description provided for @backupPassphraseMismatch.
+  ///
+  /// In ar, this message translates to:
+  /// **'كلمتا السر غير متطابقتين'**
+  String get backupPassphraseMismatch;
+
+  /// No description provided for @backupEncryptedNotice.
+  ///
+  /// In ar, this message translates to:
+  /// **'النسخة مشفّرة بـ AES-256-GCM. لا يمكن قراءتها بدون كلمة السر — احفظها في مكان آمن.'**
+  String get backupEncryptedNotice;
+
+  /// No description provided for @saveBackupFile.
+  ///
+  /// In ar, this message translates to:
+  /// **'حفظ كملف'**
+  String get saveBackupFile;
+
+  /// No description provided for @openBackupFile.
+  ///
+  /// In ar, this message translates to:
+  /// **'فتح ملف'**
+  String get openBackupFile;
+
+  /// No description provided for @backupShareSubject.
+  ///
+  /// In ar, this message translates to:
+  /// **'نسخة احتياطية مُشفَّرة - الحاي POS'**
+  String get backupShareSubject;
+
+  /// No description provided for @backupCopiedToClipboardMasked.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم النسخ — سيُمسَح من الحافظة بعد 60 ثانية'**
+  String get backupCopiedToClipboardMasked;
+
+  /// No description provided for @restoreSourcePrompt.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر مصدر النسخة الاحتياطية:'**
+  String get restoreSourcePrompt;
+
+  /// No description provided for @restoreOverwriteWarning.
+  ///
+  /// In ar, this message translates to:
+  /// **'سيتم استبدال البيانات الحالية. لا يمكن التراجع.'**
+  String get restoreOverwriteWarning;
+
+  /// No description provided for @restorePassphraseTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدخل كلمة سر النسخة'**
+  String get restorePassphraseTitle;
+
+  /// No description provided for @restoreBadPassphrase.
+  ///
+  /// In ar, this message translates to:
+  /// **'كلمة السر خاطئة أو الملف تالف'**
+  String get restoreBadPassphrase;
+
+  /// No description provided for @restoreCorruptBackup.
+  ///
+  /// In ar, this message translates to:
+  /// **'الملف ليس نسخة احتياطية صالحة من تطبيق الحاي'**
+  String get restoreCorruptBackup;
+
+  /// No description provided for @restoreSchemaMismatchTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إصدار قاعدة بيانات غير متوافق'**
+  String get restoreSchemaMismatchTitle;
+
+  /// No description provided for @restoreSchemaMismatchBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'النسخة من إصدار {backupVersion}، التطبيق على إصدار {appVersion}. حدِّث التطبيق أو ارجع لإصدار مطابق قبل الاستعادة.'**
+  String restoreSchemaMismatchBody(int backupVersion, int appVersion);
+
+  /// No description provided for @autoBackupHelper.
+  ///
+  /// In ar, this message translates to:
+  /// **'تفعيل النسخ الاحتياطي التلقائي حسب الجدول المُحدَّد'**
+  String get autoBackupHelper;
+
+  /// No description provided for @autoBackupLastFiredAt.
+  ///
+  /// In ar, this message translates to:
+  /// **'آخر تشغيل تلقائي: {when}'**
+  String autoBackupLastFiredAt(String when);
+
   /// No description provided for @splitReceiptTitle.
   ///
   /// In ar, this message translates to:

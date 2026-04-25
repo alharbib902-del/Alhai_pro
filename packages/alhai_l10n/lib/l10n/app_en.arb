@@ -7308,6 +7308,43 @@
     }
   },
   "silentLimitBadgeAction": "Refine filters",
+  "backupPassphraseTitle": "Backup passphrase",
+  "backupPassphraseHelper": "Pick a strong passphrase to encrypt the backup. There's no recovery path if you forget it.",
+  "backupPassphraseLabel": "Passphrase",
+  "backupPassphraseConfirmLabel": "Confirm passphrase",
+  "backupPassphraseTooShort": "Passphrase must be at least 8 characters",
+  "backupPassphraseMismatch": "Passphrases don't match",
+  "backupEncryptedNotice": "The backup is AES-256-GCM encrypted. It can't be read without the passphrase — store it somewhere safe.",
+  "saveBackupFile": "Save as file",
+  "openBackupFile": "Open file",
+  "backupShareSubject": "Encrypted backup — Alhai POS",
+  "backupCopiedToClipboardMasked": "Copied — clipboard will auto-clear in 60 seconds",
+  "restoreSourcePrompt": "Choose where the backup is coming from:",
+  "restoreOverwriteWarning": "Current data will be overwritten. This cannot be undone.",
+  "restorePassphraseTitle": "Enter the backup passphrase",
+  "restoreBadPassphrase": "Wrong passphrase or corrupt backup",
+  "restoreCorruptBackup": "File isn't a valid Alhai backup",
+  "restoreSchemaMismatchTitle": "Incompatible database version",
+  "restoreSchemaMismatchBody": "Backup is at v{backupVersion}, app is at v{appVersion}. Update or downgrade the app to a matching version before restoring.",
+  "@restoreSchemaMismatchBody": {
+    "placeholders": {
+      "backupVersion": {
+        "type": "int"
+      },
+      "appVersion": {
+        "type": "int"
+      }
+    }
+  },
+  "autoBackupHelper": "Run an auto-backup on the chosen schedule",
+  "autoBackupLastFiredAt": "Last auto-fire: {when}",
+  "@autoBackupLastFiredAt": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
   "splitReceiptTitle": "Split Receipt",
   "paymentBreakdown": "Payment Breakdown",
   "zatcaQrTitle": "ZATCA QR",

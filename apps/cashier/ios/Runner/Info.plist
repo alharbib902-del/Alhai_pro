@@ -45,5 +45,22 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<!-- Wave 5 (P0-09): iOS BGTaskScheduler permitted identifiers.
+	     The string MUST match `backupTaskName` in
+	     lib/core/services/backup_scheduler.dart. workmanager wraps
+	     BGTaskScheduler under the hood; without this entry iOS will
+	     silently refuse to register the periodic backup task. -->
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>com.alhai.cashier.autoBackup</string>
+	</array>
+	<!-- Wave 5: enable background execution + processing modes so
+	     workmanager can wake the app for the backup task. Add only
+	     "fetch" and "processing" — the others are unrelated. -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>processing</string>
+	</array>
 </dict>
 </plist>
