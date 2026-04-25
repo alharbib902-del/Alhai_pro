@@ -93,13 +93,67 @@ void main() {
     });
 
     test('receivePurchase sets status and receivedAt', () async {
-      await db.purchasesDao.insertPurchase(makePurchase());
+      // Wave 10 batch 1 added an optimistic `status = 'approved'` guard
+      // to receivePurchase to defend against double-receive races. The
+      // PO must therefore be in `approved` state before this method
+      // can flip it to `received` — match the production flow.
+      await db.purchasesDao.insertPurchase(
+        makePurchase(status: 'approved'),
+      );
 
-      await db.purchasesDao.receivePurchase('pur-1');
+      final affected = await db.purchasesDao.receivePurchase('pur-1');
+      expect(affected, 1);
 
       final purchase = await db.purchasesDao.getPurchaseById('pur-1');
       expect(purchase!.status, 'received');
       expect(purchase.receivedAt, isNotNull);
+    });
+
+    test('receivePurchase guard returns 0 on draft → no double-receive', () async {
+      // Two cashiers tap "استلام" almost simultaneously. The DAO's
+      // `where status = 'approved'` predicate makes the second update
+      // a no-op (zero rows affected), so the caller can bail out
+      // instead of double-adjusting stock.
+      await db.purchasesDao.insertPurchase(makePurchase(status: 'draft'));
+
+      final affected = await db.purchasesDao.receivePurchase('pur-1');
+      expect(affected, 0);
+
+      final purchase = await db.purchasesDao.getPurchaseById('pur-1');
+      expect(purchase!.status, 'draft');
+      expect(purchase.receivedAt, isNull);
+    });
+
+    test('markItemReceived writes receivedQty on the line', () async {
+      // P0-27: pre-fix, purchase_items.received_qty stayed at its 0
+      // default forever — even after the cashier confirmed receipt.
+      // markItemReceived persists the line-level count so partial-
+      // receive reports + future re-receive guards have data to read.
+      await db.purchasesDao.insertPurchase(makePurchase());
+      await db.purchasesDao.insertPurchaseItems([
+        PurchaseItemsTableCompanion.insert(
+          id: 'pi-1',
+          purchaseId: 'pur-1',
+          productId: 'prod-1',
+          productName: 'منتج',
+          qty: 12.5,
+          unitCost: 500,
+          total: 6250,
+        ),
+      ]);
+      var items = await db.purchasesDao.getPurchaseItems('pur-1');
+      expect(items.first.receivedQty, 0);
+
+      await db.purchasesDao.markItemReceived(
+        itemId: 'pi-1',
+        receivedQty: 12.5,
+      );
+
+      items = await db.purchasesDao.getPurchaseItems('pur-1');
+      expect(items.first.receivedQty, 12.5);
+      // Other columns must not be clobbered.
+      expect(items.first.qty, 12.5);
+      expect(items.first.unitCost, 500);
     });
 
     test('deletePurchase removes purchase', () async {

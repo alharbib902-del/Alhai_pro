@@ -714,6 +714,13 @@ class _CashierReceivingScreenState
             qty: item.qty,
             unitCostCents: unitCostCents,
           );
+          // P0-27: persist the line-level receivedQty so partial-receive
+          // reports + any future re-receive guard can read accurate
+          // counts. Pre-fix the column stayed at its 0 default forever.
+          await _db.purchasesDao.markItemReceived(
+            itemId: item.id,
+            receivedQty: item.qty,
+          );
         }
         return items;
       });

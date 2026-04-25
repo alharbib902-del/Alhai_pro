@@ -102,6 +102,26 @@ class PurchasesDao extends DatabaseAccessor<AppDatabase>
     )..where((i) => i.purchaseId.equals(purchaseId))).go();
   }
 
+  /// P0-27: mark a purchase line as fully received. Sprint 1 fix —
+  /// previously `purchase_items.received_qty` stayed at its `0` default
+  /// even after the cashier confirmed receipt, so the column was
+  /// effectively dead and partial-receive reports would always read as
+  /// "nothing received".
+  ///
+  /// Called from inside the cashier_receiving transaction (one row per
+  /// PO line), after `recordReceiveMovement` + `applyReceiveAndRecomputeCost`
+  /// have updated stock + cost. Atomic together with those writes via
+  /// the surrounding `_db.transaction(...)`.
+  Future<int> markItemReceived({
+    required String itemId,
+    required double receivedQty,
+  }) {
+    return (update(purchaseItemsTable)..where((i) => i.id.equals(itemId)))
+        .write(
+      PurchaseItemsTableCompanion(receivedQty: Value(receivedQty)),
+    );
+  }
+
   // ── Pagination ─────────────────────────────────────────────────
 
   /// Paginated purchases (all statuses)

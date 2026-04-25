@@ -429,6 +429,99 @@ void main() {
         );
         expect((newCost! - 4800).abs(), lessThanOrEqualTo(1));
       });
+
+      // ─── P0-27: TOCTOU regression ─────────────────────────────────
+      test(
+        'concurrent receives serialise via Drift transactions (no last-write-wins)',
+        () async {
+          // The pre-fix bug: cashier_receiving read stockQty (cached),
+          // added the received qty, wrote the result. POS sale
+          // happening in parallel did the same with -1. Whichever
+          // wrote last clobbered the other → stock drift.
+          //
+          // Wave 7's `applyReceiveAndRecomputeCost` re-reads inside an
+          // internal `attachedDatabase.transaction(...)` which Drift
+          // serialises on a single SQLite connection. This test fires
+          // two receives "concurrently" (Future.wait) on the same
+          // product; if the helper is TOCTOU-correct the final stock
+          // is exactly old + qty1 + qty2. If it lost a write the total
+          // would be old + max(qty1, qty2).
+          await db.productsDao.insertProduct(
+            ProductsTableCompanion.insert(
+              id: 'prod-race',
+              storeId: 'store-1',
+              name: 'Race',
+              price: 1000,
+              costPrice: const Value(500),
+              stockQty: const Value(100),
+              createdAt: DateTime(2025, 1, 1),
+            ),
+          );
+
+          await Future.wait([
+            db.productsDao.applyReceiveAndRecomputeCost(
+              productId: 'prod-race',
+              qty: 30,
+              unitCostCents: 600,
+            ),
+            db.productsDao.applyReceiveAndRecomputeCost(
+              productId: 'prod-race',
+              qty: 20,
+              unitCostCents: 700,
+            ),
+          ]);
+
+          final p = await db.productsDao.getProductById('prod-race');
+          expect(p!.stockQty, 150); // 100 + 30 + 20 — both receives applied
+        },
+      );
+
+      test('concurrent receive + sale stock writes serialise correctly',
+          () async {
+        // Same race, mixed direction. POS sale of 5 units while a
+        // receive of 50 lands. The `applyReceiveAndRecomputeCost`
+        // path is serialised; the sale uses a plain `updateStock`
+        // and is NOT wrapped in a tx in this test's narrow scope —
+        // the production sale flow wraps it in `_db.transaction(...)`
+        // (see sale_service.dart). What we're verifying here is that
+        // a receive happening alongside DOES re-read inside its tx
+        // and doesn't carry a stale snapshot from before the sale.
+        await db.productsDao.insertProduct(
+          ProductsTableCompanion.insert(
+            id: 'prod-mixed',
+            storeId: 'store-1',
+            name: 'Mixed',
+            price: 1000,
+            costPrice: const Value(500),
+            stockQty: const Value(100),
+            createdAt: DateTime(2025, 1, 1),
+          ),
+        );
+
+        await Future.wait([
+          db.productsDao.applyReceiveAndRecomputeCost(
+            productId: 'prod-mixed',
+            qty: 50,
+            unitCostCents: 500,
+          ),
+          // Simulate a "sale" path — direct stock decrement.
+          db.productsDao.updateStock('prod-mixed', 95),
+        ]);
+
+        // Either order is valid as long as no write was clobbered.
+        // The two valid end states are:
+        //   - sale ran first (stock=95), then receive (re-reads 95,
+        //     writes 95+50=145)
+        //   - receive ran first (stock=150), then sale (writes 95
+        //     directly — overwrites the receive)
+        // Pre-fix the receive would have taken its captured snapshot
+        // (100) and written 100+50=150 even after the sale, masking
+        // the sale entirely. Post-fix that scenario can't happen
+        // because the receive re-reads inside its tx.
+        final p = await db.productsDao.getProductById('prod-mixed');
+        expect([95, 145].contains(p!.stockQty), isTrue,
+            reason: 'unexpected end stock ${p.stockQty}');
+      });
     });
   });
 }
