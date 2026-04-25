@@ -14298,4 +14298,28 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get creditLimitOverrideAction => 'تجاوز حد الائتمان';
+
+  @override
+  String get unauthorizedAction => 'ليست لديك صلاحية لإجراء هذه العملية';
+
+  @override
+  String get noChangesToSave => 'لا توجد تغييرات للحفظ';
+
+  @override
+  String get stockTakeFinalizeConfirmTitle => 'تأكيد إنهاء الجرد';
+
+  @override
+  String stockTakeFinalizeConfirmBody(int count) {
+    return 'سيُطبَّق $count تعديل على المخزون. هذا الإجراء لا يمكن التراجع عنه.';
+  }
+
+  @override
+  String get stockTakeUnsavedTitle => 'حفظ مسودة الجرد؟';
+
+  @override
+  String get stockTakeUnsavedBody =>
+      'لديك إدخالات غير محفوظة. الخروج بدون حفظ سيفقدها.';
+
+  @override
+  String get discard => 'تجاهل';
 }

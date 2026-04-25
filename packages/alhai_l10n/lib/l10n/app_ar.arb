@@ -7246,5 +7246,19 @@
   },
   "creditLimitOverrideButton": "تجاوز بموافقة المدير",
   "creditLimitBlockButton": "إلغاء العملية",
-  "creditLimitOverrideAction": "تجاوز حد الائتمان"
+  "creditLimitOverrideAction": "تجاوز حد الائتمان",
+  "unauthorizedAction": "ليست لديك صلاحية لإجراء هذه العملية",
+  "noChangesToSave": "لا توجد تغييرات للحفظ",
+  "stockTakeFinalizeConfirmTitle": "تأكيد إنهاء الجرد",
+  "stockTakeFinalizeConfirmBody": "سيُطبَّق {count} تعديل على المخزون. هذا الإجراء لا يمكن التراجع عنه.",
+  "@stockTakeFinalizeConfirmBody": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "stockTakeUnsavedTitle": "حفظ مسودة الجرد؟",
+  "stockTakeUnsavedBody": "لديك إدخالات غير محفوظة. الخروج بدون حفظ سيفقدها.",
+  "discard": "تجاهل"
 }

@@ -297,6 +297,44 @@ void main() {
         expect(all.first.newQty, 8);
       });
 
+      // ─── P0-22: session reference fields ────────────────────────────
+      test(
+        'recordStockTakeMovement persists referenceType + referenceId for session linkage',
+        () async {
+          await db.inventoryDao.recordStockTakeMovement(
+            id: 'mov-stk-ref',
+            productId: 'prod-1',
+            storeId: 'store-1',
+            delta: 5,
+            previousQty: 95,
+            reason: 'overcount',
+            userId: 'user-1',
+            referenceType: 'stock_take',
+            referenceId: 'session-abc-123',
+          );
+          final all = await db.inventoryDao.getMovementsByProduct('prod-1');
+          expect(all.first.referenceType, 'stock_take');
+          expect(all.first.referenceId, 'session-abc-123');
+          expect(all.first.userId, 'user-1');
+        },
+      );
+
+      test(
+        'recordStockTakeMovement omits reference fields when not provided (legacy callers)',
+        () async {
+          await db.inventoryDao.recordStockTakeMovement(
+            id: 'mov-stk-no-ref',
+            productId: 'prod-1',
+            storeId: 'store-1',
+            delta: 3,
+            previousQty: 97,
+          );
+          final all = await db.inventoryDao.getMovementsByProduct('prod-1');
+          expect(all.first.referenceType, isNull);
+          expect(all.first.referenceId, isNull);
+        },
+      );
+
       test('transfer pair records correct directions', () async {
         await db.inventoryDao.recordTransferOutMovement(
           id: 'mov-out',

@@ -7386,5 +7386,19 @@
   },
   "creditLimitOverrideButton": "Override with manager approval",
   "creditLimitBlockButton": "Cancel operation",
-  "creditLimitOverrideAction": "Credit limit override"
+  "creditLimitOverrideAction": "Credit limit override",
+  "unauthorizedAction": "You don't have permission to perform this action",
+  "noChangesToSave": "No changes to save",
+  "stockTakeFinalizeConfirmTitle": "Confirm stock-take finalize",
+  "stockTakeFinalizeConfirmBody": "{count} adjustments will be applied to inventory. This cannot be undone.",
+  "@stockTakeFinalizeConfirmBody": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "stockTakeUnsavedTitle": "Save stock-take draft?",
+  "stockTakeUnsavedBody": "You have unsaved entries. Leaving will discard them.",
+  "discard": "Discard"
 }

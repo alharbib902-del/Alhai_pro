@@ -26456,6 +26456,48 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'تجاوز حد الائتمان'**
   String get creditLimitOverrideAction;
+
+  /// No description provided for @unauthorizedAction.
+  ///
+  /// In ar, this message translates to:
+  /// **'ليست لديك صلاحية لإجراء هذه العملية'**
+  String get unauthorizedAction;
+
+  /// No description provided for @noChangesToSave.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد تغييرات للحفظ'**
+  String get noChangesToSave;
+
+  /// No description provided for @stockTakeFinalizeConfirmTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تأكيد إنهاء الجرد'**
+  String get stockTakeFinalizeConfirmTitle;
+
+  /// No description provided for @stockTakeFinalizeConfirmBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'سيُطبَّق {count} تعديل على المخزون. هذا الإجراء لا يمكن التراجع عنه.'**
+  String stockTakeFinalizeConfirmBody(int count);
+
+  /// No description provided for @stockTakeUnsavedTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'حفظ مسودة الجرد؟'**
+  String get stockTakeUnsavedTitle;
+
+  /// No description provided for @stockTakeUnsavedBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'لديك إدخالات غير محفوظة. الخروج بدون حفظ سيفقدها.'**
+  String get stockTakeUnsavedBody;
+
+  /// No description provided for @discard.
+  ///
+  /// In ar, this message translates to:
+  /// **'تجاهل'**
+  String get discard;
 }
 
 class _AppLocalizationsDelegate

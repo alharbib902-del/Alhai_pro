@@ -14,6 +14,7 @@ import 'package:go_router/go_router.dart';
 import 'package:get_it/get_it.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_auth/alhai_auth.dart';
+import 'package:alhai_core/alhai_core.dart' show User;
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:uuid/uuid.dart';
@@ -138,6 +139,41 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
     final l10n = AppLocalizations.of(context);
     final user = ref.watch(currentUserProvider);
 
+    // P0-22: PopScope guard. Stock-takes can sit half-filled for many
+    // minutes while the cashier walks the aisles; an accidental back
+    // press without a confirm would discard everything silently. We
+    // gate on `_hasPendingCounts()` so the dialog only appears when
+    // there's actually something to lose.
+    return PopScope(
+      canPop: !_hasPendingCounts(),
+      onPopInvokedWithResult: (didPop, _) async {
+        if (didPop) return;
+        final navigator = Navigator.of(context);
+        final shouldDiscard = await _confirmDiscardUnsaved();
+        if (!mounted) return;
+        if (shouldDiscard) {
+          navigator.pop();
+        }
+      },
+      child: _buildContent(
+        context: context,
+        isWideScreen: isWideScreen,
+        isMediumScreen: isMediumScreen,
+        isDark: isDark,
+        l10n: l10n,
+        user: user,
+      ),
+    );
+  }
+
+  Widget _buildContent({
+    required BuildContext context,
+    required bool isWideScreen,
+    required bool isMediumScreen,
+    required bool isDark,
+    required AppLocalizations l10n,
+    required User? user,
+  }) {
     return Column(
       children: [
         AppHeader(
@@ -681,77 +717,241 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
   }
 
   Future<void> _finalizeCount() async {
+    final l10n = AppLocalizations.of(context);
+    final user = ref.read(currentUserProvider);
+
+    // P0-22: role gate. Stock-take adjustments mutate inventory in bulk
+    // and feed margin reports; only managers/owners may finalize. The
+    // server-side guarantee is the inventory_movements RLS policy from
+    // Wave 9 — this is the matching client-side gate so the cashier
+    // sees a clear "no permission" message instead of a silent server
+    // rejection.
+    if (!Permissions.canRunStockTake(user)) {
+      AlhaiSnackbar.error(context, l10n.unauthorizedAction);
+      return;
+    }
+
+    // P0-22: confirmation dialog before applying. A finalize on a 5000-
+    // SKU store can't be undone in the UI — make the operator confirm
+    // intent and surface the count of pending adjustments first.
+    final pendingCounts = _entriesAcrossAllFilters();
+    if (pendingCounts.isEmpty) {
+      AlhaiSnackbar.info(context, l10n.noChangesToSave);
+      return;
+    }
+    final confirmed = await _showFinalizeConfirmation(pendingCounts.length);
+    if (confirmed != true) return;
+
     setState(() => _isSaving = true);
 
     try {
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) return;
 
-      final adjustedProducts = <ProductsTableData>[];
+      final sessionId = const Uuid().v4();
+      final startedAt = DateTime.now();
+      final adjustedSnapshots = <_AdjustmentSnapshot>[];
 
-      // Wave 7 (P0-19/20): TOCTOU re-read for every product before
-      // recording its stock-take adjustment. Stock-takes can sit
-      // half-filled for minutes while the cashier walks the aisles —
-      // any sale during that window made the snapshot's stockQty stale.
-      // The DAO helper records `delta = counted - freshSystemQty` so
-      // the ledger row matches what the products row actually held when
-      // the count was applied.
+      // P0-22 + Wave 7 (P0-19/20): single transaction wraps session-row
+      // creation, every per-product TOCTOU re-read + delta movement +
+      // stock update, and the session-row finalisation. If any single
+      // product fails to apply, the whole stock-take rolls back so the
+      // session row never enters a half-applied state.
+      //
+      // Filter-scope fix: iterate `_entriesAcrossAllFilters` (all
+      // controllers with text), NOT `_filteredProducts`. Pre-fix the
+      // cashier could enter counts in category A, switch to B, hit
+      // finalise, and silently lose every count outside B.
       await _db.transaction(() async {
-        for (final product in _filteredProducts) {
-          final ctrl = _countControllers[product.id];
-          if (ctrl == null || ctrl.text.isEmpty) continue;
+        // Open the session row up-front so the inventory_movements rows
+        // can carry its id as referenceId. Status starts in_progress in
+        // case a partial failure rolls everything back.
+        await _db.into(_db.stockTakesTable).insert(
+              StockTakesTableCompanion.insert(
+                id: sessionId,
+                storeId: storeId,
+                name:
+                    'جرد ${startedAt.year}-${startedAt.month.toString().padLeft(2, '0')}-${startedAt.day.toString().padLeft(2, '0')} ${startedAt.hour.toString().padLeft(2, '0')}:${startedAt.minute.toString().padLeft(2, '0')}',
+                createdBy: Value(user?.id),
+                startedAt: startedAt,
+                status: const Value('in_progress'),
+              ),
+            );
 
-          final double? counted = double.tryParse(ctrl.text);
-          if (counted == null) continue;
-
-          final fresh = await _db.productsDao.getProductById(product.id);
+        for (final entry in pendingCounts) {
+          final fresh = await _db.productsDao.getProductById(entry.productId);
           if (fresh == null) continue;
           final double systemQty = fresh.stockQty;
-          if (counted != systemQty) {
-            await _db.inventoryDao.recordStockTakeMovement(
-              id: const Uuid().v4(),
-              productId: product.id,
-              storeId: storeId,
-              delta: counted - systemQty,
-              previousQty: systemQty,
-              reason: 'stock_take',
-            );
-            await _db.productsDao.updateStock(product.id, counted);
-            adjustedProducts.add(product);
-          }
+          if (entry.counted == systemQty) continue;
+          await _db.inventoryDao.recordStockTakeMovement(
+            id: const Uuid().v4(),
+            productId: entry.productId,
+            storeId: storeId,
+            delta: entry.counted - systemQty,
+            previousQty: systemQty,
+            reason: 'stock_take',
+            userId: user?.id,
+            referenceType: 'stock_take',
+            referenceId: sessionId,
+          );
+          await _db.productsDao.updateStock(entry.productId, entry.counted);
+          adjustedSnapshots.add(
+            _AdjustmentSnapshot(
+              productId: entry.productId,
+              productName: fresh.name,
+              oldQty: systemQty,
+              newQty: entry.counted,
+            ),
+          );
         }
+
+        // Stamp session as finalized with summary counts. Done inside
+        // the same tx so a row marked `finalized` never points at
+        // missing or half-applied movements.
+        await (_db.update(_db.stockTakesTable)
+              ..where((t) => t.id.equals(sessionId)))
+            .write(
+          StockTakesTableCompanion(
+            status: const Value('finalized'),
+            completedAt: Value(DateTime.now()),
+            totalItems: Value(_products.length),
+            countedItems: Value(pendingCounts.length),
+            varianceItems: Value(adjustedSnapshots.length),
+          ),
+        );
       });
 
-      // Audit log for each adjusted product
-      final user = ref.read(currentUserProvider);
-      for (final product in adjustedProducts) {
-        final ctrl = _countControllers[product.id];
-        final double counted = double.tryParse(ctrl?.text ?? '') ?? 0.0;
+      // Audit log for each adjusted product (outside DB transaction —
+      // non-transactional sink). Uses the FRESH oldQty captured during
+      // the tx, NOT the cached `_products` snapshot — matches the
+      // delta that was actually applied.
+      for (final snap in adjustedSnapshots) {
         auditService.logStockAdjust(
           storeId: storeId,
           userId: user?.id ?? 'unknown',
           userName: user?.name ?? 'unknown',
-          productId: product.id,
-          productName: product.name,
-          oldQty: product.stockQty,
-          newQty: counted,
+          productId: snap.productId,
+          productName: snap.productName,
+          oldQty: snap.oldQty,
+          newQty: snap.newQty,
           reason: 'جرد',
         );
       }
 
       if (!mounted) return;
 
-      final l10n = AppLocalizations.of(context);
       AlhaiSnackbar.success(context, l10n.success);
 
       await _loadData();
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Save stock take');
       if (!mounted) return;
-      final l10n = AppLocalizations.of(context);
       AlhaiSnackbar.error(context, l10n.errorWithDetails('$e'));
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }
   }
+
+  /// P0-22: collect every entered count, regardless of which category
+  /// filter is currently selected. Replaces the pre-fix loop over
+  /// `_filteredProducts` which silently dropped counts entered while
+  /// other filters were active.
+  ///
+  /// Iteration is over the controller map (sparse — only products the
+  /// cashier touched), then resolved against `_products` for the
+  /// matching row. Products that were soft-deleted between load and
+  /// finalize get skipped silently — the surrounding tx's TOCTOU re-
+  /// read will surface the same condition for the survivors.
+  List<_PendingCount> _entriesAcrossAllFilters() {
+    final out = <_PendingCount>[];
+    final byId = <String, ProductsTableData>{
+      for (final p in _products) p.id: p,
+    };
+    for (final entry in _countControllers.entries) {
+      final text = entry.value.text.trim();
+      if (text.isEmpty) continue;
+      final counted = double.tryParse(text);
+      if (counted == null) continue;
+      // Sanity guard: drop counts for products that were removed from
+      // the catalogue between load and finalize. The TOCTOU re-read in
+      // the tx covers the same case for survivors; no point inserting
+      // a movement for a row that's gone.
+      if (!byId.containsKey(entry.key)) continue;
+      out.add(_PendingCount(productId: entry.key, counted: counted));
+    }
+    return out;
+  }
+
+  /// True if the operator has any unsaved counts in any filter view —
+  /// used by the PopScope guard to gate back-button dismissal.
+  bool _hasPendingCounts() => _entriesAcrossAllFilters().isNotEmpty;
+
+  Future<bool?> _showFinalizeConfirmation(int adjustmentCount) async {
+    final l10n = AppLocalizations.of(context);
+    return showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        icon: const Icon(Icons.inventory_2_outlined, size: 48),
+        title: Text(l10n.stockTakeFinalizeConfirmTitle),
+        content: Text(l10n.stockTakeFinalizeConfirmBody(adjustmentCount)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: Text(l10n.finalize),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<bool> _confirmDiscardUnsaved() async {
+    final l10n = AppLocalizations.of(context);
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        icon: const Icon(Icons.warning_amber_rounded, size: 48),
+        title: Text(l10n.stockTakeUnsavedTitle),
+        content: Text(l10n.stockTakeUnsavedBody),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: Text(l10n.discard),
+          ),
+        ],
+      ),
+    );
+    return ok ?? false;
+  }
+}
+
+/// P0-22: pending count payload for one product. Internal to the screen.
+class _PendingCount {
+  final String productId;
+  final double counted;
+  const _PendingCount({required this.productId, required this.counted});
+}
+
+/// P0-22: snapshot of a successful stock-take adjustment, used to feed
+/// the audit log AFTER the DB tx commits — so the audit row's `oldQty`
+/// is the value that was actually replaced (re-read inside the tx),
+/// NOT the stale `_products` cache the screen first loaded.
+class _AdjustmentSnapshot {
+  final String productId;
+  final String productName;
+  final double oldQty;
+  final double newQty;
+  const _AdjustmentSnapshot({
+    required this.productId,
+    required this.productName,
+    required this.oldQty,
+    required this.newQty,
+  });
 }

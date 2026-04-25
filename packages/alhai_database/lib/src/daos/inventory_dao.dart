@@ -277,6 +277,11 @@ class InventoryDao extends DatabaseAccessor<AppDatabase>
   /// Wave 7: stock-take adjustment. `delta` is `counted - on-hand` and
   /// can be negative (overcount → write-down) or positive
   /// (undercount → write-up).
+  ///
+  /// P0-22: [referenceType] / [referenceId] let the caller pin the
+  /// movement to a `stock_takes` session row, so audit reports can
+  /// reconstruct which physical-count operation produced each delta.
+  /// Both nullable to keep legacy call sites compiling unchanged.
   Future<int> recordStockTakeMovement({
     required String id,
     required String productId,
@@ -285,6 +290,8 @@ class InventoryDao extends DatabaseAccessor<AppDatabase>
     required double previousQty,
     String? reason,
     String? userId,
+    String? referenceType,
+    String? referenceId,
   }) {
     return insertMovement(
       InventoryMovementsTableCompanion.insert(
@@ -297,6 +304,8 @@ class InventoryDao extends DatabaseAccessor<AppDatabase>
         newQty: previousQty + delta,
         reason: Value(reason),
         userId: Value(userId),
+        referenceType: Value(referenceType),
+        referenceId: Value(referenceId),
         createdAt: DateTime.now(),
       ),
     );

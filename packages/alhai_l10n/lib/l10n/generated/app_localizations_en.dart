@@ -14275,4 +14275,29 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get creditLimitOverrideAction => 'Credit limit override';
+
+  @override
+  String get unauthorizedAction =>
+      'You don\'t have permission to perform this action';
+
+  @override
+  String get noChangesToSave => 'No changes to save';
+
+  @override
+  String get stockTakeFinalizeConfirmTitle => 'Confirm stock-take finalize';
+
+  @override
+  String stockTakeFinalizeConfirmBody(int count) {
+    return '$count adjustments will be applied to inventory. This cannot be undone.';
+  }
+
+  @override
+  String get stockTakeUnsavedTitle => 'Save stock-take draft?';
+
+  @override
+  String get stockTakeUnsavedBody =>
+      'You have unsaved entries. Leaving will discard them.';
+
+  @override
+  String get discard => 'Discard';
 }
