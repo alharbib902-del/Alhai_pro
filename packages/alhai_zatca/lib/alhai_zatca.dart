@@ -7,6 +7,7 @@ export 'src/models/reporting_status.dart';
 export 'src/models/zatca_buyer.dart';
 export 'src/models/zatca_invoice.dart';
 export 'src/models/zatca_invoice_line.dart';
+export 'src/models/zatca_payment_means.dart';
 export 'src/models/zatca_response.dart';
 export 'src/models/zatca_seller.dart';
 

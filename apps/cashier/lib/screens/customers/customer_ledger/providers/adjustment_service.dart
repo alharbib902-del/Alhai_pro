@@ -58,11 +58,19 @@ Future<void> saveLedgerAdjustment({
     // reflects the most recent value, not whatever the UI cached. Without
     // this guard a concurrent write (e.g. a sale or another adjustment)
     // would be silently overwritten.
+    // Wave 10 (P0-12): atomic SQL `balance = balance + ?` via
+    // `addToBalance` instead of read-modify-write. Two devices sync
+    // applying ±300 / ±200 to the same account used to lose one delta
+    // when LWW picked one device's "absolute" balance over the other;
+    // the SQL atomic add commutes so both deltas land. We still need
+    // the freshly-read `newBalance` for the audit row's `balanceAfter`
+    // — re-read it inside the same tx after the write so the value
+    // matches what's on disk.
     late final double newBalance;
     await db.transaction(() async {
+      await db.accountsDao.addToBalance(accountId, signedAmount);
       final fresh = await db.accountsDao.getAccountById(accountId);
-      final currentBal = (fresh?.balance ?? 0) / 100.0;
-      newBalance = currentBal + signedAmount;
+      newBalance = (fresh?.balance ?? 0) / 100.0;
       await db.transactionsDao.insertTransaction(
         TransactionsTableCompanion.insert(
           id: txnId,
@@ -76,7 +84,6 @@ Future<void> saveLedgerAdjustment({
           createdAt: date,
         ),
       );
-      await db.accountsDao.updateBalance(accountId, newBalance);
     });
 
     // Sync enqueue — outside the DB transaction. Without this, manual

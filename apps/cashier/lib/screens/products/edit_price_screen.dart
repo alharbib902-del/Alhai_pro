@@ -80,7 +80,16 @@ class _EditPriceScreenState extends ConsumerState<EditPriceScreen> {
       _error = null;
     });
     try {
-      final product = await _db.productsDao.getProductById(widget.productId);
+      // Wave 10 (P0-29): tenant-isolated load. Refuses to surface a
+      // product from a different store even if the route id resolves —
+      // closes the deep-link / URL-tampering vector.
+      final storeIdAtLoad = ref.read(currentStoreIdProvider);
+      final product = storeIdAtLoad == null
+          ? null
+          : await _db.productsDao.getByIdForStore(
+              widget.productId,
+              storeIdAtLoad,
+            );
       if (!mounted) {
         return;
       }
@@ -845,20 +854,44 @@ class _EditPriceScreenState extends ConsumerState<EditPriceScreen> {
       }
       // C-4 Stage B: convert user-typed SAR doubles → int cents for storage.
       final newPriceCents = (newPrice * 100).round();
-      final costPriceCents =
-          costPrice == null ? null : (costPrice * 100).round();
       final oldPrice = currentProduct.price / 100.0;
+
+      // Wave 10 (P0-30): the cost field is "absent" when the user
+      // didn't touch it (we read what's in the controller, but the
+      // controller is pre-filled at load time). To preserve cost when
+      // the user only edits price, only pass costPrice through to the
+      // companion when the value actually differs from what was loaded.
+      // Empty input → clear cost (Value(null)); typed value differs →
+      // write new value; otherwise → Value.absent() and the SQL UPDATE
+      // skips the column entirely.
+      final loadedCostCents = currentProduct.costPrice;
+      final typedCostCents =
+          costPrice == null ? null : (costPrice * 100).round();
+      final Value<int?> costPriceArg = (typedCostCents == loadedCostCents)
+          ? const Value.absent()
+          : Value(typedCostCents);
+
+      // Wave 10 (P0-29): tenant-isolation re-check. The UI loads the
+      // product without a store filter (legacy `getProductById`). Even
+      // with the role gate above, refusing the write when the loaded
+      // product belongs to a different store stops a crafted-route
+      // attack from a privileged-but-wrong-store user.
+      if (currentProduct.storeId != storeId) {
+        if (mounted) {
+          AlhaiSnackbar.warning(context, 'لا تملك صلاحية تعديل السعر');
+          setState(() => _isSaving = false);
+        }
+        return;
+      }
 
       // P1 #10 (2026-04-24): run product update + audit log inside the same
       // Drift transaction so a mid-write crash can't leave the tables in a
       // torn state (price updated but no audit row, or vice versa).
       await _db.transaction(() async {
-        await _db.productsDao.updateProduct(
-          currentProduct.copyWith(
-            price: newPriceCents,
-            costPrice: Value(costPriceCents),
-            updatedAt: Value(DateTime.now()),
-          ),
+        await _db.productsDao.updatePriceAndCost(
+          productId: currentProduct.id,
+          priceCents: newPriceCents,
+          costPriceCents: costPriceArg,
         );
         await _db.auditLogDao.logPriceChange(
           storeId: storeId,

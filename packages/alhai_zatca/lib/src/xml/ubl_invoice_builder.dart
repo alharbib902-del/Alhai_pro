@@ -1,6 +1,7 @@
 import 'package:xml/xml.dart';
 
 import 'package:alhai_zatca/src/models/zatca_invoice.dart';
+import 'package:alhai_zatca/src/models/zatca_payment_means.dart';
 import 'package:alhai_zatca/src/xml/invoice_line_builder.dart';
 import 'package:alhai_zatca/src/xml/tax_total_builder.dart';
 import 'package:alhai_zatca/src/xml/ubl_namespaces.dart';
@@ -138,8 +139,9 @@ class UblInvoiceBuilder {
     // 18. AccountingCustomerParty
     children.add(_buildCustomerParty(invoice));
 
-    // 19. PaymentMeans
-    children.add(_buildPaymentMeans(invoice));
+    // 19. PaymentMeans — Wave 10 (P0-11): one element per tender for
+    // mixed-payment invoices, single fallback for legacy single-tender.
+    children.addAll(_buildPaymentMeansList(invoice));
 
     // 20. AllowanceCharge (document-level discounts)
     children.addAll(_buildAllowanceCharges(invoice));
@@ -441,14 +443,49 @@ class UblInvoiceBuilder {
 
   // ─── Payment ─────────────────────────────────────────────
 
-  /// Build PaymentMeans element
-  XmlElement _buildPaymentMeans(ZatcaInvoice invoice) {
+  /// Build the list of PaymentMeans elements.
+  ///
+  /// Wave 10 (P0-11): ZATCA UBL 2.1 expects one `<cac:PaymentMeans>`
+  /// per tender on the invoice. When [ZatcaInvoice.paymentMeans] is
+  /// non-empty we emit one element per entry; otherwise we fall back to
+  /// the legacy single-element path keyed off `paymentMeansCode` /
+  /// `paymentNote` so existing callers keep working.
+  List<XmlElement> _buildPaymentMeansList(ZatcaInvoice invoice) {
+    final list = invoice.paymentMeans;
+    if (list != null && list.isNotEmpty) {
+      return list.map(_buildSinglePaymentMeans).toList();
+    }
+    // Legacy single-element fallback.
+    return [
+      _buildSinglePaymentMeans(
+        ZatcaPaymentMeans(
+          code: invoice.paymentMeansCode,
+          note: invoice.paymentNote,
+        ),
+      ),
+    ];
+  }
+
+  XmlElement _buildSinglePaymentMeans(ZatcaPaymentMeans tender) {
     final children = <XmlNode>[
-      _cbcElement('PaymentMeansCode', invoice.paymentMeansCode),
+      _cbcElement('PaymentMeansCode', tender.code),
     ];
 
-    if (invoice.paymentNote != null) {
-      children.add(_cbcElement('InstructionNote', invoice.paymentNote!));
+    // Optional `cbc:PayableAmount` keeps the per-tender amount on the
+    // wire so portal-side reconciliation can compare per-method totals
+    // against the cashier's split.
+    if (tender.amount != null) {
+      children.add(
+        XmlElement(
+          XmlName('PayableAmount', 'cbc'),
+          [XmlAttribute(XmlName('currencyID'), 'SAR')],
+          [XmlText(tender.amount!.toStringAsFixed(2))],
+        ),
+      );
+    }
+
+    if (tender.note != null) {
+      children.add(_cbcElement('InstructionNote', tender.note!));
     }
 
     return XmlElement(XmlName('PaymentMeans', 'cac'), [], children);

@@ -843,14 +843,25 @@ class _CashierPurchaseRequestScreenState
       final purchaseNumber = 'PO-${_uuid.v4()}';
       final now = DateTime.now();
 
-      // C-4 Session 4: purchases.subtotal, total and
-      // purchase_items.unit_cost, total are int cents. product.price is
-      // already int cents, so price × qty is cents too. Accumulate in
-      // int to avoid any FP drift when qty values happen to be doubles.
+      // Wave 10 (P0-18): use the product's cost basis, not its sell
+      // price, when seeding a purchase request line. The legacy code
+      // multiplied `product.price` (retail) × qty for both `unit_cost`
+      // and `total` — every PO came out at the retail price, so the
+      // payable booked to the supplier was inflated by the markup and
+      // the WAVG cost roll-up at receive time pulled the basis up
+      // toward retail. Fall back to `product.price` only when the
+      // product hasn't been seeded with a cost yet (legacy products
+      // imported before cost tracking).
+      int costForProduct(int? cost, int retail) =>
+          (cost == null || cost == 0) ? retail : cost;
+
       int subtotalCentsInt = 0;
       for (final item in _requestItems) {
-        subtotalCentsInt +=
-            (item.product.price * item.quantity.toDouble()).round();
+        final unitCost = costForProduct(
+          item.product.costPrice,
+          item.product.price,
+        );
+        subtotalCentsInt += (unitCost * item.quantity.toDouble()).round();
       }
       // Draft purchases deliberately carry no VAT row — VAT is applied
       // only when goods are received and the invoice is finalised.
@@ -876,8 +887,13 @@ class _CashierPurchaseRequestScreenState
         ),
       );
 
-      // 2. Insert purchase items
+      // 2. Insert purchase items — Wave 10 (P0-18): unit_cost is the
+      // product's cost basis, not its retail price.
       final purchaseItems = _requestItems.map((item) {
+        final unitCost = costForProduct(
+          item.product.costPrice,
+          item.product.price,
+        );
         return PurchaseItemsTableCompanion.insert(
           id: _uuid.v4(),
           purchaseId: purchaseId,
@@ -885,10 +901,8 @@ class _CashierPurchaseRequestScreenState
           productName: item.product.name,
           productBarcode: Value(item.product.barcode),
           qty: item.quantity.toDouble(),
-          // C-4 Session 4: purchase_items.unit_cost, total are int cents.
-          // product.price is already int cents.
-          unitCost: item.product.price,
-          total: (item.product.price * item.quantity.toDouble()).round(),
+          unitCost: unitCost,
+          total: (unitCost * item.quantity.toDouble()).round(),
         );
       }).toList();
 

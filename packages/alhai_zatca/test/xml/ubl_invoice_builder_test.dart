@@ -5,6 +5,7 @@ import 'package:alhai_zatca/src/models/invoice_type_code.dart';
 import 'package:alhai_zatca/src/models/zatca_buyer.dart';
 import 'package:alhai_zatca/src/models/zatca_invoice.dart';
 import 'package:alhai_zatca/src/models/zatca_invoice_line.dart';
+import 'package:alhai_zatca/src/models/zatca_payment_means.dart';
 import 'package:alhai_zatca/src/models/zatca_seller.dart';
 import 'package:alhai_zatca/src/xml/invoice_line_builder.dart';
 import 'package:alhai_zatca/src/xml/tax_total_builder.dart';
@@ -857,6 +858,70 @@ void main() {
       final stripped = canonicalizer.removeSignatureElements(xml);
       expect(stripped, isNot(contains('UBLExtensions')));
       expect(stripped, contains('InvoiceLine'));
+    });
+
+    // ─── Wave 10 (P0-11): per-tender PaymentMeans multiplicity ─────
+    group('PaymentMeans multiplicity', () {
+      test('falls back to single element for legacy callers', () {
+        final builder = UblInvoiceBuilder();
+        final doc = XmlDocument.parse(builder.build(simplifiedInvoice));
+        final tenders = doc.findAllElements('PaymentMeans', namespace: '*');
+        expect(tenders.length, 1);
+      });
+
+      test('emits one element per tender for mixed-payment invoices', () {
+        final builder = UblInvoiceBuilder();
+        final mixed = simplifiedInvoice.copyWith(
+          paymentMeans: const [
+            ZatcaPaymentMeans(code: '10', amount: 50.0, note: 'cash portion'),
+            ZatcaPaymentMeans(code: '48', amount: 30.0, note: 'card portion'),
+            ZatcaPaymentMeans(code: '30', amount: 20.0, note: 'credit portion'),
+          ],
+        );
+        final doc = XmlDocument.parse(builder.build(mixed));
+        final tenders =
+            doc.findAllElements('PaymentMeans', namespace: '*').toList();
+        expect(tenders.length, 3);
+
+        // Codes appear in caller-provided order — ZATCA doesn't mandate
+        // a sort but stability matters for hash-chain equality tests.
+        final codes = tenders
+            .expand(
+              (e) => e.findElements('PaymentMeansCode', namespace: '*'),
+            )
+            .map((e) => e.innerText)
+            .toList();
+        expect(codes, ['10', '48', '30']);
+
+        // Per-tender PayableAmount round-trips with 2-decimal precision.
+        final amounts = tenders
+            .expand(
+              (e) => e.findElements('PayableAmount', namespace: '*'),
+            )
+            .map((e) => e.innerText)
+            .toList();
+        expect(amounts, ['50.00', '30.00', '20.00']);
+      });
+
+      test('paymentMeans precedes legacy paymentMeansCode when both set', () {
+        // Mixed-payment list wins; the legacy single field is ignored
+        // so callers can migrate without simultaneously clearing the
+        // old field.
+        final builder = UblInvoiceBuilder();
+        final mixed = simplifiedInvoice.copyWith(
+          paymentMeansCode: '10',
+          paymentNote: 'IGNORED legacy note',
+          paymentMeans: const [
+            ZatcaPaymentMeans(code: '48', amount: 100.0),
+          ],
+        );
+        final doc = XmlDocument.parse(builder.build(mixed));
+        final notes = doc
+            .findAllElements('InstructionNote', namespace: '*')
+            .map((e) => e.innerText)
+            .toList();
+        expect(notes, isNot(contains('IGNORED legacy note')));
+      });
     });
   });
 }

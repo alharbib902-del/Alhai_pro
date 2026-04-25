@@ -2,6 +2,7 @@ import 'package:alhai_zatca/src/models/invoice_type_code.dart';
 import 'package:alhai_zatca/src/models/reporting_status.dart';
 import 'package:alhai_zatca/src/models/zatca_buyer.dart';
 import 'package:alhai_zatca/src/models/zatca_invoice_line.dart';
+import 'package:alhai_zatca/src/models/zatca_payment_means.dart';
 import 'package:alhai_zatca/src/models/zatca_seller.dart';
 
 /// Complete ZATCA Phase 2 invoice model
@@ -57,11 +58,24 @@ class ZatcaInvoice {
 
   // ─── Payment ───────────────────────────────────────────────
 
-  /// Payment means code (BT-81): 10=cash, 30=credit, 42=bank, 48=card
+  /// Payment means code (BT-81): 10=cash, 30=credit, 42=bank, 48=card.
+  /// Used as the FALLBACK single payment-means entry when [paymentMeans]
+  /// below is null/empty (preserves backwards compat with cash-only /
+  /// card-only callers).
   final String paymentMeansCode;
 
-  /// Additional payment instructions note
+  /// Additional payment instructions note (single-tender path).
   final String? paymentNote;
+
+  /// Wave 10 (P0-11): per-tender payment-means list for mixed-payment
+  /// invoices. ZATCA expects one `<cac:PaymentMeans>` element per
+  /// tender; emitting just one for a 50-cash + 30-card + 20-credit sale
+  /// produces a non-compliant XML the portal may silently reject. When
+  /// this list is non-empty the UBL builder iterates and emits one
+  /// element per entry, ignoring [paymentMeansCode] / [paymentNote].
+  /// When null/empty the builder falls back to the legacy single-entry
+  /// path so existing callers keep working.
+  final List<ZatcaPaymentMeans>? paymentMeans;
 
   // ─── References ────────────────────────────────────────────
 
@@ -120,6 +134,7 @@ class ZatcaInvoice {
     this.documentDiscountReason,
     this.paymentMeansCode = '10',
     this.paymentNote,
+    this.paymentMeans,
     this.billingReferenceId,
     this.purchaseOrderId,
     this.contractId,
@@ -186,6 +201,7 @@ class ZatcaInvoice {
     String? documentDiscountReason,
     String? paymentMeansCode,
     String? paymentNote,
+    List<ZatcaPaymentMeans>? paymentMeans,
     String? billingReferenceId,
     String? purchaseOrderId,
     String? contractId,
@@ -214,6 +230,7 @@ class ZatcaInvoice {
           documentDiscountReason ?? this.documentDiscountReason,
       paymentMeansCode: paymentMeansCode ?? this.paymentMeansCode,
       paymentNote: paymentNote ?? this.paymentNote,
+      paymentMeans: paymentMeans ?? this.paymentMeans,
       billingReferenceId: billingReferenceId ?? this.billingReferenceId,
       purchaseOrderId: purchaseOrderId ?? this.purchaseOrderId,
       contractId: contractId ?? this.contractId,

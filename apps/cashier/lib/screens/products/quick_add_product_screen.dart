@@ -815,22 +815,49 @@ class _QuickAddProductScreenState extends ConsumerState<QuickAddProductScreen> {
         }
       }
 
-      await _db.productsDao.insertProduct(
-        ProductsTableCompanion.insert(
-          id: productId,
-          storeId: storeId,
-          name: sanitizedName,
-          price: price,
-          barcode: Value(sanitizedBarcode.isNotEmpty ? sanitizedBarcode : null),
-          categoryId: Value(selectedCategoryId),
-          stockQty: Value(quantity.toDouble()),
-          createdAt: DateTime.now(),
-          updatedAt: Value(DateTime.now()),
-        ),
-      );
+      // Wave 10 (P0-26): when the user enters opening stock > 0, the
+      // legacy flow inserted the product with `stockQty` set but
+      // recorded NO inventory_movement row. The audit ledger then
+      // claimed the product had zero historical stock — COGS, FIFO
+      // valuation, and stock-take reconciliation all started from a
+      // false floor. Pair the product insert with a 'receive' movement
+      // (canonical type from Wave 7) so the ledger faithfully shows
+      // the opening balance entered the system on day one.
+      final user = ref.read(currentUserProvider);
+      final stockQtyDouble = quantity.toDouble();
+      await _db.transaction(() async {
+        await _db.productsDao.insertProduct(
+          ProductsTableCompanion.insert(
+            id: productId,
+            storeId: storeId,
+            name: sanitizedName,
+            price: price,
+            barcode: Value(
+              sanitizedBarcode.isNotEmpty ? sanitizedBarcode : null,
+            ),
+            categoryId: Value(selectedCategoryId),
+            stockQty: Value(stockQtyDouble),
+            createdAt: DateTime.now(),
+            updatedAt: Value(DateTime.now()),
+          ),
+        );
+
+        if (stockQtyDouble > 0) {
+          await _db.inventoryDao.recordReceiveMovement(
+            id: const Uuid().v4(),
+            productId: productId,
+            storeId: storeId,
+            qty: stockQtyDouble,
+            previousQty: 0,
+            referenceType: 'opening_stock',
+            referenceId: productId,
+            userId: user?.id,
+            notes: 'Opening stock on product creation',
+          );
+        }
+      });
 
       // Audit log — audit API uses double SAR; pass the pre-conversion value.
-      final user = ref.read(currentUserProvider);
       auditService.logProductCreate(
         storeId: storeId,
         userId: user?.id ?? 'unknown',

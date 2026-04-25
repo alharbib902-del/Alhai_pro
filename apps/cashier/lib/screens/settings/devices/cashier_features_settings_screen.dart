@@ -19,8 +19,9 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_design_system/alhai_design_system.dart'
-    show AlhaiBreakpoints, AlhaiSpacing;
+    show AlhaiBreakpoints, AlhaiSnackbar, AlhaiSpacing;
 import 'package:alhai_pos/alhai_pos.dart';
+import '../../../core/services/sentry_service.dart';
 
 /// شاشة إعدادات الميزات والأجهزة
 class CashierFeaturesSettingsScreen extends ConsumerStatefulWidget {
@@ -74,8 +75,13 @@ class _CashierFeaturesSettingsScreenState
               int.tryParse(settingsMap['nfc_timeout_seconds'] ?? '') ?? 30;
         });
       }
-    } catch (e) {
-      // استخدام القيم الافتراضية عند الخطأ — مع تسجيل الخطأ لتسهيل التتبع
+    } catch (e, stack) {
+      // Wave 10 (P0-32): release builds need Sentry visibility — debug
+      // print alone left load failures invisible. Defaults still apply
+      // so the screen renders; the user sees the toggles in their last
+      // known state but the maintainer gets the load failure on the
+      // dashboard.
+      reportError(e, stackTrace: stack, hint: 'Load cashier feature settings');
       if (kDebugMode) {
         debugPrint(
           '[CashierFeaturesSettings] Failed to load settings, using defaults: $e',
@@ -87,49 +93,84 @@ class _CashierFeaturesSettingsScreenState
   }
 
   /// حفظ إعداد واحد في قاعدة البيانات
-  Future<void> _saveSetting(String key, String value) async {
+  ///
+  /// Wave 10 (P0-32): the previous version had no try/catch — a DB
+  /// failure threw past the toggle handler, and the toggle UI showed a
+  /// success state because it had already optimistically `setState`'d.
+  /// The user "saved" a toggle that never persisted. Now we surface the
+  /// failure to Sentry + return false so the caller can revert the
+  /// toggle and show an error snackbar.
+  Future<bool> _saveSetting(String key, String value) async {
     final storeId = ref.read(currentStoreIdProvider);
-    if (storeId == null) return;
+    if (storeId == null) return false;
 
-    await _db
-        .into(_db.settingsTable)
-        .insertOnConflictUpdate(
-          SettingsTableCompanion.insert(
-            id: '${storeId}_$key',
-            storeId: storeId,
-            key: key,
-            value: value,
-            updatedAt: DateTime.now(),
-          ),
+    try {
+      await _db
+          .into(_db.settingsTable)
+          .insertOnConflictUpdate(
+            SettingsTableCompanion.insert(
+              id: '${storeId}_$key',
+              storeId: storeId,
+              key: key,
+              value: value,
+              updatedAt: DateTime.now(),
+            ),
+          );
+      ref.invalidate(cashierFeatureSettingsProvider);
+      return true;
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Save cashier feature setting');
+      if (mounted) {
+        AlhaiSnackbar.error(
+          context,
+          AppLocalizations.of(context).errorWithDetails('$e'),
         );
-
-    // تحديث مزود الإعدادات
-    ref.invalidate(cashierFeatureSettingsProvider);
+      }
+      return false;
+    }
   }
 
   /// تبديل تفعيل شاشة العميل
+  ///
+  /// Wave 10 (P0-32): toggle handlers now revert the optimistic
+  /// `setState` if the underlying save fails. The UI used to flash a
+  /// success state before silently leaving the DB unchanged.
   Future<void> _toggleCustomerDisplay(bool enabled) async {
     setState(() => _enableCustomerDisplay = enabled);
-    await _saveSetting('feature_customer_display', enabled ? 'true' : 'false');
+    final ok = await _saveSetting(
+      'feature_customer_display',
+      enabled ? 'true' : 'false',
+    );
+    if (!ok && mounted) setState(() => _enableCustomerDisplay = !enabled);
   }
 
   /// تبديل جمع رقم الجوال
   Future<void> _togglePhoneCollection(bool enabled) async {
     setState(() => _enablePhoneCollection = enabled);
-    await _saveSetting('feature_phone_collection', enabled ? 'true' : 'false');
+    final ok = await _saveSetting(
+      'feature_phone_collection',
+      enabled ? 'true' : 'false',
+    );
+    if (!ok && mounted) setState(() => _enablePhoneCollection = !enabled);
   }
 
   /// تبديل الدفع بـ NFC
   Future<void> _toggleNfcPayment(bool enabled) async {
     setState(() => _enableNfcPayment = enabled);
-    await _saveSetting('feature_nfc_payment', enabled ? 'true' : 'false');
+    final ok = await _saveSetting(
+      'feature_nfc_payment',
+      enabled ? 'true' : 'false',
+    );
+    if (!ok && mounted) setState(() => _enableNfcPayment = !enabled);
   }
 
   /// تحديث مهلة NFC
   Future<void> _updateNfcTimeout(double value) async {
     final seconds = value.round();
+    final previous = _nfcTimeoutSeconds;
     setState(() => _nfcTimeoutSeconds = seconds);
-    await _saveSetting('nfc_timeout_seconds', '$seconds');
+    final ok = await _saveSetting('nfc_timeout_seconds', '$seconds');
+    if (!ok && mounted) setState(() => _nfcTimeoutSeconds = previous);
   }
 
   @override

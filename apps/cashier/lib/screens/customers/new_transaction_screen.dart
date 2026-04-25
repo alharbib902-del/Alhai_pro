@@ -1000,16 +1000,17 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
       final note = _noteController.text.isEmpty ? null : _noteController.text;
       final txnType = s.isDebt ? 'invoice' : 'payment';
 
-      // C-4 Session 4: accounts.balance, transactions.amount,
-      // balance_after are int cents. Re-read the account inside the
-      // transaction to avoid TOCTOU drift if another device adjusted the
-      // balance since the UI loaded.
+      // Wave 10 (P0-12): atomic `balance = balance + delta` via
+      // `addToBalance` so multi-device sync can't lose a transaction
+      // by overwriting an "absolute" balance with another device's
+      // stale absolute balance. We still need `newBalance` for the
+      // audit row's `balanceAfter` — re-read it inside the tx after
+      // the SQL update so the recorded value matches disk.
       late final double newBalance;
-      late final double currentBalSar;
       await _db.transaction(() async {
+        await _db.accountsDao.addToBalance(account.id, signedAmount);
         final fresh = await _db.accountsDao.getAccountById(account.id);
-        currentBalSar = (fresh?.balance ?? account.balance) / 100.0;
-        newBalance = currentBalSar + signedAmount;
+        newBalance = (fresh?.balance ?? account.balance) / 100.0;
         await _db.transactionsDao.insertTransaction(
           TransactionsTableCompanion.insert(
             id: txnId,
@@ -1023,7 +1024,6 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
             createdAt: now,
           ),
         );
-        await _db.accountsDao.updateBalance(account.id, newBalance);
       });
 
       // Sync enqueue — outside the DB transaction so a sync_queue write

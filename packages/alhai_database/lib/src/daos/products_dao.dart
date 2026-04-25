@@ -55,20 +55,91 @@ class ProductsDao extends DatabaseAccessor<AppDatabase>
     )..where((p) => p.id.equals(id))).getSingleOrNull();
   }
 
+  /// Wave 10 (P0-29): tenant-isolated single-product fetch.
+  ///
+  /// `getProductById` doesn't filter by store, which means a store_owner
+  /// who knows (or guesses) a product id from a different store can
+  /// load + edit that row by deep-linking. This method enforces that
+  /// the product belongs to the active store before returning it. Use
+  /// it from screens that mutate the product (price edit, stock edit,
+  /// etc); the un-scoped version stays for cross-store admin tooling.
+  Future<ProductsTableData?> getByIdForStore(String id, String storeId) {
+    return (select(productsTable)
+          ..where(
+            (p) =>
+                p.id.equals(id) &
+                p.storeId.equals(storeId) &
+                p.deletedAt.isNull(),
+          ))
+        .getSingleOrNull();
+  }
+
+  /// Wave 10 (P0-30): targeted price + cost write that touches ONLY the
+  /// columns the caller passed.
+  ///
+  /// The legacy edit_price flow used `currentProduct.copyWith(price: …)`
+  /// + `update(productsTable).replace(row)` which writes EVERY column.
+  /// If `cost_price` was null on disk and the user touched only the
+  /// price, copyWith carried the null through and the replace wiped a
+  /// cost that may have been set by another flow (e.g. a receive WAVG
+  /// recompute) since the row was loaded. This method uses a Drift
+  /// companion update so absent fields stay untouched at the SQL level.
+  ///
+  /// `costPriceCents` is wrapped in [Value]: pass `Value.absent()` to
+  /// leave the cost untouched (the common case where the user only
+  /// edits sell price), `Value(null)` to explicitly clear it, or
+  /// `Value(n)` to set it.
+  Future<int> updatePriceAndCost({
+    required String productId,
+    required int priceCents,
+    Value<int?> costPriceCents = const Value.absent(),
+  }) {
+    return (update(
+      productsTable,
+    )..where((p) => p.id.equals(productId))).write(
+      ProductsTableCompanion(
+        price: Value(priceCents),
+        costPrice: costPriceCents,
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
+  }
+
   /// الحصول على منتج بالباركود
+  ///
+  /// Wave 10 (P0-25): excludes soft-deleted rows. POS scanning and
+  /// transfer-destination lookups rely on this method for "find an
+  /// active product"; without the `deletedAt IS NULL` clause a
+  /// soft-deleted product would still resolve and (a) sales would
+  /// silently transact against a deleted SKU, (b) inventory transfers
+  /// would land stock on rows the cashier had already removed.
   Future<ProductsTableData?> getProductByBarcode(
     String barcode,
     String storeId,
   ) {
     return (select(productsTable)
-          ..where((p) => p.barcode.equals(barcode) & p.storeId.equals(storeId)))
+          ..where(
+            (p) =>
+                p.barcode.equals(barcode) &
+                p.storeId.equals(storeId) &
+                p.deletedAt.isNull(),
+          ))
         .getSingleOrNull();
   }
 
   /// الحصول على منتج بـ SKU داخل متجر محدد.
+  ///
+  /// Wave 10 (P0-25): excludes soft-deleted rows for the same reason
+  /// as [getProductByBarcode] — every caller that uses SKU lookup is
+  /// looking for a live, sellable product.
   Future<ProductsTableData?> getProductBySku(String sku, String storeId) {
     return (select(productsTable)
-          ..where((p) => p.sku.equals(sku) & p.storeId.equals(storeId)))
+          ..where(
+            (p) =>
+                p.sku.equals(sku) &
+                p.storeId.equals(storeId) &
+                p.deletedAt.isNull(),
+          ))
         .getSingleOrNull();
   }
 

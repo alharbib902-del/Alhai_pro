@@ -38,6 +38,10 @@ void main() {
     // For auditLogDao.getLogsByAction(any(), any()) the second arg is an
     // AuditAction enum. Mocktail requires a fallback for non-null matchers.
     registerFallbackValue(AuditAction.priceChange);
+    // Wave 10 (P0-30): updatePriceAndCost takes a Drift `Value<int?>`
+    // for costPriceCents. Mocktail's any() matcher needs a fallback
+    // value of the exact generic type for non-primitives.
+    registerFallbackValue(const Value<int?>.absent());
   });
 
   setUp(() {
@@ -54,7 +58,19 @@ void main() {
     when(
       () => productsDao.getProductById(any()),
     ).thenAnswer((_) async => testProduct);
+    // Wave 10 (P0-29): screen now uses tenant-isolated `getByIdForStore`
+    // for the load + the new `updatePriceAndCost` for the save.
+    when(
+      () => productsDao.getByIdForStore(any(), any()),
+    ).thenAnswer((_) async => testProduct);
     when(() => productsDao.updateProduct(any())).thenAnswer((_) async => true);
+    when(
+      () => productsDao.updatePriceAndCost(
+        productId: any(named: 'productId'),
+        priceCents: any(named: 'priceCents'),
+        costPriceCents: any(named: 'costPriceCents'),
+      ),
+    ).thenAnswer((_) async => 1);
 
     // P1 #9 (2026-04-24): screen now pulls price history from audit_log.
     when(
@@ -87,10 +103,11 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      // Use Completer to hold the future without pending timers
+      // Use Completer to hold the future without pending timers.
+      // Wave 10 (P0-29): screen now calls `getByIdForStore` instead.
       final completer = Completer<ProductsTableData?>();
       when(
-        () => productsDao.getProductById(any()),
+        () => productsDao.getByIdForStore(any(), any()),
       ).thenAnswer((_) => completer.future);
 
       await tester.pumpWidget(
@@ -114,7 +131,7 @@ void main() {
       suppressOverflowErrors();
 
       when(
-        () => productsDao.getProductById(any()),
+        () => productsDao.getByIdForStore(any(), any()),
       ).thenAnswer((_) async => null);
 
       await tester.pumpWidget(
