@@ -753,36 +753,38 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) return;
       final movementId = const Uuid().v4();
-      final double currentStock = _selectedProduct!.stockQty;
-      final double newStock = currentStock - quantity;
 
-      if (newStock < 0) {
-        AlhaiSnackbar.error(
-          context,
-          'المخزون غير كافٍ: المتاح ${currentStock.toStringAsFixed(2)}، المطلوب ${quantity.toStringAsFixed(2)}',
-        );
-        setState(() => _isSaving = false);
-        return;
-      }
-
+      // Wave 7 (P0-19/20): TOCTOU re-read inside the tx. Wastage is
+      // typically called after the cashier holds a damaged item in
+      // hand for a while — concurrent sales between screen-open and
+      // submit can drain stock to less than the user-typed quantity.
+      late double freshPrev;
+      late double freshNew;
       await _db.transaction(() async {
-        await _db.inventoryDao.insertMovement(
-          InventoryMovementsTableCompanion.insert(
-            id: movementId,
-            storeId: storeId,
-            productId: _selectedProduct!.id,
-            type: 'wastage',
-            qty: -quantity,
-            previousQty: currentStock,
-            newQty: newStock,
-            reason: Value(_reason),
-            notes: Value(
-              _noteController.text.isNotEmpty ? _noteController.text : null,
-            ),
-            createdAt: DateTime.now(),
-          ),
+        final fresh = await _db.productsDao.getProductById(_selectedProduct!.id);
+        if (fresh == null) {
+          throw StateError('المنتج لم يعد موجوداً');
+        }
+        freshPrev = fresh.stockQty;
+        freshNew = freshPrev - quantity;
+        if (freshNew < 0) {
+          throw StateError(
+            'المخزون غير كافٍ: المتاح ${freshPrev.toStringAsFixed(2)}، '
+            'المطلوب ${quantity.toStringAsFixed(2)}',
+          );
+        }
+        await _db.inventoryDao.recordWastageMovement(
+          id: movementId,
+          productId: _selectedProduct!.id,
+          storeId: storeId,
+          qty: quantity,
+          previousQty: freshPrev,
+          reason: _reason,
+          notes: _noteController.text.isNotEmpty
+              ? _noteController.text
+              : null,
         );
-        await _db.productsDao.updateStock(_selectedProduct!.id, newStock);
+        await _db.productsDao.updateStock(_selectedProduct!.id, freshNew);
       });
 
       // Audit log — reason stays an enum-style tag ("expired", "damaged"),
@@ -794,8 +796,8 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
         userName: user?.name ?? 'unknown',
         productId: _selectedProduct!.id,
         productName: _selectedProduct!.name,
-        oldQty: currentStock,
-        newQty: newStock,
+        oldQty: freshPrev,
+        newQty: freshNew,
         reason: 'wastage:$_reason',
       );
 

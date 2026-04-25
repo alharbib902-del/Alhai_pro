@@ -7336,6 +7336,8 @@
       }
     }
   },
+  "unitCostLabel": "Unit cost (optional)",
+  "unitCostHint": "Enter purchase cost to update weighted-average cost",
   "autoBackupHelper": "Run an auto-backup on the chosen schedule",
   "autoBackupLastFiredAt": "Last auto-fire: {when}",
   "@autoBackupLastFiredAt": {

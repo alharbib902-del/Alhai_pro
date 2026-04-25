@@ -111,6 +111,11 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
   final _quantityController = TextEditingController();
   final _supplierRefController = TextEditingController();
   final _noteController = TextEditingController();
+  // Wave 7 (P0-21): optional per-unit cost. When the cashier fills it,
+  // the WAVG path on `applyReceiveAndRecomputeCost` recomputes
+  // `products.cost_price` against the new receipt. Empty → fall back
+  // to "stock-only" semantics (cost_price stays untouched).
+  final _unitCostController = TextEditingController();
 
   Timer? _searchDebounce;
 
@@ -121,6 +126,7 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
     _quantityController.dispose();
     _supplierRefController.dispose();
     _noteController.dispose();
+    _unitCostController.dispose();
     super.dispose();
   }
 
@@ -729,6 +735,52 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
             ),
           ),
           const SizedBox(height: AlhaiSpacing.md),
+          // Wave 7 (P0-21): optional unit-cost input. Drives WAVG when
+          // filled; left blank, the receipt only bumps stock.
+          Text(
+            l10n.unitCostLabel,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: AlhaiSpacing.xs),
+          TextField(
+            controller: _unitCostController,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            style: TextStyle(color: colorScheme.onSurface),
+            decoration: InputDecoration(
+              hintText: l10n.unitCostHint,
+              hintStyle: TextStyle(color: colorScheme.onSurfaceVariant),
+              prefixIcon: Icon(
+                Icons.attach_money_rounded,
+                color: colorScheme.onSurfaceVariant,
+              ),
+              filled: true,
+              fillColor: colorScheme.surfaceContainerLow,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: colorScheme.outlineVariant),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: colorScheme.outlineVariant),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(
+                  color: AppColors.primary,
+                  width: 2,
+                ),
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: AlhaiSpacing.md,
+                vertical: 14,
+              ),
+            ),
+          ),
+          const SizedBox(height: AlhaiSpacing.md),
           Text(
             l10n.noteLabel,
             style: TextStyle(
@@ -847,6 +899,16 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
         return parts.isEmpty ? null : parts.join(' / ');
       }();
 
+      // Wave 7 (P0-21): parse the optional unit-cost field. We accept
+      // SAR doubles in the input and convert to int cents at the
+      // boundary — DB columns are int cents end-to-end. Empty input
+      // → null → WAVG path skips the cost recompute, behaving exactly
+      // like the legacy receive flow.
+      final unitCostText = _unitCostController.text.trim();
+      final int? unitCostCents = unitCostText.isEmpty
+          ? null
+          : ((double.tryParse(unitCostText) ?? 0) * 100).round();
+
       await _db.transaction(() async {
         // TOCTOU guard: re-read the product row inside the tx so the
         // movement's previousQty reflects true state, not the snapshot
@@ -860,21 +922,28 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
         previousQty = fresh.stockQty;
         newStock = previousQty + quantity;
 
-        await _db.inventoryDao.insertMovement(
-          InventoryMovementsTableCompanion.insert(
-            id: movementId,
-            storeId: storeId,
-            productId: current.id,
-            type: 'addition',
-            qty: quantity,
-            previousQty: previousQty,
-            newQty: newStock,
-            reason: const Value('received'),
-            notes: Value(combinedNote),
-            createdAt: DateTime.now(),
-          ),
+        // Wave 7 (P0-19/20): canonical 'receive' type via the renamed
+        // DAO helper. Carries the unit cost so the ledger row records
+        // what the cashier actually paid; the WAVG roll-up below
+        // updates `products.cost_price` separately.
+        await _db.inventoryDao.recordReceiveMovement(
+          id: movementId,
+          productId: current.id,
+          storeId: storeId,
+          qty: quantity,
+          previousQty: previousQty,
+          unitCostCents: unitCostCents,
+          notes: combinedNote,
+          referenceType: 'manual_addition',
         );
-        await _db.productsDao.updateStock(current.id, newStock);
+        // Wave 7 (P0-21): WAVG cost roll-up. Re-reads the product
+        // inside its own tx (transactions are nested via savepoints
+        // in Drift) and writes the new stock+cost atomically.
+        await _db.productsDao.applyReceiveAndRecomputeCost(
+          productId: current.id,
+          qty: quantity,
+          unitCostCents: unitCostCents,
+        );
       });
 
       // Audit log

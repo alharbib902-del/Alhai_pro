@@ -7949,6 +7949,12 @@ class $InventoryMovementsTableTable extends InventoryMovementsTable
   late final GeneratedColumn<double> newQty = GeneratedColumn<double>(
       'new_qty', aliasedName, false,
       type: DriftSqlType.double, requiredDuringInsert: true);
+  static const VerificationMeta _unitCostCentsMeta =
+      const VerificationMeta('unitCostCents');
+  @override
+  late final GeneratedColumn<int> unitCostCents = GeneratedColumn<int>(
+      'unit_cost_cents', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
   static const VerificationMeta _referenceTypeMeta =
       const VerificationMeta('referenceType');
   @override
@@ -7998,6 +8004,7 @@ class $InventoryMovementsTableTable extends InventoryMovementsTable
         qty,
         previousQty,
         newQty,
+        unitCostCents,
         referenceType,
         referenceId,
         reason,
@@ -8064,6 +8071,12 @@ class $InventoryMovementsTableTable extends InventoryMovementsTable
     } else if (isInserting) {
       context.missing(_newQtyMeta);
     }
+    if (data.containsKey('unit_cost_cents')) {
+      context.handle(
+          _unitCostCentsMeta,
+          unitCostCents.isAcceptableOrUnknown(
+              data['unit_cost_cents']!, _unitCostCentsMeta));
+    }
     if (data.containsKey('reference_type')) {
       context.handle(
           _referenceTypeMeta,
@@ -8124,6 +8137,8 @@ class $InventoryMovementsTableTable extends InventoryMovementsTable
           .read(DriftSqlType.double, data['${effectivePrefix}previous_qty'])!,
       newQty: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}new_qty'])!,
+      unitCostCents: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}unit_cost_cents']),
       referenceType: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}reference_type']),
       referenceId: attachedDatabase.typeMapping
@@ -8157,6 +8172,7 @@ class InventoryMovementsTableData extends DataClass
   final double qty;
   final double previousQty;
   final double newQty;
+  final int? unitCostCents;
   final String? referenceType;
   final String? referenceId;
   final String? reason;
@@ -8173,6 +8189,7 @@ class InventoryMovementsTableData extends DataClass
       required this.qty,
       required this.previousQty,
       required this.newQty,
+      this.unitCostCents,
       this.referenceType,
       this.referenceId,
       this.reason,
@@ -8193,6 +8210,9 @@ class InventoryMovementsTableData extends DataClass
     map['qty'] = Variable<double>(qty);
     map['previous_qty'] = Variable<double>(previousQty);
     map['new_qty'] = Variable<double>(newQty);
+    if (!nullToAbsent || unitCostCents != null) {
+      map['unit_cost_cents'] = Variable<int>(unitCostCents);
+    }
     if (!nullToAbsent || referenceType != null) {
       map['reference_type'] = Variable<String>(referenceType);
     }
@@ -8226,6 +8246,9 @@ class InventoryMovementsTableData extends DataClass
       qty: Value(qty),
       previousQty: Value(previousQty),
       newQty: Value(newQty),
+      unitCostCents: unitCostCents == null && nullToAbsent
+          ? const Value.absent()
+          : Value(unitCostCents),
       referenceType: referenceType == null && nullToAbsent
           ? const Value.absent()
           : Value(referenceType),
@@ -8257,6 +8280,7 @@ class InventoryMovementsTableData extends DataClass
       qty: serializer.fromJson<double>(json['qty']),
       previousQty: serializer.fromJson<double>(json['previousQty']),
       newQty: serializer.fromJson<double>(json['newQty']),
+      unitCostCents: serializer.fromJson<int?>(json['unitCostCents']),
       referenceType: serializer.fromJson<String?>(json['referenceType']),
       referenceId: serializer.fromJson<String?>(json['referenceId']),
       reason: serializer.fromJson<String?>(json['reason']),
@@ -8278,6 +8302,7 @@ class InventoryMovementsTableData extends DataClass
       'qty': serializer.toJson<double>(qty),
       'previousQty': serializer.toJson<double>(previousQty),
       'newQty': serializer.toJson<double>(newQty),
+      'unitCostCents': serializer.toJson<int?>(unitCostCents),
       'referenceType': serializer.toJson<String?>(referenceType),
       'referenceId': serializer.toJson<String?>(referenceId),
       'reason': serializer.toJson<String?>(reason),
@@ -8297,6 +8322,7 @@ class InventoryMovementsTableData extends DataClass
           double? qty,
           double? previousQty,
           double? newQty,
+          Value<int?> unitCostCents = const Value.absent(),
           Value<String?> referenceType = const Value.absent(),
           Value<String?> referenceId = const Value.absent(),
           Value<String?> reason = const Value.absent(),
@@ -8313,6 +8339,8 @@ class InventoryMovementsTableData extends DataClass
         qty: qty ?? this.qty,
         previousQty: previousQty ?? this.previousQty,
         newQty: newQty ?? this.newQty,
+        unitCostCents:
+            unitCostCents.present ? unitCostCents.value : this.unitCostCents,
         referenceType:
             referenceType.present ? referenceType.value : this.referenceType,
         referenceId: referenceId.present ? referenceId.value : this.referenceId,
@@ -8334,6 +8362,9 @@ class InventoryMovementsTableData extends DataClass
       previousQty:
           data.previousQty.present ? data.previousQty.value : this.previousQty,
       newQty: data.newQty.present ? data.newQty.value : this.newQty,
+      unitCostCents: data.unitCostCents.present
+          ? data.unitCostCents.value
+          : this.unitCostCents,
       referenceType: data.referenceType.present
           ? data.referenceType.value
           : this.referenceType,
@@ -8358,6 +8389,7 @@ class InventoryMovementsTableData extends DataClass
           ..write('qty: $qty, ')
           ..write('previousQty: $previousQty, ')
           ..write('newQty: $newQty, ')
+          ..write('unitCostCents: $unitCostCents, ')
           ..write('referenceType: $referenceType, ')
           ..write('referenceId: $referenceId, ')
           ..write('reason: $reason, ')
@@ -8379,6 +8411,7 @@ class InventoryMovementsTableData extends DataClass
       qty,
       previousQty,
       newQty,
+      unitCostCents,
       referenceType,
       referenceId,
       reason,
@@ -8398,6 +8431,7 @@ class InventoryMovementsTableData extends DataClass
           other.qty == this.qty &&
           other.previousQty == this.previousQty &&
           other.newQty == this.newQty &&
+          other.unitCostCents == this.unitCostCents &&
           other.referenceType == this.referenceType &&
           other.referenceId == this.referenceId &&
           other.reason == this.reason &&
@@ -8417,6 +8451,7 @@ class InventoryMovementsTableCompanion
   final Value<double> qty;
   final Value<double> previousQty;
   final Value<double> newQty;
+  final Value<int?> unitCostCents;
   final Value<String?> referenceType;
   final Value<String?> referenceId;
   final Value<String?> reason;
@@ -8434,6 +8469,7 @@ class InventoryMovementsTableCompanion
     this.qty = const Value.absent(),
     this.previousQty = const Value.absent(),
     this.newQty = const Value.absent(),
+    this.unitCostCents = const Value.absent(),
     this.referenceType = const Value.absent(),
     this.referenceId = const Value.absent(),
     this.reason = const Value.absent(),
@@ -8452,6 +8488,7 @@ class InventoryMovementsTableCompanion
     required double qty,
     required double previousQty,
     required double newQty,
+    this.unitCostCents = const Value.absent(),
     this.referenceType = const Value.absent(),
     this.referenceId = const Value.absent(),
     this.reason = const Value.absent(),
@@ -8477,6 +8514,7 @@ class InventoryMovementsTableCompanion
     Expression<double>? qty,
     Expression<double>? previousQty,
     Expression<double>? newQty,
+    Expression<int>? unitCostCents,
     Expression<String>? referenceType,
     Expression<String>? referenceId,
     Expression<String>? reason,
@@ -8495,6 +8533,7 @@ class InventoryMovementsTableCompanion
       if (qty != null) 'qty': qty,
       if (previousQty != null) 'previous_qty': previousQty,
       if (newQty != null) 'new_qty': newQty,
+      if (unitCostCents != null) 'unit_cost_cents': unitCostCents,
       if (referenceType != null) 'reference_type': referenceType,
       if (referenceId != null) 'reference_id': referenceId,
       if (reason != null) 'reason': reason,
@@ -8515,6 +8554,7 @@ class InventoryMovementsTableCompanion
       Value<double>? qty,
       Value<double>? previousQty,
       Value<double>? newQty,
+      Value<int?>? unitCostCents,
       Value<String?>? referenceType,
       Value<String?>? referenceId,
       Value<String?>? reason,
@@ -8532,6 +8572,7 @@ class InventoryMovementsTableCompanion
       qty: qty ?? this.qty,
       previousQty: previousQty ?? this.previousQty,
       newQty: newQty ?? this.newQty,
+      unitCostCents: unitCostCents ?? this.unitCostCents,
       referenceType: referenceType ?? this.referenceType,
       referenceId: referenceId ?? this.referenceId,
       reason: reason ?? this.reason,
@@ -8569,6 +8610,9 @@ class InventoryMovementsTableCompanion
     }
     if (newQty.present) {
       map['new_qty'] = Variable<double>(newQty.value);
+    }
+    if (unitCostCents.present) {
+      map['unit_cost_cents'] = Variable<int>(unitCostCents.value);
     }
     if (referenceType.present) {
       map['reference_type'] = Variable<String>(referenceType.value);
@@ -8608,6 +8652,7 @@ class InventoryMovementsTableCompanion
           ..write('qty: $qty, ')
           ..write('previousQty: $previousQty, ')
           ..write('newQty: $newQty, ')
+          ..write('unitCostCents: $unitCostCents, ')
           ..write('referenceType: $referenceType, ')
           ..write('referenceId: $referenceId, ')
           ..write('reason: $reason, ')
@@ -49278,6 +49323,7 @@ typedef $$InventoryMovementsTableTableCreateCompanionBuilder
   required double qty,
   required double previousQty,
   required double newQty,
+  Value<int?> unitCostCents,
   Value<String?> referenceType,
   Value<String?> referenceId,
   Value<String?> reason,
@@ -49297,6 +49343,7 @@ typedef $$InventoryMovementsTableTableUpdateCompanionBuilder
   Value<double> qty,
   Value<double> previousQty,
   Value<double> newQty,
+  Value<int?> unitCostCents,
   Value<String?> referenceType,
   Value<String?> referenceId,
   Value<String?> reason,
@@ -49369,6 +49416,9 @@ class $$InventoryMovementsTableTableFilterComposer
 
   ColumnFilters<double> get newQty => $composableBuilder(
       column: $table.newQty, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get unitCostCents => $composableBuilder(
+      column: $table.unitCostCents, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get referenceType => $composableBuilder(
       column: $table.referenceType, builder: (column) => ColumnFilters(column));
@@ -49459,6 +49509,10 @@ class $$InventoryMovementsTableTableOrderingComposer
   ColumnOrderings<double> get newQty => $composableBuilder(
       column: $table.newQty, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<int> get unitCostCents => $composableBuilder(
+      column: $table.unitCostCents,
+      builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<String> get referenceType => $composableBuilder(
       column: $table.referenceType,
       builder: (column) => ColumnOrderings(column));
@@ -49548,6 +49602,9 @@ class $$InventoryMovementsTableTableAnnotationComposer
 
   GeneratedColumn<double> get newQty =>
       $composableBuilder(column: $table.newQty, builder: (column) => column);
+
+  GeneratedColumn<int> get unitCostCents => $composableBuilder(
+      column: $table.unitCostCents, builder: (column) => column);
 
   GeneratedColumn<String> get referenceType => $composableBuilder(
       column: $table.referenceType, builder: (column) => column);
@@ -49646,6 +49703,7 @@ class $$InventoryMovementsTableTableTableManager extends RootTableManager<
             Value<double> qty = const Value.absent(),
             Value<double> previousQty = const Value.absent(),
             Value<double> newQty = const Value.absent(),
+            Value<int?> unitCostCents = const Value.absent(),
             Value<String?> referenceType = const Value.absent(),
             Value<String?> referenceId = const Value.absent(),
             Value<String?> reason = const Value.absent(),
@@ -49664,6 +49722,7 @@ class $$InventoryMovementsTableTableTableManager extends RootTableManager<
             qty: qty,
             previousQty: previousQty,
             newQty: newQty,
+            unitCostCents: unitCostCents,
             referenceType: referenceType,
             referenceId: referenceId,
             reason: reason,
@@ -49682,6 +49741,7 @@ class $$InventoryMovementsTableTableTableManager extends RootTableManager<
             required double qty,
             required double previousQty,
             required double newQty,
+            Value<int?> unitCostCents = const Value.absent(),
             Value<String?> referenceType = const Value.absent(),
             Value<String?> referenceId = const Value.absent(),
             Value<String?> reason = const Value.absent(),
@@ -49700,6 +49760,7 @@ class $$InventoryMovementsTableTableTableManager extends RootTableManager<
             qty: qty,
             previousQty: previousQty,
             newQty: newQty,
+            unitCostCents: unitCostCents,
             referenceType: referenceType,
             referenceId: referenceId,
             reason: reason,

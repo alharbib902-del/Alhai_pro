@@ -14215,6 +14215,12 @@ class AppLocalizationsFil extends AppLocalizations {
   }
 
   @override
+  String get unitCostLabel => 'تكلفة الوحدة (اختياري)';
+
+  @override
+  String get unitCostHint => 'أدخل تكلفة الشراء لتحديث متوسط التكلفة المرجح';
+
+  @override
   String get autoBackupHelper =>
       'تفعيل النسخ الاحتياطي التلقائي حسب الجدول المُحدَّد';
 

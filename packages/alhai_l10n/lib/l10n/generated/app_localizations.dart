@@ -26318,6 +26318,18 @@ abstract class AppLocalizations {
   /// **'النسخة من إصدار {backupVersion}، التطبيق على إصدار {appVersion}. حدِّث التطبيق أو ارجع لإصدار مطابق قبل الاستعادة.'**
   String restoreSchemaMismatchBody(int backupVersion, int appVersion);
 
+  /// No description provided for @unitCostLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'تكلفة الوحدة (اختياري)'**
+  String get unitCostLabel;
+
+  /// No description provided for @unitCostHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدخل تكلفة الشراء لتحديث متوسط التكلفة المرجح'**
+  String get unitCostHint;
+
   /// No description provided for @autoBackupHelper.
   ///
   /// In ar, this message translates to:

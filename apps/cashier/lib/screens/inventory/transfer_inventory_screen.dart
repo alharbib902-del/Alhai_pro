@@ -952,44 +952,39 @@ class _TransferInventoryScreenState
           return userNote == null ? tag : '$tag $userNote';
         }
 
-        // 1. Source: transfer_out movement + stock decrement.
+        // Wave 7 (P0-19/20/21): switch both legs to canonical DAO
+        // helpers. The transfer carries the source product's cost so
+        // the destination's WAVG reflects what was actually moved
+        // (treat transfer as a zero-margin receive). Drift handles the
+        // nested savepoint when applyReceiveAndRecomputeCost opens its
+        // own tx inside our outer one.
         final outMovementId = const Uuid().v4();
-        await _db.inventoryDao.insertMovement(
-          InventoryMovementsTableCompanion.insert(
-            id: outMovementId,
-            storeId: storeId,
-            productId: freshSource.id,
-            type: 'transfer_out',
-            qty: -qtyDouble,
-            previousQty: freshSource.stockQty,
-            newQty: sourceNewStock,
-            reason: const Value('transfer_out'),
-            referenceType: const Value('transfer'),
-            referenceId: Value(outMovementId),
-            notes: Value(composeNotes('toStoreId', toStoreId)),
-            createdAt: DateTime.now(),
-          ),
+        await _db.inventoryDao.recordTransferOutMovement(
+          id: outMovementId,
+          productId: freshSource.id,
+          storeId: storeId,
+          qty: qtyDouble,
+          previousQty: freshSource.stockQty,
+          transferId: outMovementId,
+          notes: composeNotes('toStoreId', toStoreId),
         );
         await _db.productsDao.updateStock(freshSource.id, sourceNewStock);
 
-        // 2. Destination: transfer_in movement + stock increment.
-        await _db.inventoryDao.insertMovement(
-          InventoryMovementsTableCompanion.insert(
-            id: const Uuid().v4(),
-            storeId: toStoreId,
-            productId: dest.id,
-            type: 'transfer_in',
-            qty: qtyDouble,
-            previousQty: destPreviousQty,
-            newQty: destNewQty,
-            reason: const Value('transfer_in'),
-            referenceType: const Value('transfer'),
-            referenceId: Value(outMovementId),
-            notes: Value(composeNotes('fromStoreId', storeId)),
-            createdAt: DateTime.now(),
-          ),
+        await _db.inventoryDao.recordTransferInMovement(
+          id: const Uuid().v4(),
+          productId: dest.id,
+          storeId: toStoreId,
+          qty: qtyDouble,
+          previousQty: destPreviousQty,
+          transferId: outMovementId,
+          unitCostCents: freshSource.costPrice,
+          notes: composeNotes('fromStoreId', storeId),
         );
-        await _db.productsDao.updateStock(dest.id, destNewQty);
+        await _db.productsDao.applyReceiveAndRecomputeCost(
+          productId: dest.id,
+          qty: qtyDouble,
+          unitCostCents: freshSource.costPrice,
+        );
       });
 
       // Audit log (outside the DB transaction). Logs both legs so the

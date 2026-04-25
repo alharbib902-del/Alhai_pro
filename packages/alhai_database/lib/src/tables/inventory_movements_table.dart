@@ -30,14 +30,28 @@ class InventoryMovementsTable extends Table {
   TextColumn get productId => text().references(ProductsTable, #id)();
   TextColumn get storeId => text().references(StoresTable, #id)();
 
-  // نوع الحركة
-  TextColumn get type =>
-      text()(); // sale, purchase, adjustment, return, transfer, waste
+  // نوع الحركة. Wave 7 (P0-19): the canonical enum is
+  // {receive, adjust, transfer_in, transfer_out, wastage, stock_take,
+  //  return, sale, void}. Old rows ('purchase', 'addition',
+  // 'subtraction', 'adjustment') are remapped at migration v48.
+  // Application-level validation lives in `kInventoryMovementTypes`
+  // (alhai_database) — SQLite ALTER TABLE can't add a CHECK constraint
+  // in place, and the table-copy pattern is heavier than the safety
+  // we'd buy with it given we own every write path.
+  TextColumn get type => text()();
 
   // الكميات
   RealColumn get qty => real()(); // موجب أو سالب
   RealColumn get previousQty => real()();
   RealColumn get newQty => real()();
+
+  // Wave 7 (P0-21): unit cost in int cents at the time of the
+  // movement. Null on legacy rows (pre-v48) and on movements where
+  // a cost makes no sense (sale / void / transfer_out — these draw
+  // down stock at whatever cost was already on the product). The
+  // `receive` flow uses this to compute weighted-average product cost
+  // via `productsDao.applyReceiveAndRecomputeCost`.
+  IntColumn get unitCostCents => integer().nullable()();
 
   // المرجع
   TextColumn get referenceType =>

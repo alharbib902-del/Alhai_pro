@@ -188,9 +188,9 @@ void main() {
             id: 'mov_$i',
             productId: 'prod_${i % 20}',
             storeId: 'store-1',
-            type: i % 3 == 0
-                ? 'sale'
-                : (i % 3 == 1 ? 'purchase' : 'adjustment'),
+            // Wave 7 (P0-19): canonical types — 'purchase'/'adjustment'
+            // were remapped to 'receive'/'adjust' in v48.
+            type: i % 3 == 0 ? 'sale' : (i % 3 == 1 ? 'receive' : 'adjust'),
             qty: (i % 3 == 0 ? -(1 + i % 5) : (1 + i % 10)).toDouble(),
             previousQty: 100.0,
             newQty: (i % 3 == 0 ? (100 - (1 + i % 5)) : (100 + (1 + i % 10)))

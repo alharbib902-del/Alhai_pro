@@ -17,9 +17,9 @@ void main() {
       await db.close();
     });
 
-    test('schema version is 47', () async {
+    test('schema version is 48', () async {
       final db = createTestDatabase();
-      expect(db.schemaVersion, 47);
+      expect(db.schemaVersion, 48);
       await db.close();
     });
 

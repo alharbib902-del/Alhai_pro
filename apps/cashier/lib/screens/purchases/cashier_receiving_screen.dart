@@ -687,21 +687,32 @@ class _CashierReceivingScreenState
         //    fractional units (e.g. 12.5 kg → 12). Use the double directly.
         //    Also record an inventory_movements row so the receive shows
         //    up in stock-history reports.
+        // Wave 7 (P0-19/20/21): canonical 'receive' + WAVG cost roll-up
+        // for purchase-order receipts. The PO carries unit cost on each
+        // item, so this is the canonical place to seed accurate WAVG —
+        // older receivings overwrote `cost_price` with whatever the
+        // last PO line said.
         final items = await _db.purchasesDao.getPurchaseItems(purchase.id);
         for (final item in items) {
           final product = await _db.productsDao.getProductById(item.productId);
           if (product == null) continue;
           final previousQty = product.stockQty;
-          final newStock = previousQty + item.qty;
-          await _db.productsDao.updateStock(item.productId, newStock);
-          await _db.inventoryDao.recordPurchaseMovement(
+          final unitCostCents = item.unitCost;
+          await _db.inventoryDao.recordReceiveMovement(
             id: const Uuid().v4(),
             productId: item.productId,
             storeId: storeId,
             qty: item.qty,
             previousQty: previousQty,
-            purchaseId: purchase.id,
+            referenceType: 'purchase_order',
+            referenceId: purchase.id,
+            unitCostCents: unitCostCents,
             userId: user?.id,
+          );
+          await _db.productsDao.applyReceiveAndRecomputeCost(
+            productId: item.productId,
+            qty: item.qty,
+            unitCostCents: unitCostCents,
           );
         }
         return items;

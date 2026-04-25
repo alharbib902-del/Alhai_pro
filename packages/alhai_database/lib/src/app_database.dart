@@ -137,7 +137,7 @@ class AppDatabase extends _$AppDatabase {
   late final DatabaseBackupService backupService = DatabaseBackupService(this);
 
   @override
-  int get schemaVersion => 47;
+  int get schemaVersion => 48;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -1124,6 +1124,44 @@ class AppDatabase extends _$AppDatabase {
           '[Migration v47] Added ZATCA chain snapshot columns to shifts '
           '(opening + closing invoice_count / last_pih / timestamp_utc, '
           'plus pending_zatca_at_close).',
+        );
+
+      case 48:
+        // Sprint 1 / Wave 7 (P0-19, P0-20, P0-21): inventory_movements
+        // unification.
+        //
+        // 1. Add `unit_cost_cents` so receive movements can carry the
+        //    per-unit cost at the time of the receipt. The new
+        //    `productsDao.applyReceiveAndRecomputeCost` reads this column
+        //    to compute a weighted-average product cost on every receipt
+        //    instead of overwriting cost_price with whichever was last.
+        //
+        // 2. Normalize the type enum. The app accumulated 11 distinct
+        //    type strings across DAO helpers and direct insertMovement
+        //    callers (`sale`, `purchase`, `void`, `return`, `adjustment`,
+        //    `addition`, `subtraction`, `stock_take`, `transfer_in`,
+        //    `transfer_out`, `wastage`). Reports filtered by string match
+        //    couldn't tell that 'addition' and 'purchase' were the same
+        //    thing. We collapse to the canonical set:
+        //    {receive, adjust, transfer_in, transfer_out, wastage,
+        //     stock_take, return, sale, void}. UPDATE the existing rows
+        //    in place — type is text and the index on it is rebuilt
+        //    automatically.
+        await customStatement(
+          'ALTER TABLE inventory_movements ADD COLUMN unit_cost_cents INTEGER',
+        );
+        await customStatement(
+          "UPDATE inventory_movements SET type = 'receive' "
+          "WHERE type IN ('purchase', 'addition')",
+        );
+        await customStatement(
+          "UPDATE inventory_movements SET type = 'adjust' "
+          "WHERE type IN ('adjustment', 'subtraction')",
+        );
+        debugPrint(
+          '[Migration v48] inventory_movements unification: added '
+          'unit_cost_cents and remapped 4 legacy type strings to '
+          'canonical receive/adjust.',
         );
 
       default:

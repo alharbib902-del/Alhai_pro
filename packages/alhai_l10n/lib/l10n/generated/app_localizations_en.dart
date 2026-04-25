@@ -14198,6 +14198,13 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get unitCostLabel => 'Unit cost (optional)';
+
+  @override
+  String get unitCostHint =>
+      'Enter purchase cost to update weighted-average cost';
+
+  @override
   String get autoBackupHelper => 'Run an auto-backup on the chosen schedule';
 
   @override

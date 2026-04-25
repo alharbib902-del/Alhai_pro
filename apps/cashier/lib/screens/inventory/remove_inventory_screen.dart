@@ -722,31 +722,36 @@ class _RemoveInventoryScreenState extends ConsumerState<RemoveInventoryScreen> {
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) return;
       final movementId = const Uuid().v4();
-      final double currentStock = _selectedProduct!.stockQty;
-      final double newStock = currentStock - quantity;
 
-      // Refuse to drive stock negative. Message is plain Arabic — an
-      // l10n key specifically for "negative stock on remove" does not
-      // exist in app_ar.arb yet.
-      if (newStock < 0) {
-        AlhaiSnackbar.error(
-          context,
-          'المخزون غير كافٍ: المتاح ${currentStock.toStringAsFixed(2)}، المطلوب سحبه ${quantity.toStringAsFixed(2)}',
-        );
-        setState(() => _isSaving = false);
-        return;
-      }
-
+      // Wave 7 (P0-19/20): TOCTOU re-read inside the tx + canonical
+      // 'adjust' type (was 'subtraction'). The signed qty preserves
+      // direction. Negative-stock check moves inside the tx so a
+      // concurrent sale that drained the row mid-form gets rejected
+      // instead of leaving an inconsistent ledger row.
+      late double freshPrev;
+      late double freshNew;
       await _db.transaction(() async {
+        final fresh = await _db.productsDao.getProductById(_selectedProduct!.id);
+        if (fresh == null) {
+          throw StateError('المنتج لم يعد موجوداً');
+        }
+        freshPrev = fresh.stockQty;
+        freshNew = freshPrev - quantity;
+        if (freshNew < 0) {
+          throw StateError(
+            'المخزون غير كافٍ: المتاح ${freshPrev.toStringAsFixed(2)}، '
+            'المطلوب سحبه ${quantity.toStringAsFixed(2)}',
+          );
+        }
         await _db.inventoryDao.insertMovement(
           InventoryMovementsTableCompanion.insert(
             id: movementId,
             storeId: storeId,
             productId: _selectedProduct!.id,
-            type: 'subtraction',
+            type: 'adjust',
             qty: -quantity,
-            previousQty: currentStock,
-            newQty: newStock,
+            previousQty: freshPrev,
+            newQty: freshNew,
             reason: Value(_reason),
             notes: Value(
               _noteController.text.isNotEmpty ? _noteController.text : null,
@@ -754,12 +759,11 @@ class _RemoveInventoryScreenState extends ConsumerState<RemoveInventoryScreen> {
             createdAt: DateTime.now(),
           ),
         );
-        await _db.productsDao.updateStock(_selectedProduct!.id, newStock);
+        await _db.productsDao.updateStock(_selectedProduct!.id, freshNew);
       });
 
-      // Audit log — reason stays as an enum-style tag ("sold", "damaged"
-      // etc.); the Arabic prefix was lost to hard-coded i18n and made
-      // downstream reason-based aggregation impossible.
+      // Audit log uses the post-tx values so the recorded oldQty/newQty
+      // match the actual ledger row, not the stale screen snapshot.
       final user = ref.read(currentUserProvider);
       auditService.logStockAdjust(
         storeId: storeId,
@@ -767,8 +771,8 @@ class _RemoveInventoryScreenState extends ConsumerState<RemoveInventoryScreen> {
         userName: user?.name ?? 'unknown',
         productId: _selectedProduct!.id,
         productName: _selectedProduct!.name,
-        oldQty: currentStock,
-        newQty: newStock,
+        oldQty: freshPrev,
+        newQty: freshNew,
         reason: 'remove:$_reason',
       );
 

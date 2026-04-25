@@ -7196,6 +7196,8 @@
       }
     }
   },
+  "unitCostLabel": "تكلفة الوحدة (اختياري)",
+  "unitCostHint": "أدخل تكلفة الشراء لتحديث متوسط التكلفة المرجح",
   "autoBackupHelper": "تفعيل النسخ الاحتياطي التلقائي حسب الجدول المُحدَّد",
   "autoBackupLastFiredAt": "آخر تشغيل تلقائي: {when}",
   "@autoBackupLastFiredAt": {

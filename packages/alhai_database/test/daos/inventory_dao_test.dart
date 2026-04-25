@@ -65,21 +65,24 @@ void main() {
       expect(movements.first.referenceId, 'sale-1');
     });
 
-    test('recordPurchaseMovement creates positive quantity movement', () async {
-      await db.inventoryDao.recordPurchaseMovement(
+    test('recordReceiveMovement creates positive quantity movement', () async {
+      // Wave 7 (P0-19): renamed from recordPurchaseMovement; type
+      // 'purchase' was remapped to 'receive' in v48.
+      await db.inventoryDao.recordReceiveMovement(
         id: 'mov-purchase-1',
         productId: 'prod-1',
         storeId: 'store-1',
         qty: 50,
         previousQty: 100,
-        purchaseId: 'purchase-1',
+        referenceType: 'purchase_order',
+        referenceId: 'purchase-1',
       );
 
       final movements = await db.inventoryDao.getMovementsByProduct('prod-1');
       expect(movements, hasLength(1));
-      expect(movements.first.qty, 50); // positive for purchases
+      expect(movements.first.qty, 50); // positive for receives
       expect(movements.first.newQty, 150);
-      expect(movements.first.type, 'purchase');
+      expect(movements.first.type, 'receive');
     });
 
     test('recordAdjustment creates correct movement', () async {
@@ -97,7 +100,8 @@ void main() {
       expect(movements.first.qty, -20);
       expect(movements.first.newQty, 80);
       expect(movements.first.reason, 'تلف بضاعة');
-      expect(movements.first.type, 'adjustment');
+      // Wave 7 (P0-19): type renamed 'adjustment' → 'adjust'.
+      expect(movements.first.type, 'adjust');
     });
 
     test('getMovementsByProduct returns empty for unknown product', () async {
@@ -143,7 +147,8 @@ void main() {
           id: 'mov-2',
           productId: 'prod-1',
           storeId: 'store-1',
-          type: 'purchase',
+          // Wave 7 (P0-19): canonical 'receive' (was 'purchase').
+          type: 'receive',
           qty: 20,
           previousQty: 9,
           newQty: 29,
@@ -175,7 +180,10 @@ void main() {
           id: 'mov-2',
           productId: 'prod-1',
           storeId: 'store-1',
-          type: 'purchase',
+          // Wave 7 (P0-19): canonical 'receive' (was 'purchase' pre-v48
+          // — old name still in legacy backups but rejected on insert
+          // by `kInventoryMovementTypes` validation).
+          type: 'receive',
           qty: 20,
           previousQty: 9,
           newQty: 29,
@@ -185,6 +193,242 @@ void main() {
 
       final movements = await db.inventoryDao.getMovementsByProduct('prod-1');
       expect(movements.first.id, 'mov-2'); // most recent first
+    });
+
+    // ─── Wave 7 (P0-19): canonical movement types ────────────────────
+    group('canonical type validation', () {
+      test('insertMovement accepts every canonical type', () async {
+        for (final type in kInventoryMovementTypes) {
+          await db.inventoryDao.insertMovement(
+            InventoryMovementsTableCompanion.insert(
+              id: 'mov-$type',
+              productId: 'prod-1',
+              storeId: 'store-1',
+              type: type,
+              qty: 1,
+              previousQty: 0,
+              newQty: 1,
+              createdAt: DateTime(2025, 6, 15),
+            ),
+          );
+        }
+        final all = await db.inventoryDao.getMovementsByProduct('prod-1');
+        expect(all, hasLength(kInventoryMovementTypes.length));
+      });
+
+      test('insertMovement rejects legacy/unknown types', () {
+        // 'purchase' / 'addition' / 'subtraction' / 'adjustment' were the
+        // legacy strings the v48 migration remapped — new writes must use
+        // the canonical names.
+        for (final bad in const [
+          'purchase',
+          'addition',
+          'subtraction',
+          'adjustment',
+          'misc',
+          '',
+        ]) {
+          expect(
+            () => db.inventoryDao.insertMovement(
+              InventoryMovementsTableCompanion.insert(
+                id: 'mov-bad-$bad',
+                productId: 'prod-1',
+                storeId: 'store-1',
+                type: bad,
+                qty: 1,
+                previousQty: 0,
+                newQty: 1,
+                createdAt: DateTime(2025, 6, 15),
+              ),
+            ),
+            throwsArgumentError,
+          );
+        }
+      });
+    });
+
+    // ─── Wave 7 (P0-19): new DAO helpers — smoke + side effects ──────
+    group('new DAO helpers', () {
+      test('recordReceiveMovement persists unitCostCents', () async {
+        await db.inventoryDao.recordReceiveMovement(
+          id: 'mov-recv',
+          productId: 'prod-1',
+          storeId: 'store-1',
+          qty: 10,
+          previousQty: 5,
+          unitCostCents: 750, // 7.50 SAR per unit
+          referenceType: 'manual_addition',
+        );
+        final all = await db.inventoryDao.getMovementsByProduct('prod-1');
+        expect(all, hasLength(1));
+        expect(all.first.type, 'receive');
+        expect(all.first.unitCostCents, 750);
+        expect(all.first.qty, 10);
+        expect(all.first.newQty, 15);
+      });
+
+      test('recordWastageMovement records negative qty', () async {
+        await db.inventoryDao.recordWastageMovement(
+          id: 'mov-wst',
+          productId: 'prod-1',
+          storeId: 'store-1',
+          qty: 3,
+          previousQty: 20,
+          reason: 'expired',
+        );
+        final all = await db.inventoryDao.getMovementsByProduct('prod-1');
+        expect(all.first.type, 'wastage');
+        expect(all.first.qty, -3);
+        expect(all.first.newQty, 17);
+      });
+
+      test('recordStockTakeMovement supports negative delta', () async {
+        await db.inventoryDao.recordStockTakeMovement(
+          id: 'mov-stk',
+          productId: 'prod-1',
+          storeId: 'store-1',
+          delta: -2, // counted < on-hand
+          previousQty: 10,
+          reason: 'undercount',
+        );
+        final all = await db.inventoryDao.getMovementsByProduct('prod-1');
+        expect(all.first.type, 'stock_take');
+        expect(all.first.qty, -2);
+        expect(all.first.newQty, 8);
+      });
+
+      test('transfer pair records correct directions', () async {
+        await db.inventoryDao.recordTransferOutMovement(
+          id: 'mov-out',
+          productId: 'prod-1',
+          storeId: 'store-1',
+          qty: 4,
+          previousQty: 12,
+          transferId: 'xfer-1',
+        );
+        await db.inventoryDao.recordTransferInMovement(
+          id: 'mov-in',
+          productId: 'prod-1',
+          storeId: 'store-1',
+          qty: 4,
+          previousQty: 0,
+          transferId: 'xfer-1',
+          unitCostCents: 500,
+        );
+        final all = await db.inventoryDao.getMovementsByProduct('prod-1');
+        final out = all.firstWhere((m) => m.id == 'mov-out');
+        final inn = all.firstWhere((m) => m.id == 'mov-in');
+        expect(out.qty, -4);
+        expect(out.type, 'transfer_out');
+        expect(inn.qty, 4);
+        expect(inn.type, 'transfer_in');
+        expect(inn.unitCostCents, 500);
+      });
+    });
+
+    // ─── Wave 7 (P0-21): WAVG cost computation ───────────────────────
+    group('applyReceiveAndRecomputeCost (WAVG)', () {
+      test('first receive seeds cost when none was set', () async {
+        await db.productsDao.insertProduct(
+          ProductsTableCompanion.insert(
+            id: 'prod-fresh',
+            storeId: 'store-1',
+            name: 'Fresh',
+            price: 1500,
+            costPrice: const Value(null),
+            stockQty: const Value(0),
+            createdAt: DateTime(2025, 1, 1),
+          ),
+        );
+        final newCost = await db.productsDao.applyReceiveAndRecomputeCost(
+          productId: 'prod-fresh',
+          qty: 10,
+          unitCostCents: 800,
+        );
+        expect(newCost, 800);
+        final p = await db.productsDao.getProductById('prod-fresh');
+        expect(p!.stockQty, 10);
+        expect(p.costPrice, 800);
+      });
+
+      test('weighted average across two receipts', () async {
+        await db.productsDao.insertProduct(
+          ProductsTableCompanion.insert(
+            id: 'prod-wavg',
+            storeId: 'store-1',
+            name: 'WAVG',
+            price: 2000,
+            costPrice: const Value(null),
+            stockQty: const Value(0),
+            createdAt: DateTime(2025, 1, 1),
+          ),
+        );
+        // Receipt 1: 10 units @ 1000c → cost 1000c, stock 10
+        await db.productsDao.applyReceiveAndRecomputeCost(
+          productId: 'prod-wavg',
+          qty: 10,
+          unitCostCents: 1000,
+        );
+        // Receipt 2: 10 units @ 2000c → WAVG (1000*10 + 2000*10) / 20 = 1500c
+        final newCost = await db.productsDao.applyReceiveAndRecomputeCost(
+          productId: 'prod-wavg',
+          qty: 10,
+          unitCostCents: 2000,
+        );
+        expect(newCost, 1500);
+        final p = await db.productsDao.getProductById('prod-wavg');
+        expect(p!.stockQty, 20);
+        expect(p.costPrice, 1500);
+      });
+
+      test('null unitCost preserves existing cost (legacy behaviour)', () async {
+        await db.productsDao.insertProduct(
+          ProductsTableCompanion.insert(
+            id: 'prod-legacy',
+            storeId: 'store-1',
+            name: 'Legacy',
+            price: 1000,
+            costPrice: const Value(700),
+            stockQty: const Value(5),
+            createdAt: DateTime(2025, 1, 1),
+          ),
+        );
+        final newCost = await db.productsDao.applyReceiveAndRecomputeCost(
+          productId: 'prod-legacy',
+          qty: 5,
+          unitCostCents: null,
+        );
+        expect(newCost, 700); // unchanged
+        final p = await db.productsDao.getProductById('prod-legacy');
+        expect(p!.stockQty, 10); // stock still bumped
+        expect(p.costPrice, 700);
+      });
+
+      test('fractional qty (decimal pack) WAVG within rounding tolerance', () async {
+        await db.productsDao.insertProduct(
+          ProductsTableCompanion.insert(
+            id: 'prod-frac',
+            storeId: 'store-1',
+            name: 'Frac',
+            price: 5000,
+            costPrice: const Value(null),
+            stockQty: const Value(0),
+            createdAt: DateTime(2025, 1, 1),
+          ),
+        );
+        await db.productsDao.applyReceiveAndRecomputeCost(
+          productId: 'prod-frac',
+          qty: 0.75,
+          unitCostCents: 4000,
+        );
+        // 0.5 kg @ 6000c. Expected ≈ (4000*0.75 + 6000*0.5) / 1.25 = 4800c
+        final newCost = await db.productsDao.applyReceiveAndRecomputeCost(
+          productId: 'prod-frac',
+          qty: 0.5,
+          unitCostCents: 6000,
+        );
+        expect((newCost! - 4800).abs(), lessThanOrEqualTo(1));
+      });
     });
   });
 }

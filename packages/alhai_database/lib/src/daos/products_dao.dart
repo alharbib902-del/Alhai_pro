@@ -246,6 +246,85 @@ class ProductsDao extends DatabaseAccessor<AppDatabase>
     );
   }
 
+  /// Apply a `receive` movement and recompute the product's
+  /// weighted-average cost in one atomic step.
+  ///
+  /// Wave 7 (P0-21): the legacy receive flow overwrote `cost_price`
+  /// with the latest receipt's unit cost — so a single batch at a
+  /// promotional price wiped the basis the rest of the inventory was
+  /// valued against. The new flow accumulates a true WAVG:
+  ///
+  ///   newCost = (oldCost × oldStock + unitCost × qty) / (oldStock + qty)
+  ///
+  /// All arithmetic happens in int cents to avoid floating-point drift.
+  /// Caller still records the InventoryMovement separately (this method
+  /// only touches the products row) so the same call site can stitch
+  /// both writes into its own transaction with the FK update.
+  ///
+  /// Returns the new cost in cents (matches what was written). When
+  /// [unitCostCents] is null the method just bumps `stock_qty` and
+  /// leaves `cost_price` alone — same semantics the receive_purchase
+  /// flow had before unit cost capture existed, used as a fallback.
+  Future<int?> applyReceiveAndRecomputeCost({
+    required String productId,
+    required double qty,
+    int? unitCostCents,
+  }) async {
+    return attachedDatabase.transaction(() async {
+      // Re-read inside the tx — `applyReceive...` will frequently be
+      // called from a UI screen that captured the product on screen
+      // open, and we need TOCTOU-correct stock+cost for the WAVG.
+      final fresh = await getProductById(productId);
+      if (fresh == null) {
+        throw StateError('Product $productId disappeared before receive');
+      }
+      final newStock = fresh.stockQty + qty;
+
+      // No unit cost → bump stock only (preserve old behaviour for
+      // legacy receive paths that don't yet capture cost).
+      if (unitCostCents == null) {
+        await updateStock(productId, newStock);
+        return fresh.costPrice;
+      }
+
+      // Fresh stock with no prior cost basis → cost is exactly the
+      // receipt unit cost.
+      final oldCost = fresh.costPrice;
+      final oldStock = fresh.stockQty;
+      late final int newCostCents;
+      if (oldCost == null || oldCost <= 0 || oldStock <= 0) {
+        newCostCents = unitCostCents;
+      } else {
+        // WAVG in pure integer arithmetic. oldStock and qty are doubles
+        // (the products schema stores stock as REAL — fractional packs).
+        // Convert to a fixed-precision representation by scaling by 1000
+        // before the divide so 0.75 kg + 0.5 kg behaves correctly.
+        const precision = 1000;
+        final oldStockScaled = (oldStock * precision).round();
+        final addStockScaled = (qty * precision).round();
+        final totalScaled = oldStockScaled + addStockScaled;
+        if (totalScaled <= 0) {
+          newCostCents = unitCostCents;
+        } else {
+          final numerator =
+              (oldCost * oldStockScaled) + (unitCostCents * addStockScaled);
+          newCostCents = (numerator / totalScaled).round();
+        }
+      }
+
+      await (update(
+        productsTable,
+      )..where((p) => p.id.equals(productId))).write(
+        ProductsTableCompanion(
+          stockQty: Value(newStock),
+          costPrice: Value(newCostCents),
+          updatedAt: Value(DateTime.now()),
+        ),
+      );
+      return newCostCents;
+    });
+  }
+
   /// حذف منتج
   Future<int> deleteProduct(String id) {
     return (delete(productsTable)..where((p) => p.id.equals(id))).go();

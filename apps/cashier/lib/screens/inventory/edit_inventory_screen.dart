@@ -770,16 +770,37 @@ class _EditInventoryScreenState extends ConsumerState<EditInventoryScreen> {
       }
 
       final movementId = const Uuid().v4();
+      // Wave 7 (P0-19/20): unify type to canonical 'adjust' (was
+      // 'addition'/'subtraction'). The qty already carries the sign, so
+      // a single bucket is enough — directional info is preserved by
+      // qty's sign and reports use that. Wrap the read+write in a
+      // transaction with TOCTOU re-read so a concurrent sync that
+      // bumped stock between screen-open and submit doesn't leave a
+      // wrong-previousQty row in the ledger.
+      late double freshPrev;
+      late double freshNew;
       await _db.transaction(() async {
+        final fresh = await _db.productsDao.getProductById(widget.productId);
+        if (fresh == null) {
+          throw StateError('المنتج لم يعد موجوداً');
+        }
+        freshPrev = fresh.stockQty;
+        freshNew = freshPrev + signedAdjustment;
+        if (freshNew < 0) {
+          throw StateError(
+            'المخزون غير كافٍ: المتاح ${freshPrev.toStringAsFixed(2)}، '
+            'المطلوب سحبه ${adjustment.toStringAsFixed(2)}',
+          );
+        }
         await _db.inventoryDao.insertMovement(
           InventoryMovementsTableCompanion.insert(
             id: movementId,
             storeId: storeId,
             productId: widget.productId,
-            type: _isAdding ? 'addition' : 'subtraction',
+            type: 'adjust',
             qty: signedAdjustment,
-            previousQty: currentStock,
-            newQty: newStock,
+            previousQty: freshPrev,
+            newQty: freshNew,
             reason: Value(_reason),
             notes: Value(
               _noteController.text.isNotEmpty ? _noteController.text : null,
@@ -787,8 +808,13 @@ class _EditInventoryScreenState extends ConsumerState<EditInventoryScreen> {
             createdAt: DateTime.now(),
           ),
         );
-        await _db.productsDao.updateStock(widget.productId, newStock);
+        await _db.productsDao.updateStock(widget.productId, freshNew);
       });
+      // Reflect the post-tx values in the rest of the closure (audit log,
+      // success message). The pre-tx `currentStock` / `newStock` are
+      // stale once the re-read happened.
+      final actualPrev = freshPrev;
+      final actualNew = freshNew;
 
       // Audit log
       final user = ref.read(currentUserProvider);
@@ -798,8 +824,8 @@ class _EditInventoryScreenState extends ConsumerState<EditInventoryScreen> {
         userName: user?.name ?? 'unknown',
         productId: widget.productId,
         productName: _product?.name ?? widget.productId,
-        oldQty: currentStock,
-        newQty: newStock,
+        oldQty: actualPrev,
+        newQty: actualNew,
         reason: _reason,
       );
 

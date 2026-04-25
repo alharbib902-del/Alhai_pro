@@ -689,6 +689,13 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
 
       final adjustedProducts = <ProductsTableData>[];
 
+      // Wave 7 (P0-19/20): TOCTOU re-read for every product before
+      // recording its stock-take adjustment. Stock-takes can sit
+      // half-filled for minutes while the cashier walks the aisles —
+      // any sale during that window made the snapshot's stockQty stale.
+      // The DAO helper records `delta = counted - freshSystemQty` so
+      // the ledger row matches what the products row actually held when
+      // the count was applied.
       await _db.transaction(() async {
         for (final product in _filteredProducts) {
           final ctrl = _countControllers[product.id];
@@ -697,21 +704,17 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
           final double? counted = double.tryParse(ctrl.text);
           if (counted == null) continue;
 
-          final double systemQty = product.stockQty;
+          final fresh = await _db.productsDao.getProductById(product.id);
+          if (fresh == null) continue;
+          final double systemQty = fresh.stockQty;
           if (counted != systemQty) {
-            final movementId = const Uuid().v4();
-            await _db.inventoryDao.insertMovement(
-              InventoryMovementsTableCompanion.insert(
-                id: movementId,
-                storeId: storeId,
-                productId: product.id,
-                type: 'stock_take',
-                qty: counted - systemQty,
-                previousQty: systemQty,
-                newQty: counted,
-                reason: const Value('stock_take'),
-                createdAt: DateTime.now(),
-              ),
+            await _db.inventoryDao.recordStockTakeMovement(
+              id: const Uuid().v4(),
+              productId: product.id,
+              storeId: storeId,
+              delta: counted - systemQty,
+              previousQty: systemQty,
+              reason: 'stock_take',
             );
             await _db.productsDao.updateStock(product.id, counted);
             adjustedProducts.add(product);
