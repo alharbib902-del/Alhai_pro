@@ -56,6 +56,9 @@ enum AuditAction {
 
   // الإعدادات
   settingsChange,
+
+  // الموافقات الخاصة (P0-13: تجاوز حد الائتمان بموافقة مدير)
+  creditLimitOverride,
 }
 
 /// DAO لسجل التدقيق

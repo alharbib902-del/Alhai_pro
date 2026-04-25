@@ -35,7 +35,15 @@ import 'package:alhai_core/alhai_core.dart' show Product;
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_pos/alhai_pos.dart'
-    show PosCartItem, ZatcaComplianceException, saleServiceProvider;
+    show
+        CreditCheckExceeded,
+        CreditCheckWarning,
+        CreditLimitEnforcer,
+        PosCartItem,
+        ZatcaComplianceException,
+        saleServiceProvider,
+        showCreditLimitExceededDialog,
+        showCreditLimitWarning;
 import 'package:alhai_design_system/alhai_design_system.dart'
     show AlhaiBreakpoints, AlhaiSnackbar, AlhaiSpacing;
 
@@ -151,6 +159,36 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
         );
       }
 
+      // P0-13: credit-limit pre-flight. The whole `total` is going to
+      // sit on the customer's receivable account, so check the projected
+      // balance against the limit before committing.
+      var didOverride = false;
+      CreditCheckExceeded? overrideContext;
+      final customerId = draft.selectedCustomer?.id;
+      if (customerId != null && customerId.isNotEmpty) {
+        final enforcer = CreditLimitEnforcer(db: db);
+        final check = await enforcer.checkByCustomer(
+          customerId: customerId,
+          storeId: storeId,
+          proposedDeltaCents: (draft.total * 100).round(),
+        );
+        if (check is CreditCheckExceeded) {
+          if (!mounted) {
+            setState(() => _isSubmitting = false);
+            return;
+          }
+          final approved = await showCreditLimitExceededDialog(context, check);
+          if (!approved) {
+            setState(() => _isSubmitting = false);
+            return;
+          }
+          didOverride = true;
+          overrideContext = check;
+        } else if (check is CreditCheckWarning) {
+          if (mounted) showCreditLimitWarning(context, check);
+        }
+      }
+
       // Credit invoice: customer owes the total, no cash collected upfront.
       // SaleService internally creates the matching invoice row through
       // InvoiceService (ZATCA QR + sync enqueue) — anything that fails
@@ -184,6 +222,26 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
         total: draft.total,
         paymentMethod: 'credit',
       );
+
+      // P0-13: audit trail for the credit-limit override (if any).
+      if (didOverride && overrideContext != null && customerId != null) {
+        final accountId = await db.accountsDao
+            .getCustomerAccount(customerId, storeId)
+            .then((a) => a?.id ?? customerId);
+        auditService.logCreditLimitOverride(
+          storeId: storeId,
+          userId: user?.id ?? 'unknown',
+          userName: user?.name ?? 'unknown',
+          accountId: accountId,
+          accountName: draft.selectedCustomer?.name ?? customerId,
+          currentBalanceCents: overrideContext.currentBalanceCents,
+          limitCents: overrideContext.limitCents,
+          newBalanceCents: overrideContext.newBalanceCents,
+          overByCents: overrideContext.overByCents,
+          entityType: 'sale',
+          entityId: result.saleId,
+        );
+      }
 
       addBreadcrumb(
         message: 'Invoice finalized',

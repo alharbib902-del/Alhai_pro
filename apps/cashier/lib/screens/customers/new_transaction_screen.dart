@@ -24,6 +24,13 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
+import 'package:alhai_pos/alhai_pos.dart'
+    show
+        CreditLimitEnforcer,
+        CreditCheckExceeded,
+        CreditCheckWarning,
+        showCreditLimitExceededDialog,
+        showCreditLimitWarning;
 import 'package:alhai_sync/alhai_sync.dart' show SyncPriority;
 import 'package:uuid/uuid.dart';
 import 'package:alhai_design_system/alhai_design_system.dart'
@@ -1000,6 +1007,35 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
       final note = _noteController.text.isEmpty ? null : _noteController.text;
       final txnType = s.isDebt ? 'invoice' : 'payment';
 
+      // P0-13: credit-limit pre-flight. Only relevant when this is a
+      // debt entry (payments reduce balance and can't breach a limit).
+      // Block on `exceeded` unless the cashier obtains a manager PIN
+      // override; warn but proceed on `warning`.
+      var didOverride = false;
+      CreditCheckExceeded? overrideContext;
+      if (s.isDebt) {
+        final enforcer = CreditLimitEnforcer(db: _db);
+        final check = await enforcer.check(
+          accountId: account.id,
+          proposedDeltaCents: (amount * 100).round(),
+        );
+        if (check is CreditCheckExceeded) {
+          if (!mounted) {
+            notifier.setSubmitting(false);
+            return;
+          }
+          final approved = await showCreditLimitExceededDialog(context, check);
+          if (!approved) {
+            notifier.setSubmitting(false);
+            return;
+          }
+          didOverride = true;
+          overrideContext = check;
+        } else if (check is CreditCheckWarning) {
+          if (mounted) showCreditLimitWarning(context, check);
+        }
+      }
+
       // Wave 10 (P0-12): atomic `balance = balance + delta` via
       // `addToBalance` so multi-device sync can't lose a transaction
       // by overwriting an "absolute" balance with another device's
@@ -1076,6 +1112,26 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
         amount: signedAmount,
         balanceAfter: newBalance,
       );
+
+      // P0-13: when the cashier overrode a credit-limit block, write a
+      // second audit row so the override is reviewable independently
+      // from the transaction itself (audit reports can filter on
+      // creditLimitOverride to surface them).
+      if (didOverride && overrideContext != null) {
+        auditService.logCreditLimitOverride(
+          storeId: storeId,
+          userId: user?.id ?? 'unknown',
+          userName: user?.name ?? 'unknown',
+          accountId: account.id,
+          accountName: account.name,
+          currentBalanceCents: overrideContext.currentBalanceCents,
+          limitCents: overrideContext.limitCents,
+          newBalanceCents: overrideContext.newBalanceCents,
+          overByCents: overrideContext.overByCents,
+          entityType: 'transaction',
+          entityId: txnId,
+        );
+      }
 
       addBreadcrumb(
         message: s.isDebt ? 'Debt recorded' : 'Payment recorded',

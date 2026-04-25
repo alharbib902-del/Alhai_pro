@@ -20,7 +20,9 @@ import 'package:get_it/get_it.dart';
 import 'package:alhai_database/alhai_database.dart' hide PaymentMethod;
 import '../../providers/sale_providers.dart';
 import '../../providers/cart_providers.dart';
+import '../../services/credit_limit_enforcer.dart';
 import '../../services/whatsapp_receipt_service.dart';
+import '../../widgets/credit_limit_dialog.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import '../../services/sale_service.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
@@ -28,7 +30,7 @@ import 'package:alhai_zatca/alhai_zatca.dart' show VatCalculator;
 import '../../providers/tax_settings_provider.dart';
 import '../../widgets/pos/split_payment_dialog.dart'
     as split_dlg
-    show SplitPaymentDialog, PaymentSplit;
+    show SplitPaymentDialog, PaymentSplit, PaymentMethod;
 import '../../providers/customer_display_providers.dart';
 import '../../services/customer_display/customer_display_state.dart';
 import '../../services/payment/nfc_listener_service.dart';
@@ -1282,6 +1284,31 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
     }
   }
 
+  /// P0-13: how many cents of [total] will end up as customer debt.
+  /// Cash/card tenders settle immediately and contribute zero;
+  /// wallet/bankTransfer single-tender uses the full total; mixed
+  /// payments sum the deferred-tender splits (credit + transfer).
+  int _computeCreditObligationCents(double total) {
+    if (_isSplitPayment) {
+      var sum = 0;
+      for (final s in _splitPayments) {
+        if (s.method == split_dlg.PaymentMethod.credit ||
+            s.method == split_dlg.PaymentMethod.transfer) {
+          sum += (s.amount * 100).round();
+        }
+      }
+      return sum;
+    }
+    switch (_selectedMethod) {
+      case PaymentMethod.cash:
+      case PaymentMethod.card:
+        return 0;
+      case PaymentMethod.wallet:
+      case PaymentMethod.bankTransfer:
+        return (total * 100).round();
+    }
+  }
+
   Future<void> _confirmPayment(
     double total, {
     double loyaltyDiscount = 0.0,
@@ -1330,6 +1357,40 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
       // جلب معرف الوردية المفتوحة (nullable — لا يمنع البيع إذا لم توجد وردية)
       final openShift = await ref.read(openShiftProvider.future);
 
+      // P0-13: credit-limit pre-flight. Only the portion of `total`
+      // that lands on the customer's receivable account counts —
+      // cash/card tenders settle immediately and don't add to debt.
+      final creditCents = _computeCreditObligationCents(total);
+      var didOverride = false;
+      CreditCheckExceeded? overrideContext;
+      final cartCustomerId = cartState.customerId;
+      if (creditCents > 0 &&
+          cartCustomerId != null &&
+          cartCustomerId.isNotEmpty) {
+        final db = GetIt.I<AppDatabase>();
+        final enforcer = CreditLimitEnforcer(db: db);
+        final check = await enforcer.checkByCustomer(
+          customerId: cartCustomerId,
+          storeId: resolvedStoreId,
+          proposedDeltaCents: creditCents,
+        );
+        if (check is CreditCheckExceeded) {
+          if (!mounted) {
+            setState(() => _isProcessing = false);
+            return;
+          }
+          final approved = await showCreditLimitExceededDialog(context, check);
+          if (!approved) {
+            setState(() => _isProcessing = false);
+            return;
+          }
+          didOverride = true;
+          overrideContext = check;
+        } else if (check is CreditCheckWarning) {
+          if (mounted) showCreditLimitWarning(context, check);
+        }
+      }
+
       final saleResult = await saleService.createSale(
         storeId: resolvedStoreId,
         cashierId: resolvedCashierId,
@@ -1345,6 +1406,40 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
         shiftId: openShift?.id,
       );
       final saleId = saleResult.saleId;
+
+      // P0-13: persist the override row directly via the audit DAO —
+      // alhai_pos can't depend on the cashier app's AuditService wrapper,
+      // but the hash-chain method on the DAO is the same one the wrapper
+      // uses, so review tooling sees a single coherent log.
+      if (didOverride && overrideContext != null && cartCustomerId != null) {
+        try {
+          final db = GetIt.I<AppDatabase>();
+          final account = await db.accountsDao
+              .getCustomerAccount(cartCustomerId, resolvedStoreId);
+          final user = ref.read(currentUserProvider);
+          await db.auditLogDao.appendLogWithHashChain(
+            storeId: resolvedStoreId,
+            userId: user?.id ?? 'unknown',
+            userName: user?.name ?? 'unknown',
+            action: AuditAction.creditLimitOverride,
+            payload: {
+              'accountId': account?.id ?? cartCustomerId,
+              'accountName': account?.name ?? cartCustomerId,
+              'currentBalanceSar': overrideContext.currentBalanceCents / 100,
+              'limitSar': overrideContext.limitCents / 100,
+              'newBalanceSar': overrideContext.newBalanceCents / 100,
+              'overBySar': overrideContext.overByCents / 100,
+              'saleId': saleId,
+            },
+            entityType: 'sale',
+            entityId: saleId,
+            description:
+                'تجاوز حد الائتمان بمبلغ ${(overrideContext.overByCents / 100).toStringAsFixed(2)} ر.س',
+          );
+        } catch (e) {
+          debugPrint('[PaymentScreen] credit-limit override audit failed: $e');
+        }
+      }
 
       if (saleResult.hadPriceCorrections) {
         for (final correction in saleResult.priceCorrections) {

@@ -7366,5 +7366,25 @@
   "refundAmountExceedsOriginal": "Refund amount exceeds original",
   "filterCompletedOnly": "Completed only",
   "filterCompletedOnlyDesc": "Non-completed sales are hidden",
-  "pullToRefresh": "Pull to refresh"
+  "pullToRefresh": "Pull to refresh",
+  "creditLimitWarningSnackbar": "Warning: balance will reach {percent}% of credit limit",
+  "@creditLimitWarningSnackbar": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "creditLimitExceededTitle": "Credit limit exceeded",
+  "creditLimitExceededBody": "New balance ({newBalance} SAR) exceeds the credit limit ({limit} SAR) by {overBy} SAR.",
+  "@creditLimitExceededBody": {
+    "placeholders": {
+      "newBalance": {"type": "String"},
+      "limit": {"type": "String"},
+      "overBy": {"type": "String"}
+    }
+  },
+  "creditLimitOverrideButton": "Override with manager approval",
+  "creditLimitBlockButton": "Cancel operation",
+  "creditLimitOverrideAction": "Credit limit override"
 }

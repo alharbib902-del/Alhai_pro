@@ -14275,4 +14275,27 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get pullToRefresh => 'اسحب للتحديث';
+
+  @override
+  String creditLimitWarningSnackbar(int percent) {
+    return 'تحذير: الرصيد سيصل إلى $percent% من حد الائتمان';
+  }
+
+  @override
+  String get creditLimitExceededTitle => 'تجاوز حد الائتمان';
+
+  @override
+  String creditLimitExceededBody(
+      String newBalance, String limit, String overBy) {
+    return 'الرصيد الجديد ($newBalance ر.س) يتجاوز حد الائتمان ($limit ر.س) بمبلغ $overBy ر.س.';
+  }
+
+  @override
+  String get creditLimitOverrideButton => 'تجاوز بموافقة المدير';
+
+  @override
+  String get creditLimitBlockButton => 'إلغاء العملية';
+
+  @override
+  String get creditLimitOverrideAction => 'تجاوز حد الائتمان';
 }

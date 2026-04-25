@@ -14252,4 +14252,27 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pullToRefresh => 'Pull to refresh';
+
+  @override
+  String creditLimitWarningSnackbar(int percent) {
+    return 'Warning: balance will reach $percent% of credit limit';
+  }
+
+  @override
+  String get creditLimitExceededTitle => 'Credit limit exceeded';
+
+  @override
+  String creditLimitExceededBody(
+      String newBalance, String limit, String overBy) {
+    return 'New balance ($newBalance SAR) exceeds the credit limit ($limit SAR) by $overBy SAR.';
+  }
+
+  @override
+  String get creditLimitOverrideButton => 'Override with manager approval';
+
+  @override
+  String get creditLimitBlockButton => 'Cancel operation';
+
+  @override
+  String get creditLimitOverrideAction => 'Credit limit override';
 }

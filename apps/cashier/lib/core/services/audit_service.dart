@@ -195,6 +195,44 @@ class AuditService {
         : 'تسجيل دفعة من $accountName بمبلغ ${amount.abs()} ر.س',
   );
 
+  /// P0-13: Log a credit-limit override approved by a manager PIN.
+  ///
+  /// Called whenever the cashier proceeds with a credit obligation that
+  /// would push a customer past their `accounts.creditLimit`. The audit
+  /// trail captures who approved it, what the limit was, and how far
+  /// the override pushed the balance — required for risk-management
+  /// review and (in regulated tenants) compliance audit.
+  Future<void> logCreditLimitOverride({
+    required String storeId,
+    required String userId,
+    required String userName,
+    required String accountId,
+    required String accountName,
+    required int currentBalanceCents,
+    required int limitCents,
+    required int newBalanceCents,
+    required int overByCents,
+    String? entityType,
+    String? entityId,
+  }) => _append(
+    storeId: storeId,
+    userId: userId,
+    userName: userName,
+    action: AuditAction.creditLimitOverride,
+    entityType: entityType ?? 'account',
+    entityId: entityId ?? accountId,
+    newValue: {
+      'accountId': accountId,
+      'accountName': accountName,
+      'currentBalanceSar': currentBalanceCents / 100,
+      'limitSar': limitCents / 100,
+      'newBalanceSar': newBalanceCents / 100,
+      'overBySar': overByCents / 100,
+    },
+    description:
+        'تجاوز حد الائتمان لـ $accountName بمبلغ ${(overByCents / 100).toStringAsFixed(2)} ر.س',
+  );
+
   // ============================================================================
   // SHIFT OPERATIONS
   // ============================================================================

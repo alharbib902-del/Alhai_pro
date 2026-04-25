@@ -7226,5 +7226,25 @@
   "refundAmountExceedsOriginal": "المبلغ المسترد يتجاوز المبلغ الأصلي",
   "filterCompletedOnly": "المكتملة فقط",
   "filterCompletedOnlyDesc": "المبيعات غير المكتملة مخفية",
-  "pullToRefresh": "اسحب للتحديث"
+  "pullToRefresh": "اسحب للتحديث",
+  "creditLimitWarningSnackbar": "تحذير: الرصيد سيصل إلى {percent}% من حد الائتمان",
+  "@creditLimitWarningSnackbar": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "creditLimitExceededTitle": "تجاوز حد الائتمان",
+  "creditLimitExceededBody": "الرصيد الجديد ({newBalance} ر.س) يتجاوز حد الائتمان ({limit} ر.س) بمبلغ {overBy} ر.س.",
+  "@creditLimitExceededBody": {
+    "placeholders": {
+      "newBalance": {"type": "String"},
+      "limit": {"type": "String"},
+      "overBy": {"type": "String"}
+    }
+  },
+  "creditLimitOverrideButton": "تجاوز بموافقة المدير",
+  "creditLimitBlockButton": "إلغاء العملية",
+  "creditLimitOverrideAction": "تجاوز حد الائتمان"
 }

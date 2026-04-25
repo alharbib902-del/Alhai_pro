@@ -46,6 +46,8 @@ export 'src/services/payment/payment_gateway.dart';
 export 'src/services/manager_approval_service.dart';
 export 'src/services/zatca_service.dart';
 export 'src/services/zatca_invoice_mapper.dart';
+export 'src/services/credit_limit_enforcer.dart';
+export 'src/widgets/credit_limit_dialog.dart';
 export 'src/services/whatsapp_service.dart';
 export 'src/services/whatsapp_receipt_service.dart';
 export 'src/services/customer_display/customer_display_service.dart';

@@ -26419,6 +26419,43 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'اسحب للتحديث'**
   String get pullToRefresh;
+
+  /// No description provided for @creditLimitWarningSnackbar.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحذير: الرصيد سيصل إلى {percent}% من حد الائتمان'**
+  String creditLimitWarningSnackbar(int percent);
+
+  /// No description provided for @creditLimitExceededTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تجاوز حد الائتمان'**
+  String get creditLimitExceededTitle;
+
+  /// No description provided for @creditLimitExceededBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرصيد الجديد ({newBalance} ر.س) يتجاوز حد الائتمان ({limit} ر.س) بمبلغ {overBy} ر.س.'**
+  String creditLimitExceededBody(
+      String newBalance, String limit, String overBy);
+
+  /// No description provided for @creditLimitOverrideButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'تجاوز بموافقة المدير'**
+  String get creditLimitOverrideButton;
+
+  /// No description provided for @creditLimitBlockButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلغاء العملية'**
+  String get creditLimitBlockButton;
+
+  /// No description provided for @creditLimitOverrideAction.
+  ///
+  /// In ar, this message translates to:
+  /// **'تجاوز حد الائتمان'**
+  String get creditLimitOverrideAction;
 }
 
 class _AppLocalizationsDelegate
