@@ -75,6 +75,8 @@ part 'app_database.g.dart';
     OrgProductsTable,
     // الفواتير الرسمية
     InvoicesTable,
+    // عداد ICV (Wave 3b-2b)
+    InvoiceCounterTable,
     // طابور ZATCA offline + dead-letter
     ZatcaOfflineQueueTable,
     ZatcaDeadLetterTable,
@@ -121,6 +123,8 @@ part 'app_database.g.dart';
     InvoicesDao,
     // DAO طابور ZATCA offline
     ZatcaOfflineQueueDao,
+    // DAO عداد ICV (Wave 3b-2b)
+    InvoiceCounterDao,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -137,7 +141,7 @@ class AppDatabase extends _$AppDatabase {
   late final DatabaseBackupService backupService = DatabaseBackupService(this);
 
   @override
-  int get schemaVersion => 48;
+  int get schemaVersion => 49;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -1162,6 +1166,70 @@ class AppDatabase extends _$AppDatabase {
           '[Migration v48] inventory_movements unification: added '
           'unit_cost_cents and remapped 4 legacy type strings to '
           'canonical receive/adjust.',
+        );
+
+      case 49:
+        // Sprint 1 / Wave 3b-2b (P0-04 closure): ZATCA Phase-2 plumbing.
+        //
+        // 1. Five new columns on `invoices` to capture the output of
+        //    `ZatcaInvoiceService.processInvoice` — signed UBL XML,
+        //    reportingStatus enum (text), warnings/errors JSON
+        //    arrays, and the Invoice Counter Value (ICV / BT-X).
+        //    All nullable so a Phase-1-only row stays valid; Phase-2
+        //    is a per-store opt-in via store_settings.
+        //
+        // 2. Six new structured-address columns on `stores`. ZATCA
+        //    Phase-2 doesn't accept the legacy free-text address; the
+        //    seller's address must be broken into street/building/
+        //    plot/district/postal/additional. The Phase-2 enable
+        //    toggle in admin refuses to flip ON until these are
+        //    populated for the store.
+        //
+        // 3. New table `invoice_counter` keyed (storeId, invoiceType)
+        //    holds the monotonic ICV. `InvoiceCounterDao.nextIcv`
+        //    bumps it via `INSERT ... ON CONFLICT ... DO UPDATE
+        //    RETURNING value`, single round-trip and lock per call.
+        await customStatement(
+          'ALTER TABLE invoices ADD COLUMN signed_xml TEXT',
+        );
+        await customStatement(
+          'ALTER TABLE invoices ADD COLUMN reporting_status TEXT',
+        );
+        await customStatement(
+          'ALTER TABLE invoices ADD COLUMN zatca_warnings TEXT',
+        );
+        await customStatement(
+          'ALTER TABLE invoices ADD COLUMN zatca_errors TEXT',
+        );
+        await customStatement(
+          'ALTER TABLE invoices ADD COLUMN icv INTEGER',
+        );
+
+        await customStatement(
+          'ALTER TABLE stores ADD COLUMN street_name TEXT',
+        );
+        await customStatement(
+          'ALTER TABLE stores ADD COLUMN building_number TEXT',
+        );
+        await customStatement(
+          'ALTER TABLE stores ADD COLUMN plot_identification TEXT',
+        );
+        await customStatement(
+          'ALTER TABLE stores ADD COLUMN district TEXT',
+        );
+        await customStatement(
+          'ALTER TABLE stores ADD COLUMN postal_code TEXT',
+        );
+        await customStatement(
+          'ALTER TABLE stores ADD COLUMN additional_address_number TEXT',
+        );
+
+        await m.createTable(invoiceCounterTable);
+
+        debugPrint(
+          '[Migration v49] ZATCA Phase-2 plumbing: 5 invoice columns '
+          '(signed_xml, reporting_status, warnings, errors, icv), '
+          '6 store address columns, invoice_counter table created.',
         );
 
       default:

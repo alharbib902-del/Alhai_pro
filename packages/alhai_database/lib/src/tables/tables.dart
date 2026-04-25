@@ -51,6 +51,7 @@ export 'pos_terminals_table.dart';
 export 'org_products_table.dart';
 
 // الفواتير الرسمية
+export 'invoice_counter_table.dart';
 export 'invoices_table.dart';
 
 // جداول المزامنة

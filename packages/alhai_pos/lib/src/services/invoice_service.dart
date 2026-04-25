@@ -1,10 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_sync/alhai_sync.dart';
+import 'package:alhai_zatca/alhai_zatca.dart' as zatca;
 
 import 'receipt_pdf_generator.dart';
+import 'zatca_invoice_mapper.dart';
 import 'zatca_service.dart';
 
 /// يُرفع عندما يستحيل توليد رمز ZATCA QR المطلوب لفاتورة ضريبية
@@ -67,6 +71,22 @@ class InvoiceService {
   /// If null or returns Duration.zero, `DateTime.now()` is used as-is.
   final Duration Function()? _clockOffsetProvider;
 
+  /// Wave 3b-2b: optional ZATCA Phase-2 service. When wired AND
+  /// [_isZatcaPhase2EnabledFor] returns true for the sale's store,
+  /// every newly-created invoice is also signed and submitted to the
+  /// ZATCA portal. When null OR the per-store flag is off, the legacy
+  /// Phase-1-only flow runs unchanged (TLV QR, no UBL XML, no signing).
+  /// `processInvoice` itself never throws — failures land in the
+  /// returned invoice's `errors` list and we persist them so the cashier
+  /// can retry from the queue UI without losing the receipt.
+  final zatca.ZatcaInvoiceService? _zatcaInvoiceService;
+
+  /// Per-store Phase-2 toggle. Returns `true` when the store has
+  /// completed onboarding (cert installed) AND the admin flipped the
+  /// switch ON. Defaults to "always off" — keeps stores that haven't
+  /// onboarded on the legacy path until they explicitly opt in.
+  final Future<bool> Function(String storeId)? _isZatcaPhase2EnabledFor;
+
   static const _uuid = Uuid();
 
   InvoiceService({
@@ -74,10 +94,14 @@ class InvoiceService {
     SyncService? syncService,
     ImageUploadService? uploadService,
     Duration Function()? clockOffsetProvider,
+    zatca.ZatcaInvoiceService? zatcaInvoiceService,
+    Future<bool> Function(String storeId)? isZatcaPhase2EnabledFor,
   }) : _db = db,
        _syncService = syncService,
        _uploadService = uploadService,
-       _clockOffsetProvider = clockOffsetProvider;
+       _clockOffsetProvider = clockOffsetProvider,
+       _zatcaInvoiceService = zatcaInvoiceService,
+       _isZatcaPhase2EnabledFor = isZatcaPhase2EnabledFor;
 
   /// Get a corrected timestamp that accounts for device clock drift.
   /// ZATCA requires accurate timestamps; this uses the server-measured offset.
@@ -256,6 +280,24 @@ class InvoiceService {
           }
         }
 
+        // Wave 3b-2b: ZATCA Phase-2 sign + submit (per-store opt-in).
+        // Runs after the local insert so we always have a row to update,
+        // and before the PDF so the receipt can carry the Phase-2 QR
+        // when signing succeeds. Failure is non-blocking — the cashier
+        // still gets a Phase-1-only receipt and the queue retry UI can
+        // pick up failed invoices later.
+        await _maybeProcessZatcaPhase2(
+          invoiceId: id,
+          sale: sale,
+          items: items,
+          invoiceNumber: invoiceNumber,
+          invoiceType: type,
+          customerVatNumber: customerVatNumber,
+          customerName: sale.customerName,
+          customerAddress: customerAddress,
+          issuedAt: now,
+        );
+
         // توليد وأرشفة PDF
         await _generateAndArchivePdf(
           invoiceId: id,
@@ -385,6 +427,22 @@ class InvoiceService {
           }
         }
       }
+
+      // Wave 3b-2b: ZATCA Phase-2 for credit notes. Same gating + non-
+      // blocking semantics as createFromSale — when the store has
+      // Phase-2 enabled, the credit note is signed and submitted with
+      // type code 381 + a billingReferenceId pointing at the original.
+      await _maybeProcessZatcaPhase2CreditNote(
+        invoiceId: id,
+        storeId: storeId,
+        invoiceNumber: invoiceNumber,
+        refInvoiceId: refInvoiceId,
+        reason: reason,
+        amount: amount,
+        taxAmount: taxAmount,
+        customerName: customerName,
+        issuedAt: now,
+      );
 
       return _db.invoicesDao.getById(id);
     } catch (e) {
@@ -521,12 +579,19 @@ class InvoiceService {
     required InvoiceType invoiceType,
   }) async {
     try {
+      // Wave 3b-2b: re-fetch the row so we pick up the Phase-2 QR if
+      // `_maybeProcessZatcaPhase2` ran ahead of this and overwrote it.
+      // Falls through to the Phase-1 TLV inside the generator when null.
+      final latest = await _db.invoicesDao.getById(invoiceId);
+      final qrOverride = latest?.zatcaQr;
+
       // توليد PDF
       final pdfBytes = await ReceiptPdfGenerator.generate(
         sale: sale,
         items: items,
         store: store,
         cashierName: cashierName,
+        qrOverride: qrOverride,
       );
 
       // أرشفة في Supabase Storage (إذا متاح)
@@ -546,5 +611,167 @@ class InvoiceService {
         debugPrint('InvoiceService: PDF generation/archive failed: $e');
       }
     }
+  }
+
+  // ═══════════ ZATCA Phase-2 ═══════════
+
+  /// Run the ZATCA Phase-2 pipeline for a freshly-created invoice.
+  ///
+  /// Returns silently on any of:
+  ///   - service or flag callback not wired (legacy app)
+  ///   - flag returns false for this store (per-store opt-out)
+  ///   - the store row is missing structured-address columns
+  ///   - the ZATCA service returns an error/queued status
+  ///
+  /// In all of those cases the local Phase-1 row remains the source of
+  /// truth — the only effect is that `signed_xml` / `reporting_status`
+  /// stay null and the queue UI can pick the failed/queued ones up
+  /// later. This protects the cashier flow from being blocked by
+  /// network or signing problems.
+  Future<void> _maybeProcessZatcaPhase2({
+    required String invoiceId,
+    required SalesTableData sale,
+    required List<SaleItemsTableData> items,
+    required String invoiceNumber,
+    required InvoiceType invoiceType,
+    required String? customerVatNumber,
+    required String? customerName,
+    required String? customerAddress,
+    required DateTime issuedAt,
+  }) async {
+    final svc = _zatcaInvoiceService;
+    final flag = _isZatcaPhase2EnabledFor;
+    if (svc == null || flag == null) return;
+
+    try {
+      if (!await flag(sale.storeId)) return;
+
+      final storeRow = await _db.storesDao.getStoreById(sale.storeId);
+      if (storeRow == null) return;
+
+      final icv = await _db.invoiceCounterDao.nextIcv(
+        storeId: sale.storeId,
+        invoiceType: invoiceType.value,
+      );
+
+      final zatcaInvoice = ZatcaInvoiceMapper.fromSale(
+        sale: sale,
+        items: items,
+        store: storeRow,
+        invoiceNumber: invoiceNumber,
+        invoiceCounterValue: icv,
+        type: invoiceType,
+        issuedAt: issuedAt,
+        customerVatNumber: customerVatNumber,
+        customerName: customerName,
+        customerAddress: customerAddress,
+      );
+
+      final processed = await svc.processInvoice(
+        invoice: zatcaInvoice,
+        storeId: sale.storeId,
+      );
+
+      await _persistZatcaResult(invoiceId: invoiceId, result: processed);
+    } catch (e, st) {
+      if (kDebugMode) {
+        debugPrint(
+          '[InvoiceService] ZATCA Phase-2 pipeline failed (non-blocking): '
+          '$e\n$st',
+        );
+      }
+    }
+  }
+
+  /// Credit-note variant of `_maybeProcessZatcaPhase2`. Same gating; the
+  /// difference is the `ZatcaInvoiceMapper.fromCreditNote` path and the
+  /// fact we look up the original invoice number to populate
+  /// `billingReferenceId`.
+  Future<void> _maybeProcessZatcaPhase2CreditNote({
+    required String invoiceId,
+    required String storeId,
+    required String invoiceNumber,
+    required String refInvoiceId,
+    required String reason,
+    required double amount,
+    required double taxAmount,
+    required String? customerName,
+    required DateTime issuedAt,
+  }) async {
+    final svc = _zatcaInvoiceService;
+    final flag = _isZatcaPhase2EnabledFor;
+    if (svc == null || flag == null) return;
+
+    try {
+      if (!await flag(storeId)) return;
+
+      final storeRow = await _db.storesDao.getStoreById(storeId);
+      if (storeRow == null) return;
+
+      // Resolve the original invoice's number — the credit-note UBL
+      // expects the human-readable number, not the DB id.
+      final original = await _db.invoicesDao.getById(refInvoiceId);
+      final refNumber = original?.invoiceNumber ?? refInvoiceId;
+      final originalLines = original?.saleId == null
+          ? const <SaleItemsTableData>[]
+          : await _db.saleItemsDao.getItemsBySaleId(original!.saleId!);
+
+      final icv = await _db.invoiceCounterDao.nextIcv(
+        storeId: storeId,
+        invoiceType: InvoiceType.creditNote.value,
+      );
+
+      final zatcaInvoice = ZatcaInvoiceMapper.fromCreditNote(
+        store: storeRow,
+        invoiceNumber: invoiceNumber,
+        invoiceCounterValue: icv,
+        issuedAt: issuedAt,
+        refInvoiceNumber: refNumber,
+        reason: reason,
+        subtotalCents: (amount * 100).round(),
+        taxCents: (taxAmount * 100).round(),
+        customerName: customerName,
+        originalLines: originalLines,
+      );
+
+      final processed = await svc.processInvoice(
+        invoice: zatcaInvoice,
+        storeId: storeId,
+      );
+
+      await _persistZatcaResult(invoiceId: invoiceId, result: processed);
+    } catch (e, st) {
+      if (kDebugMode) {
+        debugPrint(
+          '[InvoiceService] ZATCA Phase-2 credit-note pipeline failed '
+          '(non-blocking): $e\n$st',
+        );
+      }
+    }
+  }
+
+  /// Persist the post-process fields from a `ZatcaInvoice` back to the
+  /// local `invoices` row. JSON-encodes warnings/errors as arrays so a
+  /// future schema migration can flip the columns to typed JSON1 paths
+  /// without changing call sites.
+  Future<void> _persistZatcaResult({
+    required String invoiceId,
+    required zatca.ZatcaInvoice result,
+  }) async {
+    await _db.invoicesDao.updateZatcaPhase2Result(
+      id: invoiceId,
+      signedXml: result.signedXml,
+      reportingStatus: result.reportingStatus.name,
+      warningsJson: result.warnings.isNotEmpty
+          ? jsonEncode(result.warnings)
+          : null,
+      errorsJson: result.errors.isNotEmpty ? jsonEncode(result.errors) : null,
+      // Phase-2 enhanced QR replaces the Phase-1 TLV when signing
+      // succeeds (it embeds the signature and cert info — strict
+      // superset of the Phase-1 fields).
+      zatcaQr: result.qrCode,
+      zatcaHash: result.invoiceHash,
+      icv: result.invoiceCounterValue,
+    );
   }
 }

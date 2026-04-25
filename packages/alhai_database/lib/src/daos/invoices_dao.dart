@@ -184,6 +184,51 @@ class InvoicesDao extends DatabaseAccessor<AppDatabase>
     );
   }
 
+  /// Wave 3b-2b: persist the result of `ZatcaInvoiceService.processInvoice`
+  /// back to the local invoices row. All parameters except [id] are
+  /// optional / nullable so callers can update a partial set (e.g.
+  /// status-only after a re-submit, or warnings-only after offline retry)
+  /// without clobbering the others.
+  ///
+  /// Each `Value(null)` replaces the column; `null` itself (i.e. omitted)
+  /// leaves it untouched. Translates to `Value.absent()` for omitted
+  /// args via the named-default pattern below.
+  Future<int> updateZatcaPhase2Result({
+    required String id,
+    String? signedXml,
+    String? reportingStatus,
+    String? warningsJson,
+    String? errorsJson,
+    String? zatcaQr,
+    String? zatcaHash,
+    int? icv,
+    bool clearWarnings = false,
+    bool clearErrors = false,
+  }) {
+    return (update(invoicesTable)..where((i) => i.id.equals(id))).write(
+      InvoicesTableCompanion(
+        signedXml: signedXml != null ? Value(signedXml) : const Value.absent(),
+        reportingStatus: reportingStatus != null
+            ? Value(reportingStatus)
+            : const Value.absent(),
+        zatcaWarnings: clearWarnings
+            ? const Value(null)
+            : (warningsJson != null
+                  ? Value(warningsJson)
+                  : const Value.absent()),
+        zatcaErrors: clearErrors
+            ? const Value(null)
+            : (errorsJson != null
+                  ? Value(errorsJson)
+                  : const Value.absent()),
+        zatcaQr: zatcaQr != null ? Value(zatcaQr) : const Value.absent(),
+        zatcaHash: zatcaHash != null ? Value(zatcaHash) : const Value.absent(),
+        icv: icv != null ? Value(icv) : const Value.absent(),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
+  }
+
   /// تسجيل دفعة
   ///
   /// `amount` is SAR (double). Converts to int cents at the boundary per

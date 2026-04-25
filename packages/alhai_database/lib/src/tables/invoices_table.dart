@@ -85,6 +85,35 @@ class InvoicesTable extends Table {
   TextColumn get zatcaQr => text().nullable()();
   TextColumn get zatcaUuid => text().nullable()();
 
+  // Wave 3b-2b: Phase-2 outputs from ZatcaInvoiceService.processInvoice.
+  // All nullable so a Phase-1-only row stays valid (Phase-2 is a
+  // per-store opt-in via store_settings.zatca_phase2_enabled).
+  /// Base64-encoded XAdES-signed UBL XML returned by the signer.
+  /// ~2-10KB per invoice; local-only by design (ZATCA portal already
+  /// has its own copy, we don't sync this column to Supabase).
+  TextColumn get signedXml => text().nullable()();
+
+  /// One of: pending, reported, cleared, failed, queued. Mirrors the
+  /// `ReportingStatus` enum in alhai_zatca; persisted as text so a DB
+  /// schema bump doesn't follow every enum addition.
+  TextColumn get reportingStatus => text().nullable()();
+
+  /// JSON array of warning strings from ZatcaInvoiceService (compliance
+  /// checker non-blocking warnings + cert near-expiry hints + ZATCA
+  /// portal warnings). UI can show these when the cashier opens the
+  /// invoice; they don't gate the receipt.
+  TextColumn get zatcaWarnings => text().nullable()();
+
+  /// JSON array of error strings — populated when reportingStatus is
+  /// `failed` or `queued`. Read this for retry diagnostics.
+  TextColumn get zatcaErrors => text().nullable()();
+
+  /// Invoice Counter Value (ICV / BT-X) — monotonic per (storeId,
+  /// invoiceType). Required by ZATCA Phase-2 for the chain integrity
+  /// check on the portal side. Populated from `invoice_counter` table
+  /// at `createFromSale` time.
+  IntColumn get icv => integer().nullable()();
+
   // ═══════════ الأرشفة ═══════════
   TextColumn get pdfUrl => text().nullable()(); // رابط PDF في Supabase Storage
   TextColumn get notes => text().nullable()();

@@ -40,6 +40,7 @@ export 'org_products_dao.dart';
 export 'stock_transfers_dao.dart';
 
 // DAO الفواتير
+export 'invoice_counter_dao.dart';
 export 'invoices_dao.dart';
 
 // DAOs المزامنة

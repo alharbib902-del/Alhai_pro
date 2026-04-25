@@ -67,6 +67,42 @@ class $StoresTableTable extends StoresTable
   late final GeneratedColumn<String> commercialReg = GeneratedColumn<String>(
       'commercial_reg', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _streetNameMeta =
+      const VerificationMeta('streetName');
+  @override
+  late final GeneratedColumn<String> streetName = GeneratedColumn<String>(
+      'street_name', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _buildingNumberMeta =
+      const VerificationMeta('buildingNumber');
+  @override
+  late final GeneratedColumn<String> buildingNumber = GeneratedColumn<String>(
+      'building_number', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _plotIdentificationMeta =
+      const VerificationMeta('plotIdentification');
+  @override
+  late final GeneratedColumn<String> plotIdentification =
+      GeneratedColumn<String>('plot_identification', aliasedName, true,
+          type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _districtMeta =
+      const VerificationMeta('district');
+  @override
+  late final GeneratedColumn<String> district = GeneratedColumn<String>(
+      'district', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _postalCodeMeta =
+      const VerificationMeta('postalCode');
+  @override
+  late final GeneratedColumn<String> postalCode = GeneratedColumn<String>(
+      'postal_code', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _additionalAddressNumberMeta =
+      const VerificationMeta('additionalAddressNumber');
+  @override
+  late final GeneratedColumn<String> additionalAddressNumber =
+      GeneratedColumn<String>('additional_address_number', aliasedName, true,
+          type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _currencyMeta =
       const VerificationMeta('currency');
   @override
@@ -130,6 +166,12 @@ class $StoresTableTable extends StoresTable
         logo,
         taxNumber,
         commercialReg,
+        streetName,
+        buildingNumber,
+        plotIdentification,
+        district,
+        postalCode,
+        additionalAddressNumber,
         currency,
         timezone,
         isActive,
@@ -197,6 +239,41 @@ class $StoresTableTable extends StoresTable
           commercialReg.isAcceptableOrUnknown(
               data['commercial_reg']!, _commercialRegMeta));
     }
+    if (data.containsKey('street_name')) {
+      context.handle(
+          _streetNameMeta,
+          streetName.isAcceptableOrUnknown(
+              data['street_name']!, _streetNameMeta));
+    }
+    if (data.containsKey('building_number')) {
+      context.handle(
+          _buildingNumberMeta,
+          buildingNumber.isAcceptableOrUnknown(
+              data['building_number']!, _buildingNumberMeta));
+    }
+    if (data.containsKey('plot_identification')) {
+      context.handle(
+          _plotIdentificationMeta,
+          plotIdentification.isAcceptableOrUnknown(
+              data['plot_identification']!, _plotIdentificationMeta));
+    }
+    if (data.containsKey('district')) {
+      context.handle(_districtMeta,
+          district.isAcceptableOrUnknown(data['district']!, _districtMeta));
+    }
+    if (data.containsKey('postal_code')) {
+      context.handle(
+          _postalCodeMeta,
+          postalCode.isAcceptableOrUnknown(
+              data['postal_code']!, _postalCodeMeta));
+    }
+    if (data.containsKey('additional_address_number')) {
+      context.handle(
+          _additionalAddressNumberMeta,
+          additionalAddressNumber.isAcceptableOrUnknown(
+              data['additional_address_number']!,
+              _additionalAddressNumberMeta));
+    }
     if (data.containsKey('currency')) {
       context.handle(_currencyMeta,
           currency.isAcceptableOrUnknown(data['currency']!, _currencyMeta));
@@ -258,6 +335,19 @@ class $StoresTableTable extends StoresTable
           .read(DriftSqlType.string, data['${effectivePrefix}tax_number']),
       commercialReg: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}commercial_reg']),
+      streetName: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}street_name']),
+      buildingNumber: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}building_number']),
+      plotIdentification: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}plot_identification']),
+      district: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}district']),
+      postalCode: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}postal_code']),
+      additionalAddressNumber: attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}additional_address_number']),
       currency: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}currency'])!,
       timezone: attachedDatabase.typeMapping
@@ -293,6 +383,12 @@ class StoresTableData extends DataClass implements Insertable<StoresTableData> {
   final String? logo;
   final String? taxNumber;
   final String? commercialReg;
+  final String? streetName;
+  final String? buildingNumber;
+  final String? plotIdentification;
+  final String? district;
+  final String? postalCode;
+  final String? additionalAddressNumber;
   final String currency;
   final String timezone;
   final bool isActive;
@@ -312,6 +408,12 @@ class StoresTableData extends DataClass implements Insertable<StoresTableData> {
       this.logo,
       this.taxNumber,
       this.commercialReg,
+      this.streetName,
+      this.buildingNumber,
+      this.plotIdentification,
+      this.district,
+      this.postalCode,
+      this.additionalAddressNumber,
       required this.currency,
       required this.timezone,
       required this.isActive,
@@ -350,6 +452,25 @@ class StoresTableData extends DataClass implements Insertable<StoresTableData> {
     }
     if (!nullToAbsent || commercialReg != null) {
       map['commercial_reg'] = Variable<String>(commercialReg);
+    }
+    if (!nullToAbsent || streetName != null) {
+      map['street_name'] = Variable<String>(streetName);
+    }
+    if (!nullToAbsent || buildingNumber != null) {
+      map['building_number'] = Variable<String>(buildingNumber);
+    }
+    if (!nullToAbsent || plotIdentification != null) {
+      map['plot_identification'] = Variable<String>(plotIdentification);
+    }
+    if (!nullToAbsent || district != null) {
+      map['district'] = Variable<String>(district);
+    }
+    if (!nullToAbsent || postalCode != null) {
+      map['postal_code'] = Variable<String>(postalCode);
+    }
+    if (!nullToAbsent || additionalAddressNumber != null) {
+      map['additional_address_number'] =
+          Variable<String>(additionalAddressNumber);
     }
     map['currency'] = Variable<String>(currency);
     map['timezone'] = Variable<String>(timezone);
@@ -390,6 +511,24 @@ class StoresTableData extends DataClass implements Insertable<StoresTableData> {
       commercialReg: commercialReg == null && nullToAbsent
           ? const Value.absent()
           : Value(commercialReg),
+      streetName: streetName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(streetName),
+      buildingNumber: buildingNumber == null && nullToAbsent
+          ? const Value.absent()
+          : Value(buildingNumber),
+      plotIdentification: plotIdentification == null && nullToAbsent
+          ? const Value.absent()
+          : Value(plotIdentification),
+      district: district == null && nullToAbsent
+          ? const Value.absent()
+          : Value(district),
+      postalCode: postalCode == null && nullToAbsent
+          ? const Value.absent()
+          : Value(postalCode),
+      additionalAddressNumber: additionalAddressNumber == null && nullToAbsent
+          ? const Value.absent()
+          : Value(additionalAddressNumber),
       currency: Value(currency),
       timezone: Value(timezone),
       isActive: Value(isActive),
@@ -421,6 +560,14 @@ class StoresTableData extends DataClass implements Insertable<StoresTableData> {
       logo: serializer.fromJson<String?>(json['logo']),
       taxNumber: serializer.fromJson<String?>(json['taxNumber']),
       commercialReg: serializer.fromJson<String?>(json['commercialReg']),
+      streetName: serializer.fromJson<String?>(json['streetName']),
+      buildingNumber: serializer.fromJson<String?>(json['buildingNumber']),
+      plotIdentification:
+          serializer.fromJson<String?>(json['plotIdentification']),
+      district: serializer.fromJson<String?>(json['district']),
+      postalCode: serializer.fromJson<String?>(json['postalCode']),
+      additionalAddressNumber:
+          serializer.fromJson<String?>(json['additionalAddressNumber']),
       currency: serializer.fromJson<String>(json['currency']),
       timezone: serializer.fromJson<String>(json['timezone']),
       isActive: serializer.fromJson<bool>(json['isActive']),
@@ -445,6 +592,13 @@ class StoresTableData extends DataClass implements Insertable<StoresTableData> {
       'logo': serializer.toJson<String?>(logo),
       'taxNumber': serializer.toJson<String?>(taxNumber),
       'commercialReg': serializer.toJson<String?>(commercialReg),
+      'streetName': serializer.toJson<String?>(streetName),
+      'buildingNumber': serializer.toJson<String?>(buildingNumber),
+      'plotIdentification': serializer.toJson<String?>(plotIdentification),
+      'district': serializer.toJson<String?>(district),
+      'postalCode': serializer.toJson<String?>(postalCode),
+      'additionalAddressNumber':
+          serializer.toJson<String?>(additionalAddressNumber),
       'currency': serializer.toJson<String>(currency),
       'timezone': serializer.toJson<String>(timezone),
       'isActive': serializer.toJson<bool>(isActive),
@@ -467,6 +621,12 @@ class StoresTableData extends DataClass implements Insertable<StoresTableData> {
           Value<String?> logo = const Value.absent(),
           Value<String?> taxNumber = const Value.absent(),
           Value<String?> commercialReg = const Value.absent(),
+          Value<String?> streetName = const Value.absent(),
+          Value<String?> buildingNumber = const Value.absent(),
+          Value<String?> plotIdentification = const Value.absent(),
+          Value<String?> district = const Value.absent(),
+          Value<String?> postalCode = const Value.absent(),
+          Value<String?> additionalAddressNumber = const Value.absent(),
           String? currency,
           String? timezone,
           bool? isActive,
@@ -487,6 +647,17 @@ class StoresTableData extends DataClass implements Insertable<StoresTableData> {
         taxNumber: taxNumber.present ? taxNumber.value : this.taxNumber,
         commercialReg:
             commercialReg.present ? commercialReg.value : this.commercialReg,
+        streetName: streetName.present ? streetName.value : this.streetName,
+        buildingNumber:
+            buildingNumber.present ? buildingNumber.value : this.buildingNumber,
+        plotIdentification: plotIdentification.present
+            ? plotIdentification.value
+            : this.plotIdentification,
+        district: district.present ? district.value : this.district,
+        postalCode: postalCode.present ? postalCode.value : this.postalCode,
+        additionalAddressNumber: additionalAddressNumber.present
+            ? additionalAddressNumber.value
+            : this.additionalAddressNumber,
         currency: currency ?? this.currency,
         timezone: timezone ?? this.timezone,
         isActive: isActive ?? this.isActive,
@@ -510,6 +681,20 @@ class StoresTableData extends DataClass implements Insertable<StoresTableData> {
       commercialReg: data.commercialReg.present
           ? data.commercialReg.value
           : this.commercialReg,
+      streetName:
+          data.streetName.present ? data.streetName.value : this.streetName,
+      buildingNumber: data.buildingNumber.present
+          ? data.buildingNumber.value
+          : this.buildingNumber,
+      plotIdentification: data.plotIdentification.present
+          ? data.plotIdentification.value
+          : this.plotIdentification,
+      district: data.district.present ? data.district.value : this.district,
+      postalCode:
+          data.postalCode.present ? data.postalCode.value : this.postalCode,
+      additionalAddressNumber: data.additionalAddressNumber.present
+          ? data.additionalAddressNumber.value
+          : this.additionalAddressNumber,
       currency: data.currency.present ? data.currency.value : this.currency,
       timezone: data.timezone.present ? data.timezone.value : this.timezone,
       isActive: data.isActive.present ? data.isActive.value : this.isActive,
@@ -534,6 +719,12 @@ class StoresTableData extends DataClass implements Insertable<StoresTableData> {
           ..write('logo: $logo, ')
           ..write('taxNumber: $taxNumber, ')
           ..write('commercialReg: $commercialReg, ')
+          ..write('streetName: $streetName, ')
+          ..write('buildingNumber: $buildingNumber, ')
+          ..write('plotIdentification: $plotIdentification, ')
+          ..write('district: $district, ')
+          ..write('postalCode: $postalCode, ')
+          ..write('additionalAddressNumber: $additionalAddressNumber, ')
           ..write('currency: $currency, ')
           ..write('timezone: $timezone, ')
           ..write('isActive: $isActive, ')
@@ -546,25 +737,32 @@ class StoresTableData extends DataClass implements Insertable<StoresTableData> {
   }
 
   @override
-  int get hashCode => Object.hash(
-      id,
-      orgId,
-      name,
-      nameEn,
-      phone,
-      email,
-      address,
-      city,
-      logo,
-      taxNumber,
-      commercialReg,
-      currency,
-      timezone,
-      isActive,
-      createdAt,
-      updatedAt,
-      syncedAt,
-      deletedAt);
+  int get hashCode => Object.hashAll([
+        id,
+        orgId,
+        name,
+        nameEn,
+        phone,
+        email,
+        address,
+        city,
+        logo,
+        taxNumber,
+        commercialReg,
+        streetName,
+        buildingNumber,
+        plotIdentification,
+        district,
+        postalCode,
+        additionalAddressNumber,
+        currency,
+        timezone,
+        isActive,
+        createdAt,
+        updatedAt,
+        syncedAt,
+        deletedAt
+      ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -580,6 +778,12 @@ class StoresTableData extends DataClass implements Insertable<StoresTableData> {
           other.logo == this.logo &&
           other.taxNumber == this.taxNumber &&
           other.commercialReg == this.commercialReg &&
+          other.streetName == this.streetName &&
+          other.buildingNumber == this.buildingNumber &&
+          other.plotIdentification == this.plotIdentification &&
+          other.district == this.district &&
+          other.postalCode == this.postalCode &&
+          other.additionalAddressNumber == this.additionalAddressNumber &&
           other.currency == this.currency &&
           other.timezone == this.timezone &&
           other.isActive == this.isActive &&
@@ -601,6 +805,12 @@ class StoresTableCompanion extends UpdateCompanion<StoresTableData> {
   final Value<String?> logo;
   final Value<String?> taxNumber;
   final Value<String?> commercialReg;
+  final Value<String?> streetName;
+  final Value<String?> buildingNumber;
+  final Value<String?> plotIdentification;
+  final Value<String?> district;
+  final Value<String?> postalCode;
+  final Value<String?> additionalAddressNumber;
   final Value<String> currency;
   final Value<String> timezone;
   final Value<bool> isActive;
@@ -621,6 +831,12 @@ class StoresTableCompanion extends UpdateCompanion<StoresTableData> {
     this.logo = const Value.absent(),
     this.taxNumber = const Value.absent(),
     this.commercialReg = const Value.absent(),
+    this.streetName = const Value.absent(),
+    this.buildingNumber = const Value.absent(),
+    this.plotIdentification = const Value.absent(),
+    this.district = const Value.absent(),
+    this.postalCode = const Value.absent(),
+    this.additionalAddressNumber = const Value.absent(),
     this.currency = const Value.absent(),
     this.timezone = const Value.absent(),
     this.isActive = const Value.absent(),
@@ -642,6 +858,12 @@ class StoresTableCompanion extends UpdateCompanion<StoresTableData> {
     this.logo = const Value.absent(),
     this.taxNumber = const Value.absent(),
     this.commercialReg = const Value.absent(),
+    this.streetName = const Value.absent(),
+    this.buildingNumber = const Value.absent(),
+    this.plotIdentification = const Value.absent(),
+    this.district = const Value.absent(),
+    this.postalCode = const Value.absent(),
+    this.additionalAddressNumber = const Value.absent(),
     this.currency = const Value.absent(),
     this.timezone = const Value.absent(),
     this.isActive = const Value.absent(),
@@ -665,6 +887,12 @@ class StoresTableCompanion extends UpdateCompanion<StoresTableData> {
     Expression<String>? logo,
     Expression<String>? taxNumber,
     Expression<String>? commercialReg,
+    Expression<String>? streetName,
+    Expression<String>? buildingNumber,
+    Expression<String>? plotIdentification,
+    Expression<String>? district,
+    Expression<String>? postalCode,
+    Expression<String>? additionalAddressNumber,
     Expression<String>? currency,
     Expression<String>? timezone,
     Expression<bool>? isActive,
@@ -686,6 +914,13 @@ class StoresTableCompanion extends UpdateCompanion<StoresTableData> {
       if (logo != null) 'logo': logo,
       if (taxNumber != null) 'tax_number': taxNumber,
       if (commercialReg != null) 'commercial_reg': commercialReg,
+      if (streetName != null) 'street_name': streetName,
+      if (buildingNumber != null) 'building_number': buildingNumber,
+      if (plotIdentification != null) 'plot_identification': plotIdentification,
+      if (district != null) 'district': district,
+      if (postalCode != null) 'postal_code': postalCode,
+      if (additionalAddressNumber != null)
+        'additional_address_number': additionalAddressNumber,
       if (currency != null) 'currency': currency,
       if (timezone != null) 'timezone': timezone,
       if (isActive != null) 'is_active': isActive,
@@ -709,6 +944,12 @@ class StoresTableCompanion extends UpdateCompanion<StoresTableData> {
       Value<String?>? logo,
       Value<String?>? taxNumber,
       Value<String?>? commercialReg,
+      Value<String?>? streetName,
+      Value<String?>? buildingNumber,
+      Value<String?>? plotIdentification,
+      Value<String?>? district,
+      Value<String?>? postalCode,
+      Value<String?>? additionalAddressNumber,
       Value<String>? currency,
       Value<String>? timezone,
       Value<bool>? isActive,
@@ -729,6 +970,13 @@ class StoresTableCompanion extends UpdateCompanion<StoresTableData> {
       logo: logo ?? this.logo,
       taxNumber: taxNumber ?? this.taxNumber,
       commercialReg: commercialReg ?? this.commercialReg,
+      streetName: streetName ?? this.streetName,
+      buildingNumber: buildingNumber ?? this.buildingNumber,
+      plotIdentification: plotIdentification ?? this.plotIdentification,
+      district: district ?? this.district,
+      postalCode: postalCode ?? this.postalCode,
+      additionalAddressNumber:
+          additionalAddressNumber ?? this.additionalAddressNumber,
       currency: currency ?? this.currency,
       timezone: timezone ?? this.timezone,
       isActive: isActive ?? this.isActive,
@@ -776,6 +1024,25 @@ class StoresTableCompanion extends UpdateCompanion<StoresTableData> {
     if (commercialReg.present) {
       map['commercial_reg'] = Variable<String>(commercialReg.value);
     }
+    if (streetName.present) {
+      map['street_name'] = Variable<String>(streetName.value);
+    }
+    if (buildingNumber.present) {
+      map['building_number'] = Variable<String>(buildingNumber.value);
+    }
+    if (plotIdentification.present) {
+      map['plot_identification'] = Variable<String>(plotIdentification.value);
+    }
+    if (district.present) {
+      map['district'] = Variable<String>(district.value);
+    }
+    if (postalCode.present) {
+      map['postal_code'] = Variable<String>(postalCode.value);
+    }
+    if (additionalAddressNumber.present) {
+      map['additional_address_number'] =
+          Variable<String>(additionalAddressNumber.value);
+    }
     if (currency.present) {
       map['currency'] = Variable<String>(currency.value);
     }
@@ -817,6 +1084,12 @@ class StoresTableCompanion extends UpdateCompanion<StoresTableData> {
           ..write('logo: $logo, ')
           ..write('taxNumber: $taxNumber, ')
           ..write('commercialReg: $commercialReg, ')
+          ..write('streetName: $streetName, ')
+          ..write('buildingNumber: $buildingNumber, ')
+          ..write('plotIdentification: $plotIdentification, ')
+          ..write('district: $district, ')
+          ..write('postalCode: $postalCode, ')
+          ..write('additionalAddressNumber: $additionalAddressNumber, ')
           ..write('currency: $currency, ')
           ..write('timezone: $timezone, ')
           ..write('isActive: $isActive, ')
@@ -38571,6 +38844,35 @@ class $InvoicesTableTable extends InvoicesTable
   late final GeneratedColumn<String> zatcaUuid = GeneratedColumn<String>(
       'zatca_uuid', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _signedXmlMeta =
+      const VerificationMeta('signedXml');
+  @override
+  late final GeneratedColumn<String> signedXml = GeneratedColumn<String>(
+      'signed_xml', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _reportingStatusMeta =
+      const VerificationMeta('reportingStatus');
+  @override
+  late final GeneratedColumn<String> reportingStatus = GeneratedColumn<String>(
+      'reporting_status', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _zatcaWarningsMeta =
+      const VerificationMeta('zatcaWarnings');
+  @override
+  late final GeneratedColumn<String> zatcaWarnings = GeneratedColumn<String>(
+      'zatca_warnings', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _zatcaErrorsMeta =
+      const VerificationMeta('zatcaErrors');
+  @override
+  late final GeneratedColumn<String> zatcaErrors = GeneratedColumn<String>(
+      'zatca_errors', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _icvMeta = const VerificationMeta('icv');
+  @override
+  late final GeneratedColumn<int> icv = GeneratedColumn<int>(
+      'icv', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
   static const VerificationMeta _pdfUrlMeta = const VerificationMeta('pdfUrl');
   @override
   late final GeneratedColumn<String> pdfUrl = GeneratedColumn<String>(
@@ -38656,6 +38958,11 @@ class $InvoicesTableTable extends InvoicesTable
         zatcaHash,
         zatcaQr,
         zatcaUuid,
+        signedXml,
+        reportingStatus,
+        zatcaWarnings,
+        zatcaErrors,
+        icv,
         pdfUrl,
         notes,
         createdBy,
@@ -38812,6 +39119,32 @@ class $InvoicesTableTable extends InvoicesTable
       context.handle(_zatcaUuidMeta,
           zatcaUuid.isAcceptableOrUnknown(data['zatca_uuid']!, _zatcaUuidMeta));
     }
+    if (data.containsKey('signed_xml')) {
+      context.handle(_signedXmlMeta,
+          signedXml.isAcceptableOrUnknown(data['signed_xml']!, _signedXmlMeta));
+    }
+    if (data.containsKey('reporting_status')) {
+      context.handle(
+          _reportingStatusMeta,
+          reportingStatus.isAcceptableOrUnknown(
+              data['reporting_status']!, _reportingStatusMeta));
+    }
+    if (data.containsKey('zatca_warnings')) {
+      context.handle(
+          _zatcaWarningsMeta,
+          zatcaWarnings.isAcceptableOrUnknown(
+              data['zatca_warnings']!, _zatcaWarningsMeta));
+    }
+    if (data.containsKey('zatca_errors')) {
+      context.handle(
+          _zatcaErrorsMeta,
+          zatcaErrors.isAcceptableOrUnknown(
+              data['zatca_errors']!, _zatcaErrorsMeta));
+    }
+    if (data.containsKey('icv')) {
+      context.handle(
+          _icvMeta, icv.isAcceptableOrUnknown(data['icv']!, _icvMeta));
+    }
     if (data.containsKey('pdf_url')) {
       context.handle(_pdfUrlMeta,
           pdfUrl.isAcceptableOrUnknown(data['pdf_url']!, _pdfUrlMeta));
@@ -38919,6 +39252,16 @@ class $InvoicesTableTable extends InvoicesTable
           .read(DriftSqlType.string, data['${effectivePrefix}zatca_qr']),
       zatcaUuid: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}zatca_uuid']),
+      signedXml: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}signed_xml']),
+      reportingStatus: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}reporting_status']),
+      zatcaWarnings: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}zatca_warnings']),
+      zatcaErrors: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}zatca_errors']),
+      icv: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}icv']),
       pdfUrl: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}pdf_url']),
       notes: attachedDatabase.typeMapping
@@ -38992,6 +39335,32 @@ class InvoicesTableData extends DataClass
   final String? zatcaHash;
   final String? zatcaQr;
   final String? zatcaUuid;
+
+  /// Base64-encoded XAdES-signed UBL XML returned by the signer.
+  /// ~2-10KB per invoice; local-only by design (ZATCA portal already
+  /// has its own copy, we don't sync this column to Supabase).
+  final String? signedXml;
+
+  /// One of: pending, reported, cleared, failed, queued. Mirrors the
+  /// `ReportingStatus` enum in alhai_zatca; persisted as text so a DB
+  /// schema bump doesn't follow every enum addition.
+  final String? reportingStatus;
+
+  /// JSON array of warning strings from ZatcaInvoiceService (compliance
+  /// checker non-blocking warnings + cert near-expiry hints + ZATCA
+  /// portal warnings). UI can show these when the cashier opens the
+  /// invoice; they don't gate the receipt.
+  final String? zatcaWarnings;
+
+  /// JSON array of error strings — populated when reportingStatus is
+  /// `failed` or `queued`. Read this for retry diagnostics.
+  final String? zatcaErrors;
+
+  /// Invoice Counter Value (ICV / BT-X) — monotonic per (storeId,
+  /// invoiceType). Required by ZATCA Phase-2 for the chain integrity
+  /// check on the portal side. Populated from `invoice_counter` table
+  /// at `createFromSale` time.
+  final int? icv;
   final String? pdfUrl;
   final String? notes;
   final String? createdBy;
@@ -39030,6 +39399,11 @@ class InvoicesTableData extends DataClass
       this.zatcaHash,
       this.zatcaQr,
       this.zatcaUuid,
+      this.signedXml,
+      this.reportingStatus,
+      this.zatcaWarnings,
+      this.zatcaErrors,
+      this.icv,
       this.pdfUrl,
       this.notes,
       this.createdBy,
@@ -39097,6 +39471,21 @@ class InvoicesTableData extends DataClass
     }
     if (!nullToAbsent || zatcaUuid != null) {
       map['zatca_uuid'] = Variable<String>(zatcaUuid);
+    }
+    if (!nullToAbsent || signedXml != null) {
+      map['signed_xml'] = Variable<String>(signedXml);
+    }
+    if (!nullToAbsent || reportingStatus != null) {
+      map['reporting_status'] = Variable<String>(reportingStatus);
+    }
+    if (!nullToAbsent || zatcaWarnings != null) {
+      map['zatca_warnings'] = Variable<String>(zatcaWarnings);
+    }
+    if (!nullToAbsent || zatcaErrors != null) {
+      map['zatca_errors'] = Variable<String>(zatcaErrors);
+    }
+    if (!nullToAbsent || icv != null) {
+      map['icv'] = Variable<int>(icv);
     }
     if (!nullToAbsent || pdfUrl != null) {
       map['pdf_url'] = Variable<String>(pdfUrl);
@@ -39184,6 +39573,19 @@ class InvoicesTableData extends DataClass
       zatcaUuid: zatcaUuid == null && nullToAbsent
           ? const Value.absent()
           : Value(zatcaUuid),
+      signedXml: signedXml == null && nullToAbsent
+          ? const Value.absent()
+          : Value(signedXml),
+      reportingStatus: reportingStatus == null && nullToAbsent
+          ? const Value.absent()
+          : Value(reportingStatus),
+      zatcaWarnings: zatcaWarnings == null && nullToAbsent
+          ? const Value.absent()
+          : Value(zatcaWarnings),
+      zatcaErrors: zatcaErrors == null && nullToAbsent
+          ? const Value.absent()
+          : Value(zatcaErrors),
+      icv: icv == null && nullToAbsent ? const Value.absent() : Value(icv),
       pdfUrl:
           pdfUrl == null && nullToAbsent ? const Value.absent() : Value(pdfUrl),
       notes:
@@ -39243,6 +39645,11 @@ class InvoicesTableData extends DataClass
       zatcaHash: serializer.fromJson<String?>(json['zatcaHash']),
       zatcaQr: serializer.fromJson<String?>(json['zatcaQr']),
       zatcaUuid: serializer.fromJson<String?>(json['zatcaUuid']),
+      signedXml: serializer.fromJson<String?>(json['signedXml']),
+      reportingStatus: serializer.fromJson<String?>(json['reportingStatus']),
+      zatcaWarnings: serializer.fromJson<String?>(json['zatcaWarnings']),
+      zatcaErrors: serializer.fromJson<String?>(json['zatcaErrors']),
+      icv: serializer.fromJson<int?>(json['icv']),
       pdfUrl: serializer.fromJson<String?>(json['pdfUrl']),
       notes: serializer.fromJson<String?>(json['notes']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
@@ -39286,6 +39693,11 @@ class InvoicesTableData extends DataClass
       'zatcaHash': serializer.toJson<String?>(zatcaHash),
       'zatcaQr': serializer.toJson<String?>(zatcaQr),
       'zatcaUuid': serializer.toJson<String?>(zatcaUuid),
+      'signedXml': serializer.toJson<String?>(signedXml),
+      'reportingStatus': serializer.toJson<String?>(reportingStatus),
+      'zatcaWarnings': serializer.toJson<String?>(zatcaWarnings),
+      'zatcaErrors': serializer.toJson<String?>(zatcaErrors),
+      'icv': serializer.toJson<int?>(icv),
       'pdfUrl': serializer.toJson<String?>(pdfUrl),
       'notes': serializer.toJson<String?>(notes),
       'createdBy': serializer.toJson<String?>(createdBy),
@@ -39327,6 +39739,11 @@ class InvoicesTableData extends DataClass
           Value<String?> zatcaHash = const Value.absent(),
           Value<String?> zatcaQr = const Value.absent(),
           Value<String?> zatcaUuid = const Value.absent(),
+          Value<String?> signedXml = const Value.absent(),
+          Value<String?> reportingStatus = const Value.absent(),
+          Value<String?> zatcaWarnings = const Value.absent(),
+          Value<String?> zatcaErrors = const Value.absent(),
+          Value<int?> icv = const Value.absent(),
           Value<String?> pdfUrl = const Value.absent(),
           Value<String?> notes = const Value.absent(),
           Value<String?> createdBy = const Value.absent(),
@@ -39374,6 +39791,14 @@ class InvoicesTableData extends DataClass
         zatcaHash: zatcaHash.present ? zatcaHash.value : this.zatcaHash,
         zatcaQr: zatcaQr.present ? zatcaQr.value : this.zatcaQr,
         zatcaUuid: zatcaUuid.present ? zatcaUuid.value : this.zatcaUuid,
+        signedXml: signedXml.present ? signedXml.value : this.signedXml,
+        reportingStatus: reportingStatus.present
+            ? reportingStatus.value
+            : this.reportingStatus,
+        zatcaWarnings:
+            zatcaWarnings.present ? zatcaWarnings.value : this.zatcaWarnings,
+        zatcaErrors: zatcaErrors.present ? zatcaErrors.value : this.zatcaErrors,
+        icv: icv.present ? icv.value : this.icv,
         pdfUrl: pdfUrl.present ? pdfUrl.value : this.pdfUrl,
         notes: notes.present ? notes.value : this.notes,
         createdBy: createdBy.present ? createdBy.value : this.createdBy,
@@ -39433,6 +39858,16 @@ class InvoicesTableData extends DataClass
       zatcaHash: data.zatcaHash.present ? data.zatcaHash.value : this.zatcaHash,
       zatcaQr: data.zatcaQr.present ? data.zatcaQr.value : this.zatcaQr,
       zatcaUuid: data.zatcaUuid.present ? data.zatcaUuid.value : this.zatcaUuid,
+      signedXml: data.signedXml.present ? data.signedXml.value : this.signedXml,
+      reportingStatus: data.reportingStatus.present
+          ? data.reportingStatus.value
+          : this.reportingStatus,
+      zatcaWarnings: data.zatcaWarnings.present
+          ? data.zatcaWarnings.value
+          : this.zatcaWarnings,
+      zatcaErrors:
+          data.zatcaErrors.present ? data.zatcaErrors.value : this.zatcaErrors,
+      icv: data.icv.present ? data.icv.value : this.icv,
       pdfUrl: data.pdfUrl.present ? data.pdfUrl.value : this.pdfUrl,
       notes: data.notes.present ? data.notes.value : this.notes,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
@@ -39477,6 +39912,11 @@ class InvoicesTableData extends DataClass
           ..write('zatcaHash: $zatcaHash, ')
           ..write('zatcaQr: $zatcaQr, ')
           ..write('zatcaUuid: $zatcaUuid, ')
+          ..write('signedXml: $signedXml, ')
+          ..write('reportingStatus: $reportingStatus, ')
+          ..write('zatcaWarnings: $zatcaWarnings, ')
+          ..write('zatcaErrors: $zatcaErrors, ')
+          ..write('icv: $icv, ')
           ..write('pdfUrl: $pdfUrl, ')
           ..write('notes: $notes, ')
           ..write('createdBy: $createdBy, ')
@@ -39520,6 +39960,11 @@ class InvoicesTableData extends DataClass
         zatcaHash,
         zatcaQr,
         zatcaUuid,
+        signedXml,
+        reportingStatus,
+        zatcaWarnings,
+        zatcaErrors,
+        icv,
         pdfUrl,
         notes,
         createdBy,
@@ -39562,6 +40007,11 @@ class InvoicesTableData extends DataClass
           other.zatcaHash == this.zatcaHash &&
           other.zatcaQr == this.zatcaQr &&
           other.zatcaUuid == this.zatcaUuid &&
+          other.signedXml == this.signedXml &&
+          other.reportingStatus == this.reportingStatus &&
+          other.zatcaWarnings == this.zatcaWarnings &&
+          other.zatcaErrors == this.zatcaErrors &&
+          other.icv == this.icv &&
           other.pdfUrl == this.pdfUrl &&
           other.notes == this.notes &&
           other.createdBy == this.createdBy &&
@@ -39602,6 +40052,11 @@ class InvoicesTableCompanion extends UpdateCompanion<InvoicesTableData> {
   final Value<String?> zatcaHash;
   final Value<String?> zatcaQr;
   final Value<String?> zatcaUuid;
+  final Value<String?> signedXml;
+  final Value<String?> reportingStatus;
+  final Value<String?> zatcaWarnings;
+  final Value<String?> zatcaErrors;
+  final Value<int?> icv;
   final Value<String?> pdfUrl;
   final Value<String?> notes;
   final Value<String?> createdBy;
@@ -39641,6 +40096,11 @@ class InvoicesTableCompanion extends UpdateCompanion<InvoicesTableData> {
     this.zatcaHash = const Value.absent(),
     this.zatcaQr = const Value.absent(),
     this.zatcaUuid = const Value.absent(),
+    this.signedXml = const Value.absent(),
+    this.reportingStatus = const Value.absent(),
+    this.zatcaWarnings = const Value.absent(),
+    this.zatcaErrors = const Value.absent(),
+    this.icv = const Value.absent(),
     this.pdfUrl = const Value.absent(),
     this.notes = const Value.absent(),
     this.createdBy = const Value.absent(),
@@ -39681,6 +40141,11 @@ class InvoicesTableCompanion extends UpdateCompanion<InvoicesTableData> {
     this.zatcaHash = const Value.absent(),
     this.zatcaQr = const Value.absent(),
     this.zatcaUuid = const Value.absent(),
+    this.signedXml = const Value.absent(),
+    this.reportingStatus = const Value.absent(),
+    this.zatcaWarnings = const Value.absent(),
+    this.zatcaErrors = const Value.absent(),
+    this.icv = const Value.absent(),
     this.pdfUrl = const Value.absent(),
     this.notes = const Value.absent(),
     this.createdBy = const Value.absent(),
@@ -39724,6 +40189,11 @@ class InvoicesTableCompanion extends UpdateCompanion<InvoicesTableData> {
     Expression<String>? zatcaHash,
     Expression<String>? zatcaQr,
     Expression<String>? zatcaUuid,
+    Expression<String>? signedXml,
+    Expression<String>? reportingStatus,
+    Expression<String>? zatcaWarnings,
+    Expression<String>? zatcaErrors,
+    Expression<int>? icv,
     Expression<String>? pdfUrl,
     Expression<String>? notes,
     Expression<String>? createdBy,
@@ -39764,6 +40234,11 @@ class InvoicesTableCompanion extends UpdateCompanion<InvoicesTableData> {
       if (zatcaHash != null) 'zatca_hash': zatcaHash,
       if (zatcaQr != null) 'zatca_qr': zatcaQr,
       if (zatcaUuid != null) 'zatca_uuid': zatcaUuid,
+      if (signedXml != null) 'signed_xml': signedXml,
+      if (reportingStatus != null) 'reporting_status': reportingStatus,
+      if (zatcaWarnings != null) 'zatca_warnings': zatcaWarnings,
+      if (zatcaErrors != null) 'zatca_errors': zatcaErrors,
+      if (icv != null) 'icv': icv,
       if (pdfUrl != null) 'pdf_url': pdfUrl,
       if (notes != null) 'notes': notes,
       if (createdBy != null) 'created_by': createdBy,
@@ -39806,6 +40281,11 @@ class InvoicesTableCompanion extends UpdateCompanion<InvoicesTableData> {
       Value<String?>? zatcaHash,
       Value<String?>? zatcaQr,
       Value<String?>? zatcaUuid,
+      Value<String?>? signedXml,
+      Value<String?>? reportingStatus,
+      Value<String?>? zatcaWarnings,
+      Value<String?>? zatcaErrors,
+      Value<int?>? icv,
       Value<String?>? pdfUrl,
       Value<String?>? notes,
       Value<String?>? createdBy,
@@ -39845,6 +40325,11 @@ class InvoicesTableCompanion extends UpdateCompanion<InvoicesTableData> {
       zatcaHash: zatcaHash ?? this.zatcaHash,
       zatcaQr: zatcaQr ?? this.zatcaQr,
       zatcaUuid: zatcaUuid ?? this.zatcaUuid,
+      signedXml: signedXml ?? this.signedXml,
+      reportingStatus: reportingStatus ?? this.reportingStatus,
+      zatcaWarnings: zatcaWarnings ?? this.zatcaWarnings,
+      zatcaErrors: zatcaErrors ?? this.zatcaErrors,
+      icv: icv ?? this.icv,
       pdfUrl: pdfUrl ?? this.pdfUrl,
       notes: notes ?? this.notes,
       createdBy: createdBy ?? this.createdBy,
@@ -39943,6 +40428,21 @@ class InvoicesTableCompanion extends UpdateCompanion<InvoicesTableData> {
     if (zatcaUuid.present) {
       map['zatca_uuid'] = Variable<String>(zatcaUuid.value);
     }
+    if (signedXml.present) {
+      map['signed_xml'] = Variable<String>(signedXml.value);
+    }
+    if (reportingStatus.present) {
+      map['reporting_status'] = Variable<String>(reportingStatus.value);
+    }
+    if (zatcaWarnings.present) {
+      map['zatca_warnings'] = Variable<String>(zatcaWarnings.value);
+    }
+    if (zatcaErrors.present) {
+      map['zatca_errors'] = Variable<String>(zatcaErrors.value);
+    }
+    if (icv.present) {
+      map['icv'] = Variable<int>(icv.value);
+    }
     if (pdfUrl.present) {
       map['pdf_url'] = Variable<String>(pdfUrl.value);
     }
@@ -40009,6 +40509,11 @@ class InvoicesTableCompanion extends UpdateCompanion<InvoicesTableData> {
           ..write('zatcaHash: $zatcaHash, ')
           ..write('zatcaQr: $zatcaQr, ')
           ..write('zatcaUuid: $zatcaUuid, ')
+          ..write('signedXml: $signedXml, ')
+          ..write('reportingStatus: $reportingStatus, ')
+          ..write('zatcaWarnings: $zatcaWarnings, ')
+          ..write('zatcaErrors: $zatcaErrors, ')
+          ..write('icv: $icv, ')
           ..write('pdfUrl: $pdfUrl, ')
           ..write('notes: $notes, ')
           ..write('createdBy: $createdBy, ')
@@ -40019,6 +40524,294 @@ class InvoicesTableCompanion extends UpdateCompanion<InvoicesTableData> {
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('syncedAt: $syncedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $InvoiceCounterTableTable extends InvoiceCounterTable
+    with TableInfo<$InvoiceCounterTableTable, InvoiceCounterTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $InvoiceCounterTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _storeIdMeta =
+      const VerificationMeta('storeId');
+  @override
+  late final GeneratedColumn<String> storeId = GeneratedColumn<String>(
+      'store_id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES stores (id) ON DELETE CASCADE'));
+  static const VerificationMeta _invoiceTypeMeta =
+      const VerificationMeta('invoiceType');
+  @override
+  late final GeneratedColumn<String> invoiceType = GeneratedColumn<String>(
+      'invoice_type', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _valueMeta = const VerificationMeta('value');
+  @override
+  late final GeneratedColumn<int> value = GeneratedColumn<int>(
+      'value', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _updatedAtMeta =
+      const VerificationMeta('updatedAt');
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+      'updated_at', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
+  @override
+  List<GeneratedColumn> get $columns =>
+      [storeId, invoiceType, value, updatedAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'invoice_counter';
+  @override
+  VerificationContext validateIntegrity(
+      Insertable<InvoiceCounterTableData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('store_id')) {
+      context.handle(_storeIdMeta,
+          storeId.isAcceptableOrUnknown(data['store_id']!, _storeIdMeta));
+    } else if (isInserting) {
+      context.missing(_storeIdMeta);
+    }
+    if (data.containsKey('invoice_type')) {
+      context.handle(
+          _invoiceTypeMeta,
+          invoiceType.isAcceptableOrUnknown(
+              data['invoice_type']!, _invoiceTypeMeta));
+    } else if (isInserting) {
+      context.missing(_invoiceTypeMeta);
+    }
+    if (data.containsKey('value')) {
+      context.handle(
+          _valueMeta, value.isAcceptableOrUnknown(data['value']!, _valueMeta));
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(_updatedAtMeta,
+          updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {storeId, invoiceType};
+  @override
+  InvoiceCounterTableData map(Map<String, dynamic> data,
+      {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return InvoiceCounterTableData(
+      storeId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}store_id'])!,
+      invoiceType: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}invoice_type'])!,
+      value: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}value'])!,
+      updatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at']),
+    );
+  }
+
+  @override
+  $InvoiceCounterTableTable createAlias(String alias) {
+    return $InvoiceCounterTableTable(attachedDatabase, alias);
+  }
+}
+
+class InvoiceCounterTableData extends DataClass
+    implements Insertable<InvoiceCounterTableData> {
+  final String storeId;
+
+  /// One of `simplified_tax | standard_tax | credit_note | debit_note`
+  /// — matches `InvoiceType.value` in alhai_pos.
+  final String invoiceType;
+
+  /// Last issued ICV. Caller computes `nextIcv = value + 1` atomically.
+  final int value;
+  final DateTime? updatedAt;
+  const InvoiceCounterTableData(
+      {required this.storeId,
+      required this.invoiceType,
+      required this.value,
+      this.updatedAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['store_id'] = Variable<String>(storeId);
+    map['invoice_type'] = Variable<String>(invoiceType);
+    map['value'] = Variable<int>(value);
+    if (!nullToAbsent || updatedAt != null) {
+      map['updated_at'] = Variable<DateTime>(updatedAt);
+    }
+    return map;
+  }
+
+  InvoiceCounterTableCompanion toCompanion(bool nullToAbsent) {
+    return InvoiceCounterTableCompanion(
+      storeId: Value(storeId),
+      invoiceType: Value(invoiceType),
+      value: Value(value),
+      updatedAt: updatedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedAt),
+    );
+  }
+
+  factory InvoiceCounterTableData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return InvoiceCounterTableData(
+      storeId: serializer.fromJson<String>(json['storeId']),
+      invoiceType: serializer.fromJson<String>(json['invoiceType']),
+      value: serializer.fromJson<int>(json['value']),
+      updatedAt: serializer.fromJson<DateTime?>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'storeId': serializer.toJson<String>(storeId),
+      'invoiceType': serializer.toJson<String>(invoiceType),
+      'value': serializer.toJson<int>(value),
+      'updatedAt': serializer.toJson<DateTime?>(updatedAt),
+    };
+  }
+
+  InvoiceCounterTableData copyWith(
+          {String? storeId,
+          String? invoiceType,
+          int? value,
+          Value<DateTime?> updatedAt = const Value.absent()}) =>
+      InvoiceCounterTableData(
+        storeId: storeId ?? this.storeId,
+        invoiceType: invoiceType ?? this.invoiceType,
+        value: value ?? this.value,
+        updatedAt: updatedAt.present ? updatedAt.value : this.updatedAt,
+      );
+  InvoiceCounterTableData copyWithCompanion(InvoiceCounterTableCompanion data) {
+    return InvoiceCounterTableData(
+      storeId: data.storeId.present ? data.storeId.value : this.storeId,
+      invoiceType:
+          data.invoiceType.present ? data.invoiceType.value : this.invoiceType,
+      value: data.value.present ? data.value.value : this.value,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('InvoiceCounterTableData(')
+          ..write('storeId: $storeId, ')
+          ..write('invoiceType: $invoiceType, ')
+          ..write('value: $value, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(storeId, invoiceType, value, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is InvoiceCounterTableData &&
+          other.storeId == this.storeId &&
+          other.invoiceType == this.invoiceType &&
+          other.value == this.value &&
+          other.updatedAt == this.updatedAt);
+}
+
+class InvoiceCounterTableCompanion
+    extends UpdateCompanion<InvoiceCounterTableData> {
+  final Value<String> storeId;
+  final Value<String> invoiceType;
+  final Value<int> value;
+  final Value<DateTime?> updatedAt;
+  final Value<int> rowid;
+  const InvoiceCounterTableCompanion({
+    this.storeId = const Value.absent(),
+    this.invoiceType = const Value.absent(),
+    this.value = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  InvoiceCounterTableCompanion.insert({
+    required String storeId,
+    required String invoiceType,
+    this.value = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  })  : storeId = Value(storeId),
+        invoiceType = Value(invoiceType);
+  static Insertable<InvoiceCounterTableData> custom({
+    Expression<String>? storeId,
+    Expression<String>? invoiceType,
+    Expression<int>? value,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (storeId != null) 'store_id': storeId,
+      if (invoiceType != null) 'invoice_type': invoiceType,
+      if (value != null) 'value': value,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  InvoiceCounterTableCompanion copyWith(
+      {Value<String>? storeId,
+      Value<String>? invoiceType,
+      Value<int>? value,
+      Value<DateTime?>? updatedAt,
+      Value<int>? rowid}) {
+    return InvoiceCounterTableCompanion(
+      storeId: storeId ?? this.storeId,
+      invoiceType: invoiceType ?? this.invoiceType,
+      value: value ?? this.value,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (storeId.present) {
+      map['store_id'] = Variable<String>(storeId.value);
+    }
+    if (invoiceType.present) {
+      map['invoice_type'] = Variable<String>(invoiceType.value);
+    }
+    if (value.present) {
+      map['value'] = Variable<int>(value.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('InvoiceCounterTableCompanion(')
+          ..write('storeId: $storeId, ')
+          ..write('invoiceType: $invoiceType, ')
+          ..write('value: $value, ')
+          ..write('updatedAt: $updatedAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -41412,6 +42205,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $OrgProductsTableTable orgProductsTable =
       $OrgProductsTableTable(this);
   late final $InvoicesTableTable invoicesTable = $InvoicesTableTable(this);
+  late final $InvoiceCounterTableTable invoiceCounterTable =
+      $InvoiceCounterTableTable(this);
   late final $ZatcaOfflineQueueTableTable zatcaOfflineQueueTable =
       $ZatcaOfflineQueueTableTable(this);
   late final $ZatcaDeadLetterTableTable zatcaDeadLetterTable =
@@ -41839,6 +42634,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       'CREATE INDEX idx_invoices_customer ON invoices (customer_id)');
   late final Index idxInvoicesSale = Index('idx_invoices_sale',
       'CREATE INDEX idx_invoices_sale ON invoices (sale_id)');
+  late final Index idxInvoiceCounterLookup = Index('idx_invoice_counter_lookup',
+      'CREATE UNIQUE INDEX idx_invoice_counter_lookup ON invoice_counter (store_id, invoice_type)');
   late final Index idxZatcaQueueStatusQueued = Index(
       'idx_zatca_queue_status_queued',
       'CREATE INDEX idx_zatca_queue_status_queued ON zatca_offline_queue (status, queued_at)');
@@ -41894,6 +42691,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final InvoicesDao invoicesDao = InvoicesDao(this as AppDatabase);
   late final ZatcaOfflineQueueDao zatcaOfflineQueueDao =
       ZatcaOfflineQueueDao(this as AppDatabase);
+  late final InvoiceCounterDao invoiceCounterDao =
+      InvoiceCounterDao(this as AppDatabase);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -41951,6 +42750,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         stockDeltasTable,
         orgProductsTable,
         invoicesTable,
+        invoiceCounterTable,
         zatcaOfflineQueueTable,
         zatcaDeadLetterTable,
         idxProductsStoreId,
@@ -42143,6 +42943,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         idxInvoicesCreatedAt,
         idxInvoicesCustomer,
         idxInvoicesSale,
+        idxInvoiceCounterLookup,
         idxZatcaQueueStatusQueued,
         idxZatcaQueueStore,
         idxZatcaQueueRetry,
@@ -42229,6 +43030,13 @@ abstract class _$AppDatabase extends GeneratedDatabase {
               TableUpdate('org_products', kind: UpdateKind.update),
             ],
           ),
+          WritePropagation(
+            on: TableUpdateQuery.onTableName('stores',
+                limitUpdateKind: UpdateKind.delete),
+            result: [
+              TableUpdate('invoice_counter', kind: UpdateKind.delete),
+            ],
+          ),
         ],
       );
 }
@@ -42246,6 +43054,12 @@ typedef $$StoresTableTableCreateCompanionBuilder = StoresTableCompanion
   Value<String?> logo,
   Value<String?> taxNumber,
   Value<String?> commercialReg,
+  Value<String?> streetName,
+  Value<String?> buildingNumber,
+  Value<String?> plotIdentification,
+  Value<String?> district,
+  Value<String?> postalCode,
+  Value<String?> additionalAddressNumber,
   Value<String> currency,
   Value<String> timezone,
   Value<bool> isActive,
@@ -42268,6 +43082,12 @@ typedef $$StoresTableTableUpdateCompanionBuilder = StoresTableCompanion
   Value<String?> logo,
   Value<String?> taxNumber,
   Value<String?> commercialReg,
+  Value<String?> streetName,
+  Value<String?> buildingNumber,
+  Value<String?> plotIdentification,
+  Value<String?> district,
+  Value<String?> postalCode,
+  Value<String?> additionalAddressNumber,
   Value<String> currency,
   Value<String> timezone,
   Value<bool> isActive,
@@ -42527,6 +43347,24 @@ final class $$StoresTableTableReferences
     return ProcessedTableManager(
         manager.$state.copyWith(prefetchedData: cache));
   }
+
+  static MultiTypedResultKey<$InvoiceCounterTableTable,
+      List<InvoiceCounterTableData>> _invoiceCounterTableRefsTable(
+          _$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(db.invoiceCounterTable,
+          aliasName: $_aliasNameGenerator(
+              db.storesTable.id, db.invoiceCounterTable.storeId));
+
+  $$InvoiceCounterTableTableProcessedTableManager get invoiceCounterTableRefs {
+    final manager =
+        $$InvoiceCounterTableTableTableManager($_db, $_db.invoiceCounterTable)
+            .filter((f) => f.storeId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache =
+        $_typedResult.readTableOrNull(_invoiceCounterTableRefsTable($_db));
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: cache));
+  }
 }
 
 class $$StoresTableTableFilterComposer
@@ -42570,6 +43408,27 @@ class $$StoresTableTableFilterComposer
 
   ColumnFilters<String> get commercialReg => $composableBuilder(
       column: $table.commercialReg, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get streetName => $composableBuilder(
+      column: $table.streetName, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get buildingNumber => $composableBuilder(
+      column: $table.buildingNumber,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get plotIdentification => $composableBuilder(
+      column: $table.plotIdentification,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get district => $composableBuilder(
+      column: $table.district, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get postalCode => $composableBuilder(
+      column: $table.postalCode, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get additionalAddressNumber => $composableBuilder(
+      column: $table.additionalAddressNumber,
+      builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get currency => $composableBuilder(
       column: $table.currency, builder: (column) => ColumnFilters(column));
@@ -42910,6 +43769,27 @@ class $$StoresTableTableFilterComposer
             ));
     return f(composer);
   }
+
+  Expression<bool> invoiceCounterTableRefs(
+      Expression<bool> Function($$InvoiceCounterTableTableFilterComposer f) f) {
+    final $$InvoiceCounterTableTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.invoiceCounterTable,
+        getReferencedColumn: (t) => t.storeId,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$InvoiceCounterTableTableFilterComposer(
+              $db: $db,
+              $table: $db.invoiceCounterTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
 }
 
 class $$StoresTableTableOrderingComposer
@@ -42953,6 +43833,27 @@ class $$StoresTableTableOrderingComposer
 
   ColumnOrderings<String> get commercialReg => $composableBuilder(
       column: $table.commercialReg,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get streetName => $composableBuilder(
+      column: $table.streetName, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get buildingNumber => $composableBuilder(
+      column: $table.buildingNumber,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get plotIdentification => $composableBuilder(
+      column: $table.plotIdentification,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get district => $composableBuilder(
+      column: $table.district, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get postalCode => $composableBuilder(
+      column: $table.postalCode, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get additionalAddressNumber => $composableBuilder(
+      column: $table.additionalAddressNumber,
       builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<String> get currency => $composableBuilder(
@@ -43018,6 +43919,24 @@ class $$StoresTableTableAnnotationComposer
 
   GeneratedColumn<String> get commercialReg => $composableBuilder(
       column: $table.commercialReg, builder: (column) => column);
+
+  GeneratedColumn<String> get streetName => $composableBuilder(
+      column: $table.streetName, builder: (column) => column);
+
+  GeneratedColumn<String> get buildingNumber => $composableBuilder(
+      column: $table.buildingNumber, builder: (column) => column);
+
+  GeneratedColumn<String> get plotIdentification => $composableBuilder(
+      column: $table.plotIdentification, builder: (column) => column);
+
+  GeneratedColumn<String> get district =>
+      $composableBuilder(column: $table.district, builder: (column) => column);
+
+  GeneratedColumn<String> get postalCode => $composableBuilder(
+      column: $table.postalCode, builder: (column) => column);
+
+  GeneratedColumn<String> get additionalAddressNumber => $composableBuilder(
+      column: $table.additionalAddressNumber, builder: (column) => column);
 
   GeneratedColumn<String> get currency =>
       $composableBuilder(column: $table.currency, builder: (column) => column);
@@ -43363,6 +44282,29 @@ class $$StoresTableTableAnnotationComposer
             ));
     return f(composer);
   }
+
+  Expression<T> invoiceCounterTableRefs<T extends Object>(
+      Expression<T> Function($$InvoiceCounterTableTableAnnotationComposer a)
+          f) {
+    final $$InvoiceCounterTableTableAnnotationComposer composer =
+        $composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.id,
+            referencedTable: $db.invoiceCounterTable,
+            getReferencedColumn: (t) => t.storeId,
+            builder: (joinBuilder,
+                    {$addJoinBuilderToRootComposer,
+                    $removeJoinBuilderFromRootComposer}) =>
+                $$InvoiceCounterTableTableAnnotationComposer(
+                  $db: $db,
+                  $table: $db.invoiceCounterTable,
+                  $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                  joinBuilder: joinBuilder,
+                  $removeJoinBuilderFromRootComposer:
+                      $removeJoinBuilderFromRootComposer,
+                ));
+    return f(composer);
+  }
 }
 
 class $$StoresTableTableTableManager extends RootTableManager<
@@ -43391,7 +44333,8 @@ class $$StoresTableTableTableManager extends RootTableManager<
         bool returnsTableRefs,
         bool purchasesTableRefs,
         bool stockDeltasTableRefs,
-        bool invoicesTableRefs})> {
+        bool invoicesTableRefs,
+        bool invoiceCounterTableRefs})> {
   $$StoresTableTableTableManager(_$AppDatabase db, $StoresTableTable table)
       : super(TableManagerState(
           db: db,
@@ -43414,6 +44357,12 @@ class $$StoresTableTableTableManager extends RootTableManager<
             Value<String?> logo = const Value.absent(),
             Value<String?> taxNumber = const Value.absent(),
             Value<String?> commercialReg = const Value.absent(),
+            Value<String?> streetName = const Value.absent(),
+            Value<String?> buildingNumber = const Value.absent(),
+            Value<String?> plotIdentification = const Value.absent(),
+            Value<String?> district = const Value.absent(),
+            Value<String?> postalCode = const Value.absent(),
+            Value<String?> additionalAddressNumber = const Value.absent(),
             Value<String> currency = const Value.absent(),
             Value<String> timezone = const Value.absent(),
             Value<bool> isActive = const Value.absent(),
@@ -43435,6 +44384,12 @@ class $$StoresTableTableTableManager extends RootTableManager<
             logo: logo,
             taxNumber: taxNumber,
             commercialReg: commercialReg,
+            streetName: streetName,
+            buildingNumber: buildingNumber,
+            plotIdentification: plotIdentification,
+            district: district,
+            postalCode: postalCode,
+            additionalAddressNumber: additionalAddressNumber,
             currency: currency,
             timezone: timezone,
             isActive: isActive,
@@ -43456,6 +44411,12 @@ class $$StoresTableTableTableManager extends RootTableManager<
             Value<String?> logo = const Value.absent(),
             Value<String?> taxNumber = const Value.absent(),
             Value<String?> commercialReg = const Value.absent(),
+            Value<String?> streetName = const Value.absent(),
+            Value<String?> buildingNumber = const Value.absent(),
+            Value<String?> plotIdentification = const Value.absent(),
+            Value<String?> district = const Value.absent(),
+            Value<String?> postalCode = const Value.absent(),
+            Value<String?> additionalAddressNumber = const Value.absent(),
             Value<String> currency = const Value.absent(),
             Value<String> timezone = const Value.absent(),
             Value<bool> isActive = const Value.absent(),
@@ -43477,6 +44438,12 @@ class $$StoresTableTableTableManager extends RootTableManager<
             logo: logo,
             taxNumber: taxNumber,
             commercialReg: commercialReg,
+            streetName: streetName,
+            buildingNumber: buildingNumber,
+            plotIdentification: plotIdentification,
+            district: district,
+            postalCode: postalCode,
+            additionalAddressNumber: additionalAddressNumber,
             currency: currency,
             timezone: timezone,
             isActive: isActive,
@@ -43507,7 +44474,8 @@ class $$StoresTableTableTableManager extends RootTableManager<
               returnsTableRefs = false,
               purchasesTableRefs = false,
               stockDeltasTableRefs = false,
-              invoicesTableRefs = false}) {
+              invoicesTableRefs = false,
+              invoiceCounterTableRefs = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [
@@ -43525,7 +44493,8 @@ class $$StoresTableTableTableManager extends RootTableManager<
                 if (returnsTableRefs) db.returnsTable,
                 if (purchasesTableRefs) db.purchasesTable,
                 if (stockDeltasTableRefs) db.stockDeltasTable,
-                if (invoicesTableRefs) db.invoicesTable
+                if (invoicesTableRefs) db.invoicesTable,
+                if (invoiceCounterTableRefs) db.invoiceCounterTable
               ],
               addJoins: null,
               getPrefetchedDataCallback: (items) async {
@@ -43724,6 +44693,19 @@ class $$StoresTableTableTableManager extends RootTableManager<
                         referencedItemsForCurrentItem: (item,
                                 referencedItems) =>
                             referencedItems.where((e) => e.storeId == item.id),
+                        typedResults: items),
+                  if (invoiceCounterTableRefs)
+                    await $_getPrefetchedData<StoresTableData,
+                            $StoresTableTable, InvoiceCounterTableData>(
+                        currentTable: table,
+                        referencedTable: $$StoresTableTableReferences
+                            ._invoiceCounterTableRefsTable(db),
+                        managerFromTypedResult: (p0) =>
+                            $$StoresTableTableReferences(db, table, p0)
+                                .invoiceCounterTableRefs,
+                        referencedItemsForCurrentItem: (item,
+                                referencedItems) =>
+                            referencedItems.where((e) => e.storeId == item.id),
                         typedResults: items)
                 ];
               },
@@ -43758,7 +44740,8 @@ typedef $$StoresTableTableProcessedTableManager = ProcessedTableManager<
         bool returnsTableRefs,
         bool purchasesTableRefs,
         bool stockDeltasTableRefs,
-        bool invoicesTableRefs})>;
+        bool invoicesTableRefs,
+        bool invoiceCounterTableRefs})>;
 typedef $$CategoriesTableTableCreateCompanionBuilder = CategoriesTableCompanion
     Function({
   required String id,
@@ -66622,6 +67605,11 @@ typedef $$InvoicesTableTableCreateCompanionBuilder = InvoicesTableCompanion
   Value<String?> zatcaHash,
   Value<String?> zatcaQr,
   Value<String?> zatcaUuid,
+  Value<String?> signedXml,
+  Value<String?> reportingStatus,
+  Value<String?> zatcaWarnings,
+  Value<String?> zatcaErrors,
+  Value<int?> icv,
   Value<String?> pdfUrl,
   Value<String?> notes,
   Value<String?> createdBy,
@@ -66663,6 +67651,11 @@ typedef $$InvoicesTableTableUpdateCompanionBuilder = InvoicesTableCompanion
   Value<String?> zatcaHash,
   Value<String?> zatcaQr,
   Value<String?> zatcaUuid,
+  Value<String?> signedXml,
+  Value<String?> reportingStatus,
+  Value<String?> zatcaWarnings,
+  Value<String?> zatcaErrors,
+  Value<int?> icv,
   Value<String?> pdfUrl,
   Value<String?> notes,
   Value<String?> createdBy,
@@ -66785,6 +67778,22 @@ class $$InvoicesTableTableFilterComposer
 
   ColumnFilters<String> get zatcaUuid => $composableBuilder(
       column: $table.zatcaUuid, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get signedXml => $composableBuilder(
+      column: $table.signedXml, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get reportingStatus => $composableBuilder(
+      column: $table.reportingStatus,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get zatcaWarnings => $composableBuilder(
+      column: $table.zatcaWarnings, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get zatcaErrors => $composableBuilder(
+      column: $table.zatcaErrors, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get icv => $composableBuilder(
+      column: $table.icv, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get pdfUrl => $composableBuilder(
       column: $table.pdfUrl, builder: (column) => ColumnFilters(column));
@@ -66932,6 +67941,23 @@ class $$InvoicesTableTableOrderingComposer
   ColumnOrderings<String> get zatcaUuid => $composableBuilder(
       column: $table.zatcaUuid, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<String> get signedXml => $composableBuilder(
+      column: $table.signedXml, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get reportingStatus => $composableBuilder(
+      column: $table.reportingStatus,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get zatcaWarnings => $composableBuilder(
+      column: $table.zatcaWarnings,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get zatcaErrors => $composableBuilder(
+      column: $table.zatcaErrors, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get icv => $composableBuilder(
+      column: $table.icv, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<String> get pdfUrl => $composableBuilder(
       column: $table.pdfUrl, builder: (column) => ColumnOrderings(column));
 
@@ -67070,6 +68096,21 @@ class $$InvoicesTableTableAnnotationComposer
   GeneratedColumn<String> get zatcaUuid =>
       $composableBuilder(column: $table.zatcaUuid, builder: (column) => column);
 
+  GeneratedColumn<String> get signedXml =>
+      $composableBuilder(column: $table.signedXml, builder: (column) => column);
+
+  GeneratedColumn<String> get reportingStatus => $composableBuilder(
+      column: $table.reportingStatus, builder: (column) => column);
+
+  GeneratedColumn<String> get zatcaWarnings => $composableBuilder(
+      column: $table.zatcaWarnings, builder: (column) => column);
+
+  GeneratedColumn<String> get zatcaErrors => $composableBuilder(
+      column: $table.zatcaErrors, builder: (column) => column);
+
+  GeneratedColumn<int> get icv =>
+      $composableBuilder(column: $table.icv, builder: (column) => column);
+
   GeneratedColumn<String> get pdfUrl =>
       $composableBuilder(column: $table.pdfUrl, builder: (column) => column);
 
@@ -67171,6 +68212,11 @@ class $$InvoicesTableTableTableManager extends RootTableManager<
             Value<String?> zatcaHash = const Value.absent(),
             Value<String?> zatcaQr = const Value.absent(),
             Value<String?> zatcaUuid = const Value.absent(),
+            Value<String?> signedXml = const Value.absent(),
+            Value<String?> reportingStatus = const Value.absent(),
+            Value<String?> zatcaWarnings = const Value.absent(),
+            Value<String?> zatcaErrors = const Value.absent(),
+            Value<int?> icv = const Value.absent(),
             Value<String?> pdfUrl = const Value.absent(),
             Value<String?> notes = const Value.absent(),
             Value<String?> createdBy = const Value.absent(),
@@ -67211,6 +68257,11 @@ class $$InvoicesTableTableTableManager extends RootTableManager<
             zatcaHash: zatcaHash,
             zatcaQr: zatcaQr,
             zatcaUuid: zatcaUuid,
+            signedXml: signedXml,
+            reportingStatus: reportingStatus,
+            zatcaWarnings: zatcaWarnings,
+            zatcaErrors: zatcaErrors,
+            icv: icv,
             pdfUrl: pdfUrl,
             notes: notes,
             createdBy: createdBy,
@@ -67251,6 +68302,11 @@ class $$InvoicesTableTableTableManager extends RootTableManager<
             Value<String?> zatcaHash = const Value.absent(),
             Value<String?> zatcaQr = const Value.absent(),
             Value<String?> zatcaUuid = const Value.absent(),
+            Value<String?> signedXml = const Value.absent(),
+            Value<String?> reportingStatus = const Value.absent(),
+            Value<String?> zatcaWarnings = const Value.absent(),
+            Value<String?> zatcaErrors = const Value.absent(),
+            Value<int?> icv = const Value.absent(),
             Value<String?> pdfUrl = const Value.absent(),
             Value<String?> notes = const Value.absent(),
             Value<String?> createdBy = const Value.absent(),
@@ -67291,6 +68347,11 @@ class $$InvoicesTableTableTableManager extends RootTableManager<
             zatcaHash: zatcaHash,
             zatcaQr: zatcaQr,
             zatcaUuid: zatcaUuid,
+            signedXml: signedXml,
+            reportingStatus: reportingStatus,
+            zatcaWarnings: zatcaWarnings,
+            zatcaErrors: zatcaErrors,
+            icv: icv,
             pdfUrl: pdfUrl,
             notes: notes,
             createdBy: createdBy,
@@ -67358,6 +68419,271 @@ typedef $$InvoicesTableTableProcessedTableManager = ProcessedTableManager<
     $$InvoicesTableTableUpdateCompanionBuilder,
     (InvoicesTableData, $$InvoicesTableTableReferences),
     InvoicesTableData,
+    PrefetchHooks Function({bool storeId})>;
+typedef $$InvoiceCounterTableTableCreateCompanionBuilder
+    = InvoiceCounterTableCompanion Function({
+  required String storeId,
+  required String invoiceType,
+  Value<int> value,
+  Value<DateTime?> updatedAt,
+  Value<int> rowid,
+});
+typedef $$InvoiceCounterTableTableUpdateCompanionBuilder
+    = InvoiceCounterTableCompanion Function({
+  Value<String> storeId,
+  Value<String> invoiceType,
+  Value<int> value,
+  Value<DateTime?> updatedAt,
+  Value<int> rowid,
+});
+
+final class $$InvoiceCounterTableTableReferences extends BaseReferences<
+    _$AppDatabase, $InvoiceCounterTableTable, InvoiceCounterTableData> {
+  $$InvoiceCounterTableTableReferences(
+      super.$_db, super.$_table, super.$_typedResult);
+
+  static $StoresTableTable _storeIdTable(_$AppDatabase db) =>
+      db.storesTable.createAlias($_aliasNameGenerator(
+          db.invoiceCounterTable.storeId, db.storesTable.id));
+
+  $$StoresTableTableProcessedTableManager get storeId {
+    final $_column = $_itemColumn<String>('store_id')!;
+
+    final manager = $$StoresTableTableTableManager($_db, $_db.storesTable)
+        .filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_storeIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
+}
+
+class $$InvoiceCounterTableTableFilterComposer
+    extends Composer<_$AppDatabase, $InvoiceCounterTableTable> {
+  $$InvoiceCounterTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get invoiceType => $composableBuilder(
+      column: $table.invoiceType, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get value => $composableBuilder(
+      column: $table.value, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnFilters(column));
+
+  $$StoresTableTableFilterComposer get storeId {
+    final $$StoresTableTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.storeId,
+        referencedTable: $db.storesTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$StoresTableTableFilterComposer(
+              $db: $db,
+              $table: $db.storesTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$InvoiceCounterTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $InvoiceCounterTableTable> {
+  $$InvoiceCounterTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get invoiceType => $composableBuilder(
+      column: $table.invoiceType, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get value => $composableBuilder(
+      column: $table.value, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnOrderings(column));
+
+  $$StoresTableTableOrderingComposer get storeId {
+    final $$StoresTableTableOrderingComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.storeId,
+        referencedTable: $db.storesTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$StoresTableTableOrderingComposer(
+              $db: $db,
+              $table: $db.storesTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$InvoiceCounterTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $InvoiceCounterTableTable> {
+  $$InvoiceCounterTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get invoiceType => $composableBuilder(
+      column: $table.invoiceType, builder: (column) => column);
+
+  GeneratedColumn<int> get value =>
+      $composableBuilder(column: $table.value, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  $$StoresTableTableAnnotationComposer get storeId {
+    final $$StoresTableTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.storeId,
+        referencedTable: $db.storesTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$StoresTableTableAnnotationComposer(
+              $db: $db,
+              $table: $db.storesTable,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$InvoiceCounterTableTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $InvoiceCounterTableTable,
+    InvoiceCounterTableData,
+    $$InvoiceCounterTableTableFilterComposer,
+    $$InvoiceCounterTableTableOrderingComposer,
+    $$InvoiceCounterTableTableAnnotationComposer,
+    $$InvoiceCounterTableTableCreateCompanionBuilder,
+    $$InvoiceCounterTableTableUpdateCompanionBuilder,
+    (InvoiceCounterTableData, $$InvoiceCounterTableTableReferences),
+    InvoiceCounterTableData,
+    PrefetchHooks Function({bool storeId})> {
+  $$InvoiceCounterTableTableTableManager(
+      _$AppDatabase db, $InvoiceCounterTableTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$InvoiceCounterTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$InvoiceCounterTableTableOrderingComposer(
+                  $db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$InvoiceCounterTableTableAnnotationComposer(
+                  $db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<String> storeId = const Value.absent(),
+            Value<String> invoiceType = const Value.absent(),
+            Value<int> value = const Value.absent(),
+            Value<DateTime?> updatedAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              InvoiceCounterTableCompanion(
+            storeId: storeId,
+            invoiceType: invoiceType,
+            value: value,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String storeId,
+            required String invoiceType,
+            Value<int> value = const Value.absent(),
+            Value<DateTime?> updatedAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              InvoiceCounterTableCompanion.insert(
+            storeId: storeId,
+            invoiceType: invoiceType,
+            value: value,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (
+                    e.readTable(table),
+                    $$InvoiceCounterTableTableReferences(db, table, e)
+                  ))
+              .toList(),
+          prefetchHooksCallback: ({storeId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins: <
+                  T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic>>(state) {
+                if (storeId) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.storeId,
+                    referencedTable:
+                        $$InvoiceCounterTableTableReferences._storeIdTable(db),
+                    referencedColumn: $$InvoiceCounterTableTableReferences
+                        ._storeIdTable(db)
+                        .id,
+                  ) as T;
+                }
+
+                return state;
+              },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ));
+}
+
+typedef $$InvoiceCounterTableTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $InvoiceCounterTableTable,
+    InvoiceCounterTableData,
+    $$InvoiceCounterTableTableFilterComposer,
+    $$InvoiceCounterTableTableOrderingComposer,
+    $$InvoiceCounterTableTableAnnotationComposer,
+    $$InvoiceCounterTableTableCreateCompanionBuilder,
+    $$InvoiceCounterTableTableUpdateCompanionBuilder,
+    (InvoiceCounterTableData, $$InvoiceCounterTableTableReferences),
+    InvoiceCounterTableData,
     PrefetchHooks Function({bool storeId})>;
 typedef $$ZatcaOfflineQueueTableTableCreateCompanionBuilder
     = ZatcaOfflineQueueTableCompanion Function({
@@ -68054,6 +69380,8 @@ class $AppDatabaseManager {
       $$OrgProductsTableTableTableManager(_db, _db.orgProductsTable);
   $$InvoicesTableTableTableManager get invoicesTable =>
       $$InvoicesTableTableTableManager(_db, _db.invoicesTable);
+  $$InvoiceCounterTableTableTableManager get invoiceCounterTable =>
+      $$InvoiceCounterTableTableTableManager(_db, _db.invoiceCounterTable);
   $$ZatcaOfflineQueueTableTableTableManager get zatcaOfflineQueueTable =>
       $$ZatcaOfflineQueueTableTableTableManager(
           _db, _db.zatcaOfflineQueueTable);

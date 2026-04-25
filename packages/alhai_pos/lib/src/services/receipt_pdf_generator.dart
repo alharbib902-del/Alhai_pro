@@ -61,6 +61,16 @@ class ReceiptPdfGenerator {
   }
 
   /// توليد فاتورة PDF
+  ///
+  /// [qrOverride]: Wave 3b-2b — if non-null, this base64 string is
+  /// rendered as the receipt QR instead of generating a fresh Phase-1
+  /// TLV. Callers should pass the Phase-2 enhanced QR (from
+  /// `invoices.zatca_qr` after `ZatcaInvoiceService.processInvoice`)
+  /// when Phase-2 is enabled — it embeds the signature + cert info and
+  /// is the legally-binding artifact for the portal. When null we fall
+  /// back to a freshly-generated Phase-1 TLV (legacy path; safe because
+  /// stores that haven't onboarded for Phase-2 still need the simplified
+  /// QR for cashier compliance).
   static Future<Uint8List> generate({
     required SalesTableData sale,
     required List<SaleItemsTableData> items,
@@ -68,6 +78,7 @@ class ReceiptPdfGenerator {
     String cashierName = 'كاشير',
     double paperWidth = 80, // mm
     String? note,
+    String? qrOverride,
   }) async {
     await _loadFonts();
 
@@ -78,13 +89,17 @@ class ReceiptPdfGenerator {
 
     // توليد QR Code بيانات ZATCA
     // C-4 Session 3: sale.total / sale.tax are int cents; ZATCA expects SAR.
-    final qrData = ZatcaService.generateQrData(
-      sellerName: store.name,
-      vatNumber: store.vatNumber,
-      timestamp: sale.createdAt,
-      totalWithVat: sale.total / 100.0,
-      vatAmount: sale.tax / 100.0,
-    );
+    // Wave 3b-2b: prefer the persisted Phase-2 QR when the caller passes
+    // one — it's a strict superset of the Phase-1 TLV and is what ZATCA
+    // accepts at portal-side validation.
+    final qrData = qrOverride ??
+        ZatcaService.generateQrData(
+          sellerName: store.name,
+          vatNumber: store.vatNumber,
+          timestamp: sale.createdAt,
+          totalWithVat: sale.total / 100.0,
+          vatAmount: sale.tax / 100.0,
+        );
 
     final dateFormat = DateFormat('yyyy/MM/dd HH:mm', 'ar');
 
