@@ -504,6 +504,56 @@ class ProductsDao extends DatabaseAccessor<AppDatabase>
     return result.read(countExpression) ?? 0;
   }
 
+  /// P1-5: SQL aggregate for inventory valuation grouped by category.
+  ///
+  /// Replaces the pre-fix pattern in `report_data_provider._inventory`
+  /// which loaded every product row into Dart memory just to sum
+  /// `costPrice * stockQty` per category — for a 5000-SKU store that
+  /// materialized 5000 rows over the FFI bridge for a single number
+  /// per group. SQL aggregation does the same work in O(rows) with
+  /// no row materialization, matching the Wave 8 pattern from sales
+  /// (`aggregatePaymentBreakdownRaw`).
+  ///
+  /// Returns one entry per category (or 'uncategorized' bucket):
+  ///   - `categoryKey`: categoryId (or 'uncategorized' when null)
+  ///   - `totalValueCents`: SUM(cost_price * stock_qty), int cents
+  ///   - `totalQty`: SUM(stock_qty), double (fractional packs preserved)
+  ///   - `productCount`: COUNT(*) of products contributing
+  ///
+  /// Excludes soft-deleted rows. `cost_price` NULL contributes 0
+  /// (legacy entries before cost tracking) — matches the existing
+  /// Dart-side semantics so the report number stays the same.
+  Future<List<InventoryValuationGroup>> getInventoryValuationByCategory(
+    String storeId,
+  ) async {
+    final result = await customSelect(
+      '''SELECT
+           COALESCE(category_id, 'uncategorized') AS category_key,
+           COALESCE(SUM(COALESCE(cost_price, 0) * stock_qty), 0) AS total_value_cents,
+           COALESCE(SUM(stock_qty), 0) AS total_qty,
+           COUNT(*) AS product_count
+         FROM products
+         WHERE store_id = ?
+           AND deleted_at IS NULL
+         GROUP BY COALESCE(category_id, 'uncategorized')''',
+      variables: [Variable.withString(storeId)],
+      readsFrom: {productsTable},
+    ).get();
+
+    return result.map((row) {
+      final rawValue = row.data['total_value_cents'];
+      final rawQty = row.data['total_qty'];
+      return InventoryValuationGroup(
+        categoryKey: row.data['category_key'] as String,
+        totalValueCents: (rawValue is int)
+            ? rawValue
+            : (rawValue as num?)?.toInt() ?? 0,
+        totalQty: (rawQty as num?)?.toDouble() ?? 0.0,
+        productCount: row.data['product_count'] as int? ?? 0,
+      );
+    }).toList();
+  }
+
   /// البحث في المنتجات مع Pagination (باستثناء المحذوفة).
   ///
   /// Phase 3 §3.8 — يُجرَّب FTS5 أولاً للأداء الأفضل (خصوصاً على 10k+ منتج)،
@@ -740,4 +790,22 @@ class ProductWithCategory {
   final String? categoryName;
 
   const ProductWithCategory({required this.product, this.categoryName});
+}
+
+/// P1-5: one bucket from the inventory-valuation aggregate query.
+/// Mirrors the per-category row shape the report screen expects but
+/// stays Drift-free so the data class can travel into alhai_reports
+/// without dragging the DAO with it.
+class InventoryValuationGroup {
+  final String categoryKey;
+  final int totalValueCents;
+  final double totalQty;
+  final int productCount;
+
+  const InventoryValuationGroup({
+    required this.categoryKey,
+    required this.totalValueCents,
+    required this.totalQty,
+    required this.productCount,
+  });
 }

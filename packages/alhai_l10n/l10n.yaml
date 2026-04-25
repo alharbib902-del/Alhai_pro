@@ -1,3 +1,14 @@
+# Locale coverage status (P1-9 audit, 2026-04-26):
+#   - ar (template): 100% — primary market, every key authored here.
+#   - en: 100% — secondary primary, kept in lockstep with ar.
+#   - bn, fil, hi, id, ur: ~200 untranslated each, NON-BLOCKING for
+#     launch. These are convenience locales for the migrant-worker user
+#     base; missing keys fall back to en at runtime, which is acceptable
+#     for the initial release. Backfill is tracked as a Sprint 3+ item
+#     and does not block production launch.
+#   Run `flutter gen-l10n` from this directory to surface the current
+#   counts; the generator prints one line per under-translated locale.
+
 arb-dir: lib/l10n
 template-arb-file: app_ar.arb
 output-localization-file: app_localizations.dart

@@ -877,9 +877,16 @@ class _CashierPurchaseRequestScreenState
           status: const Value('draft'),
           subtotal: Value(subtotalCentsInt),
           total: Value(subtotalCentsInt),
+          // P1-8: sanitize free-text notes before persisting. Strips
+          // bidi overrides, zero-width joiners, control chars, HTML
+          // tags. Same defence used in audit_service for newValue
+          // strings — keeps the audit/payment trail consistent.
           notes: Value(
             _notesController.text.isNotEmpty
-                ? _notesController.text.trim()
+                ? TextInputSanitizer.sanitize(
+                    _notesController.text,
+                    maxLength: 2000,
+                  )
                 : null,
           ),
           createdAt: now,

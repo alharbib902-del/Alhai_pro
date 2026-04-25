@@ -35,6 +35,17 @@ class UsersDao extends DatabaseAccessor<AppDatabase> with _$UsersDaoMixin {
         ..where((u) => u.phone.equals(phone) & u.deletedAt.isNull()))
       .getSingleOrNull();
 
+  /// ⚠️ SECURITY NOTE (P0-1, P1-7): this method does a **plaintext** PIN
+  /// compare against the stored `users.pin` column. It MUST NOT be used
+  /// as the primary security gate for any approval flow — call
+  /// [PinService.verifyPin] (PBKDF2 + lockout) FIRST, and use this DAO
+  /// method only as a SECONDARY identification step ("which user record
+  /// matches this verified PIN?") for audit attribution.
+  ///
+  /// The legacy plaintext PIN column is scheduled for replacement in a
+  /// future wave (per-user hashed PIN with per-user lockout counters,
+  /// migration TBD). Until then, treat any new caller of this method
+  /// with high suspicion in code review.
   Future<UsersTableData?> verifyPin(String storeId, String pin) {
     return (select(usersTable)..where(
           (u) =>
@@ -45,6 +56,30 @@ class UsersDao extends DatabaseAccessor<AppDatabase> with _$UsersDaoMixin {
         ))
         .getSingleOrNull();
   }
+
+  /// P1-7 (Wave 9b plan, 2026-04-26): non-admin readers of the user
+  /// list must not pull `email` / `phone` over the wire. Today every
+  /// caller uses [getAllUsers] which returns the full row including
+  /// PII; the UI masks display, but the data still rides in memory.
+  ///
+  /// Defense-in-depth target:
+  ///   1. **Server-side**: REVOKE column-level SELECT on
+  ///      `users.email` / `users.phone` from `authenticated`, force
+  ///      reads through `get_user_pii(p_user_id)` RPC (already added
+  ///      in Wave 9 migration v81 for the single-user fetch path).
+  ///      For list views, add `get_users_safe(p_store_id)` RPC that
+  ///      strips PII server-side based on the caller's role.
+  ///   2. **Client-side**: replace `getAllUsers` calls in non-admin
+  ///      surfaces with a `getUsersListSafe(storeId)` method that
+  ///      doesn't project the PII columns. Existing admin surfaces
+  ///      keep [getAllUsers].
+  ///
+  /// Until v9b ships, the client-side UI mask in
+  /// `users_permissions_screen._showUserDetail` is the only barrier —
+  /// safe under normal use, but a curious cashier with debug tooling
+  /// could read the in-memory `_UserInfo` objects.
+  // TODO(wave-9b): implement getUsersListSafe + run migration v82
+  // (REVOKE columns) once admin surfaces are migrated to the new RPC.
 
   Future<int> insertUser(UsersTableCompanion user) =>
       into(usersTable).insert(user);

@@ -890,8 +890,16 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
         return;
       }
       final movementId = const Uuid().v4();
-      final supplierRef = _supplierRefController.text.trim();
-      final userNote = _noteController.text.trim();
+      // P1-8: sanitize free-text + supplier ref before persisting
+      // (strip bidi/zero-width/control/HTML).
+      final supplierRef = TextInputSanitizer.sanitize(
+        _supplierRefController.text,
+        maxLength: 200,
+      );
+      final userNote = TextInputSanitizer.sanitize(
+        _noteController.text,
+        maxLength: 2000,
+      );
       final combinedNote = () {
         final parts = <String>[];
         if (userNote.isNotEmpty) parts.add(userNote);

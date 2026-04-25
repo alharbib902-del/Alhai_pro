@@ -518,76 +518,75 @@ class _ManagerApprovalScreenState extends ConsumerState<ManagerApprovalScreen> {
         return;
       }
 
-      // التحقق من PIN في قاعدة البيانات
-      final manager = await db.usersDao.verifyPin(storeId, _pin);
-
+      // P0-1 fix: PinService is the ONLY security gate. Pre-fix the
+      // primary path was a plaintext compare against `users.pin` —
+      // that bypassed PBKDF2 and the lockout counter, so an attacker
+      // could brute-force PINs as fast as the device disk allows.
+      // Now every attempt — successful or failed — runs through
+      // PinService, which:
+      //   1. Refuses immediately if the lockout window is active.
+      //   2. Compares the PBKDF2-salted hash in constant time.
+      //   3. Increments the failure counter on miss + locks at 5.
+      //
+      // The legacy `db.usersDao.verifyPin(storeId, _pin)` plaintext
+      // lookup is now only a SECONDARY audit-identification step
+      // that runs ONLY after PinService says "approved" — its result
+      // never gates approval, only fills in `userName` on the audit
+      // row. If no matching DB row is found we still record the
+      // approval, attributed to the currently-logged-in operator.
+      final result = await PinService.verifyPin(_pin);
       if (!mounted) return;
 
-      if (manager == null) {
-        // PIN غير صحيح - نجرب PinService كاحتياط
-        final result = await PinService.verifyPin(_pin);
-        if (!mounted) return;
-
-        setState(() => _isLoading = false);
-
-        if (result.isSuccess) {
-          // نجح التحقق عبر PinService
-          if (_isDialogMode) {
-            Navigator.of(context).pop(true);
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(l10n.approvalGranted),
-                backgroundColor: Colors.green,
-              ),
-            );
-            context.pop(true);
-          }
-        } else {
-          setState(() {
-            _pin = '';
-            if (result.errorType == PinError.lockedOut &&
-                result.lockedUntil != null) {
-              final remaining = result.lockedUntil!.difference(DateTime.now());
-              _error = l10n.accountLockedWaitMinutes(remaining.inMinutes);
-            } else if (result.remainingAttempts != null) {
-              _error = l10n.wrongPinAttemptsRemaining(
-                result.remainingAttempts!,
-              );
-            } else {
-              _error = 'رمز PIN غير صحيح أو المستخدم ليس مديراً';
-            }
-          });
-        }
-        return;
-      }
-
-      // التحقق من أن المستخدم مدير أو مالك
-      final role = manager.role.toLowerCase();
-      final isManager =
-          role == 'manager' ||
-          role == 'admin' ||
-          role == 'owner' ||
-          role == 'superadmin' ||
-          role == 'store_owner';
-
-      if (!isManager) {
-        if (!mounted) return;
+      if (!result.isSuccess) {
         setState(() {
           _isLoading = false;
           _pin = '';
-          _error = 'هذا المستخدم ليس لديه صلاحيات المدير';
+          if (result.errorType == PinError.lockedOut &&
+              result.lockedUntil != null) {
+            final remaining = result.lockedUntil!.difference(DateTime.now());
+            _error = l10n.accountLockedWaitMinutes(remaining.inMinutes);
+          } else if (result.remainingAttempts != null) {
+            _error = l10n.wrongPinAttemptsRemaining(
+              result.remainingAttempts!,
+            );
+          } else if (result.errorType == PinError.notEnabled) {
+            _error = 'لم يتم إعداد PIN المدير على هذا الجهاز بعد';
+          } else {
+            _error = 'رمز PIN غير صحيح';
+          }
         });
         return;
       }
 
-      // تسجيل الموافقة في سجل التدقيق
+      // PIN verified. Try to identify which DB user record matches
+      // (for richer audit attribution). This is best-effort — a null
+      // result means "device PIN matched but no per-user record" and
+      // we fall back to the currently-logged-in operator.
+      final matchingUser = await db.usersDao.verifyPin(storeId, _pin);
+      final currentUser = ref.read(currentUserProvider);
+      final approverId = matchingUser?.id ?? currentUser?.id ?? 'unknown';
+      final approverName =
+          matchingUser?.name ?? currentUser?.name ?? 'manager';
+
+      // P0-1 fix: write the approval through the hash-chained audit
+      // path, NOT the legacy `auditLogDao.log` direct insert. The
+      // legacy path bypassed `__meta__` content+previous hashes, so
+      // any tampering of an approval row went undetected by
+      // `verifyChain`. Use `appendLogWithHashChain` directly here
+      // because alhai_auth can't depend on the cashier app's
+      // AuditService wrapper without a layer inversion.
       try {
-        await db.auditLogDao.log(
+        await db.auditLogDao.appendLogWithHashChain(
           storeId: storeId,
-          userId: manager.id,
-          userName: manager.name,
+          userId: approverId,
+          userName: approverName,
           action: AuditAction.settingsChange,
+          payload: {
+            'approvalAction': widget.action ?? 'unspecified',
+            'pinSource':
+                matchingUser != null ? 'user_record' : 'device_pin_only',
+          },
+          entityType: 'manager_approval',
           description:
               'موافقة المدير على: ${widget.action ?? 'عملية تتطلب موافقة'}',
         );

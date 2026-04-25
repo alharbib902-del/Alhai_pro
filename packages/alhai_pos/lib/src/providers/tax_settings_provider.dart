@@ -110,6 +110,18 @@ class TaxSettings {
 /// Invalidated by the Tax Settings screen after save so callers re-read the
 /// new values immediately. Returns [TaxSettings.fallback] on any error or
 /// when no store is selected — never throws.
+///
+/// ## P1-10 Cross-app contract (2026-04-26)
+///
+/// Any other app (admin, super_admin) that writes `tax_rate` to the
+/// shared `settings` table MUST encode it as **basis points** integer
+/// string (`"1500"` = 15.00%, `"1525"` = 15.25%). The reader below
+/// caps the parsed value at 10000 (100%) — a malformed write outside
+/// that range silently falls back to 15%, masking the misconfiguration.
+///
+/// Sprint 3 (action plan migration v86) will codify this in a shared
+/// constants file consumed by both writers; until then the contract
+/// lives in code review.
 final taxSettingsProvider = FutureProvider<TaxSettings>((ref) async {
   final storeId = ref.watch(currentStoreIdProvider);
   if (storeId == null || storeId.isEmpty) {

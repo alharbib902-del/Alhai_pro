@@ -57,6 +57,17 @@ class OrdersTable extends Table {
   // created, confirmed, preparing, ready, out_for_delivery, delivered, picked_up, completed, cancelled, refunded
 
   // المبالغ
+  // P1-4 (2026-04-26): these columns are still RealColumn (SAR doubles)
+  // while the rest of the POS money model migrated to int cents in C-4.
+  // The cashier app reads these via `online_orders_provider.dart`, so
+  // they DO show up in the in-store flow when an online order is fulfilled
+  // — floating-point drift here can produce 0.01-cent variances on
+  // totals. Migrating to int cents needs:
+  //   1. Drift schema bump + ALTER TABLE rewrites with `* 100`.
+  //   2. SyncService payload conversion (Supabase counterpart still Real).
+  //   3. Updates to every reader/writer (alhai_pos, customer_app, driver_app).
+  // Deferred: cross-app coordination required, larger than a Sprint 1
+  // session can absorb.
   RealColumn get subtotal => real().withDefault(const Constant(0))();
   RealColumn get taxAmount => real().withDefault(const Constant(0))();
   RealColumn get deliveryFee => real().withDefault(const Constant(0))();

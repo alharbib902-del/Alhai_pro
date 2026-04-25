@@ -1004,7 +1004,11 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
       final syncService = ref.read(syncServiceProvider);
       final txnId = const Uuid().v4();
       final now = DateTime.now();
-      final note = _noteController.text.isEmpty ? null : _noteController.text;
+      // P1-8: sanitize free-text note before persisting (strips bidi
+      // overrides, zero-width joiners, control chars, HTML tags).
+      final note = _noteController.text.isEmpty
+          ? null
+          : TextInputSanitizer.sanitize(_noteController.text, maxLength: 2000);
       final txnType = s.isDebt ? 'invoice' : 'payment';
 
       // P0-13: credit-limit pre-flight. Only relevant when this is a

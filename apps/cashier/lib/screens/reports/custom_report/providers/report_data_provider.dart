@@ -42,13 +42,11 @@ class _GroupItem {
   final DateTime date;
   final double value;
   final double quantity;
-  final String? label;
 
   _GroupItem({
     required this.date,
     required this.value,
     required this.quantity,
-    this.label,
   });
 }
 
@@ -157,47 +155,26 @@ class ReportDataRepository {
   }
 
   Future<List<Map<String, dynamic>>> _inventory(String storeId) async {
-    final products = await _db.productsDao.getAllProducts(storeId);
-    final Map<String, _GroupItem> grouped = {};
-    for (final product in products) {
-      final key = product.categoryId ?? 'uncategorized';
-      // Sprint 1 / P0-17: inventory valuation must use cost basis, not the
-      // retail price. The previous code multiplied stock by `product.price`
-      // (sell price), which inflated balance-sheet inventory assets by the
-      // markup percentage — a real accounting error. We now use
-      // `product.costPrice`; rows with a null cost (legacy entries before
-      // cost tracking) contribute zero rather than the misleading sell
-      // price. Sprint 2 — `add_inventory` will require unit_cost on every
-      // movement, closing the null-cost gap going forward.
-      final unitCostCents = product.costPrice ?? 0;
-      final lineValue = (unitCostCents / 100.0) * product.stockQty;
-      final existing = grouped[key];
-      if (existing != null) {
-        grouped[key] = _GroupItem(
-          date: DateTime.now(),
-          value: existing.value + lineValue,
-          quantity: existing.quantity + product.stockQty,
-          label: key,
-        );
-      } else {
-        grouped[key] = _GroupItem(
-          date: DateTime.now(),
-          value: lineValue,
-          quantity: product.stockQty,
-          label: key,
-        );
-      }
-    }
-    return grouped.entries
+    // P1-5 (2026-04-26): pushed the per-category SUM down to SQL via
+    // `getInventoryValuationByCategory`. Pre-fix the report fetched
+    // every product row over the FFI bridge just to compute one number
+    // per category — for a 5000-SKU store that's 5000 row materialisations
+    // for ~10 buckets. Now zero rows materialise; the GROUP BY happens
+    // in SQLite. Same null-cost semantics preserved (P0-17 invariant):
+    // `cost_price` NULL contributes 0 to value, never the misleading
+    // retail price.
+    final groups =
+        await _db.productsDao.getInventoryValuationByCategory(storeId);
+    return groups
         .map(
-          (e) => {
-            'label': e.key,
-            'value': e.value.value,
-            // P1 #4 (2026-04-24): fractional quantity (e.g. 0.75 kg) is preserved
-            // in the raw map so the preview can format it with
-            // `toStringAsFixed(2)`. The aggregate KPI still casts to int via
-            // `rawCount.toInt()` in `generate()`.
-            'count': e.value.quantity,
+          (g) => {
+            'label': g.categoryKey,
+            'value': g.totalValueCents / 100.0,
+            // P1 #4 (2026-04-24): fractional quantity (e.g. 0.75 kg) is
+            // preserved in the raw map so the preview can format it with
+            // `toStringAsFixed(2)`. The aggregate KPI still casts to int
+            // via `rawCount.toInt()` in `generate()`.
+            'count': g.totalQty,
           },
         )
         .toList();

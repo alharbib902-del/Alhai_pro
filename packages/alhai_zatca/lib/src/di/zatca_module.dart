@@ -125,6 +125,14 @@ class ZatcaModule {
       );
     }
     if (!getIt.isRegistered<ZatcaOfflineQueue>()) {
+      // P1-6 (2026-04-26): the queue currently uses its SharedPreferences
+      // fallback for persistence. That's tolerable while Phase-2 is OFF
+      // by default in the cashier app (Wave 3b-2b only ships the
+      // plumbing). When Wave 3b-2c flips Phase-2 ON for any store,
+      // wire the DB-backed `onQueueChanged` + `onLoadQueue` callbacks
+      // here against `ZatcaOfflineQueueDao` (already exists in
+      // alhai_database). SharedPreferences won't survive a backup/
+      // restore round-trip and is invisible to admin reports.
       getIt.registerLazySingleton<ZatcaOfflineQueue>(() => ZatcaOfflineQueue());
     }
     if (!getIt.isRegistered<ZatcaInvoiceService>()) {

@@ -6,7 +6,13 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 /// Usage:
 /// flutter run --dart-define=SENTRY_DSN=https://xxx@xxx.ingest.sentry.io/xxx
 /// flutter build apk --dart-define=SENTRY_DSN=https://xxx@xxx.ingest.sentry.io/xxx
+///
+/// P1-3: also wire APP_RELEASE so Sentry tags events per release. Without
+/// this, every error groups under "no release" and you lose the ability
+/// to see "this regression appeared in 1.2.3". Pass via --dart-define at
+/// build time, ideally derived from CI's git describe / pubspec version.
 const _sentryDsn = String.fromEnvironment('SENTRY_DSN');
+const _appRelease = String.fromEnvironment('APP_RELEASE');
 
 /// Whether Sentry is configured (DSN provided).
 bool get isSentryConfigured => _sentryDsn.isNotEmpty;
@@ -30,6 +36,11 @@ Future<void> initSentry({required Future<void> Function() appRunner}) async {
     options.attachScreenshot = true;
     options.sendDefaultPii = false;
     options.diagnosticLevel = SentryLevel.warning;
+    // P1-3: tag every event with the app release so the Sentry UI can
+    // group regressions per version. Empty string = unset (Sentry skips).
+    if (_appRelease.isNotEmpty) {
+      options.release = _appRelease;
+    }
   }, appRunner: appRunner);
 }
 

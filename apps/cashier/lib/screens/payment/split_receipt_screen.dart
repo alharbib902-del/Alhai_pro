@@ -490,14 +490,11 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
                     color: AppColors.getTextPrimary(isDark),
                   ),
                 ),
-                if (split.reference != null)
-                  Text(
-                    split.reference!,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: AppColors.getTextMuted(isDark),
-                    ),
-                  ),
+                // P0-2 cleanup: removed dead `split.reference` row.
+                // No caller ever passed a reference (card RRN, transfer
+                // ref, etc.) so the display branch was always null.
+                // Reintroduce with a real source of reference data when
+                // the per-tender RRN capture flow lands.
               ],
             ),
           ),
@@ -698,11 +695,9 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
 class _PaymentSplit {
   final String method;
   final double amount;
-  final String? reference;
 
   const _PaymentSplit({
     required this.method,
     required this.amount,
-    this.reference,
   });
 }

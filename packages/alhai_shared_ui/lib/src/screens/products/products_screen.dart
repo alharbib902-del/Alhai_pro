@@ -897,10 +897,14 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
         return;
       }
 
-      // Audit trail — failure must not block the delete UX (matches H5 pattern)
+      // Audit trail — failure must not block the delete UX (matches H5 pattern).
+      // P0-1 fix: route through `appendLogWithHashChain` so deletes
+      // participate in the tamper-evident chain. The legacy `log` API
+      // wrote rows that `verifyChain` couldn't validate — a deletion
+      // could be silently dropped from history without detection.
       try {
         final currentUser = ref.read(currentUserProvider);
-        await db.auditLogDao.log(
+        await db.auditLogDao.appendLogWithHashChain(
           storeId: storeId,
           userId: currentUser?.id ?? 'unknown',
           userName: currentUser?.name ?? 'unknown',
@@ -908,7 +912,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
           entityType: 'product',
           entityId: product.id,
           oldValue: {'name': product.name, 'deleted_at': null},
-          newValue: {
+          payload: {
             'name': product.name,
             'deleted_at': DateTime.now().toIso8601String(),
           },

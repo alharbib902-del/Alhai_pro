@@ -664,6 +664,18 @@ class _CashInOutScreenState extends ConsumerState<CashInOutScreen> {
     );
   }
 
+  /// P1-8: sanitized + nullable reason. Returns null when empty after
+  /// sanitization (matches the original `isNotEmpty` semantic), so
+  /// blank/whitespace-only inputs don't bloat the DB row.
+  String? _sanitizedReason() {
+    if (_reasonController.text.isEmpty) return null;
+    final cleaned = TextInputSanitizer.sanitize(
+      _reasonController.text,
+      maxLength: 500,
+    );
+    return cleaned.isEmpty ? null : cleaned;
+  }
+
   Future<void> _submitMovement(
     ShiftsTableData shift,
     AppLocalizations l10n,
@@ -680,9 +692,9 @@ class _CashInOutScreenState extends ConsumerState<CashInOutScreen> {
         shiftId: shift.id,
         type: _isCashIn ? 'cash_in' : 'cash_out',
         amount: amount,
-        reason: _reasonController.text.isNotEmpty
-            ? _reasonController.text
-            : null,
+        // P1-8: sanitize free-text reason once + reuse for both DB
+        // write and audit log so the recorded value is identical.
+        reason: _sanitizedReason(),
         createdBy: user?.name,
       );
 
@@ -695,9 +707,7 @@ class _CashInOutScreenState extends ConsumerState<CashInOutScreen> {
         userName: user?.name ?? 'unknown',
         type: _isCashIn ? 'cash_in' : 'cash_out',
         amount: amount,
-        reason: _reasonController.text.isNotEmpty
-            ? _reasonController.text
-            : null,
+        reason: _sanitizedReason(),
       );
 
       addBreadcrumb(

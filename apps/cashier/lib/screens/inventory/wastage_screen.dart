@@ -780,8 +780,12 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
           qty: quantity,
           previousQty: freshPrev,
           reason: _reason,
+          // P1-8: sanitize free-text note (bidi/zero-width/HTML strip).
           notes: _noteController.text.isNotEmpty
-              ? _noteController.text
+              ? TextInputSanitizer.sanitize(
+                  _noteController.text,
+                  maxLength: 2000,
+                )
               : null,
         );
         await _db.productsDao.updateStock(_selectedProduct!.id, freshNew);

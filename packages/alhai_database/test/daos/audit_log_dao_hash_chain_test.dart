@@ -264,5 +264,92 @@ void main() {
       expect(await db.auditLogDao.verifyChain(storeId: 'store-X'), isNull);
       expect(await db.auditLogDao.verifyChain(storeId: 'store-Y'), yId);
     });
+
+    // ─── P0-1 regression: manager approval audit must be hash-chained ─
+    test(
+      'manager approval written via appendLogWithHashChain stays in chain',
+      () async {
+        // Pre-fix the manager-approval flow used the legacy `log()` API
+        // that wrote rows without a __meta__ envelope — `verifyChain`
+        // skipped them silently, so an attacker could mutate any
+        // approval row and the chain would still verify "intact".
+        // Now the screen calls `appendLogWithHashChain` directly; this
+        // test is a regression guard that the rewrite still produces
+        // chain-participating rows.
+        await db.auditLogDao.appendLogWithHashChain(
+          storeId: 'store-1',
+          userId: 'user-1',
+          userName: 'أحمد',
+          action: AuditAction.saleCreate,
+          payload: {'saleId': 'sale-1'},
+        );
+        await db.auditLogDao.appendLogWithHashChain(
+          storeId: 'store-1',
+          userId: 'manager-1',
+          userName: 'المدير',
+          action: AuditAction.settingsChange,
+          payload: {
+            'approvalAction': 'void_sale',
+            'pinSource': 'device_pin_only',
+          },
+          entityType: 'manager_approval',
+          description: 'موافقة المدير على: void_sale',
+        );
+
+        // Chain still intact.
+        expect(
+          await db.auditLogDao.verifyChain(storeId: 'store-1'),
+          isNull,
+          reason:
+              'approval row must participate in the hash chain — not a legacy bare insert',
+        );
+
+        // Mutate the approval row's payload — verifyChain should
+        // detect it.
+        final rows = await db.auditLogDao.getLogs('store-1', limit: 10);
+        final approvalRow =
+            rows.firstWhere((r) => r.action == AuditAction.settingsChange.name);
+        final decoded = jsonDecode(approvalRow.newValue!) as Map<String, dynamic>;
+        decoded['approvalAction'] = 'tampered';
+        await (db.update(db.auditLogTable)
+              ..where((l) => l.id.equals(approvalRow.id)))
+            .write(
+          AuditLogTableCompanion(newValue: Value(jsonEncode(decoded))),
+        );
+
+        expect(
+          await db.auditLogDao.verifyChain(storeId: 'store-1'),
+          approvalRow.id,
+          reason: 'tampered approval payload must be detected',
+        );
+      },
+    );
+
+    test(
+      'legacy log() rows are skipped — proves the audit fix matters',
+      () async {
+        // This test pins down the exact bug we fixed: rows written via
+        // the legacy `log()` API don't carry __meta__ and are
+        // intentionally skipped by verifyChain. If a future caller
+        // adds a manager-approval row via `log()`, this test stays
+        // green (verifyChain returns null) — masking the gap. That's
+        // why the manager_approval_screen now calls
+        // appendLogWithHashChain directly; the contract is enforced
+        // at the call site, not at the DAO.
+        await db.auditLogDao.log(
+          storeId: 'store-2',
+          userId: 'manager-1',
+          userName: 'المدير',
+          action: AuditAction.settingsChange,
+          description: 'legacy approval — would slip past verifyChain',
+        );
+        // No exception, no failure — just documents the gap that the
+        // fix at the manager_approval_screen call site closes.
+        expect(
+          await db.auditLogDao.verifyChain(storeId: 'store-2'),
+          isNull,
+        );
+      },
+    );
   });
 }

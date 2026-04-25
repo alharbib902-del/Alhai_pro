@@ -554,6 +554,24 @@ class InvoiceService {
   ///
   /// الصيغة: {PREFIX}-{YEAR}-{SEQUENCE:5}
   /// مثال: INV-2026-00001, CN-2026-00002
+  ///
+  /// ## P1-10 Cross-app contract (2026-04-26)
+  ///
+  /// The cashier app reads its local `invoices` table to find the next
+  /// sequence. If the admin app ever issues invoices for the SAME
+  /// store with the SAME prefix + year, both apps can pick the same
+  /// next number and collide on insert. Two layers of protection:
+  ///   1. **DB-level**: a unique index on `(store_id, invoice_number)`
+  ///      catches the collision and the surrounding `createFromSale`
+  ///      retry loop (3 attempts) re-reads + re-generates.
+  ///   2. **Sync-level**: the Supabase `invoices` table has the same
+  ///      unique constraint, so a cross-device collision surfaces as
+  ///      a sync push failure that the queue retries with a fresh
+  ///      number.
+  ///
+  /// Long-term fix (deferred): centralised sequence allocation via a
+  /// Supabase RPC that returns the next number under a row lock. Until
+  /// then, the retry path is the contract.
   Future<String> _generateInvoiceNumber({
     required String storeId,
     required InvoiceType type,

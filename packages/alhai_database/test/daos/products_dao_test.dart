@@ -364,5 +364,157 @@ void main() {
       final products = await db.productsDao.getAllProducts('unknown-store');
       expect(products, isEmpty);
     });
+
+    // ─── P1-5: SQL aggregate inventory valuation ───────────────────
+    group('getInventoryValuationByCategory', () {
+      Future<void> seedCategory(String id, {String storeId = 'store-1'}) {
+        return db.categoriesDao.insertCategory(
+          CategoriesTableCompanion.insert(
+            id: id,
+            storeId: storeId,
+            name: 'cat-$id',
+            createdAt: DateTime(2025, 1, 1),
+          ),
+        );
+      }
+
+      test('groups by category and sums cost * qty', () async {
+        await seedCategory('cat-1');
+        await seedCategory('cat-2');
+        await db.productsDao.insertProduct(
+          ProductsTableCompanion.insert(
+            id: 'p-cat1-a',
+            storeId: 'store-1',
+            name: 'A',
+            price: 1000,
+            costPrice: const Value(500),
+            stockQty: const Value(10),
+            categoryId: const Value('cat-1'),
+            createdAt: DateTime(2025, 1, 1),
+          ),
+        );
+        await db.productsDao.insertProduct(
+          ProductsTableCompanion.insert(
+            id: 'p-cat1-b',
+            storeId: 'store-1',
+            name: 'B',
+            price: 2000,
+            costPrice: const Value(1500),
+            stockQty: const Value(4),
+            categoryId: const Value('cat-1'),
+            createdAt: DateTime(2025, 1, 1),
+          ),
+        );
+        await db.productsDao.insertProduct(
+          ProductsTableCompanion.insert(
+            id: 'p-cat2',
+            storeId: 'store-1',
+            name: 'C',
+            price: 3000,
+            costPrice: const Value(2000),
+            stockQty: const Value(2),
+            categoryId: const Value('cat-2'),
+            createdAt: DateTime(2025, 1, 1),
+          ),
+        );
+
+        final groups = await db.productsDao
+            .getInventoryValuationByCategory('store-1');
+
+        // 2 buckets: cat-1 (10*500 + 4*1500 = 11000c) and cat-2 (2*2000 = 4000c)
+        expect(groups, hasLength(2));
+        final byKey = {for (final g in groups) g.categoryKey: g};
+        expect(byKey['cat-1']!.totalValueCents, 11000);
+        expect(byKey['cat-1']!.totalQty, 14.0);
+        expect(byKey['cat-1']!.productCount, 2);
+        expect(byKey['cat-2']!.totalValueCents, 4000);
+        expect(byKey['cat-2']!.totalQty, 2.0);
+        expect(byKey['cat-2']!.productCount, 1);
+      });
+
+      test('null categoryId rolls into the "uncategorized" bucket', () async {
+        await db.productsDao.insertProduct(
+          ProductsTableCompanion.insert(
+            id: 'p-uncat',
+            storeId: 'store-1',
+            name: 'No category',
+            price: 1000,
+            costPrice: const Value(500),
+            stockQty: const Value(3),
+            createdAt: DateTime(2025, 1, 1),
+          ),
+        );
+
+        final groups = await db.productsDao
+            .getInventoryValuationByCategory('store-1');
+        expect(groups.first.categoryKey, 'uncategorized');
+        expect(groups.first.totalValueCents, 1500);
+      });
+
+      test('null cost_price contributes 0 to value (P0-17 invariant)',
+          () async {
+        // Pre-fix: rows with null cost_price contributed `price` (sell)
+        // to the inventory value, inflating balance-sheet assets by the
+        // markup percentage. Post-fix the SQL now uses
+        // COALESCE(cost_price, 0) so legacy null-cost rows show as
+        // zero value (real money — they need a cost backfill, but
+        // that's a separate operation, not silent inflation).
+        await seedCategory('cat-1');
+        await db.productsDao.insertProduct(
+          ProductsTableCompanion.insert(
+            id: 'p-nullcost',
+            storeId: 'store-1',
+            name: 'Legacy',
+            price: 5000,
+            costPrice: const Value(null),
+            stockQty: const Value(10),
+            categoryId: const Value('cat-1'),
+            createdAt: DateTime(2025, 1, 1),
+          ),
+        );
+
+        final groups = await db.productsDao
+            .getInventoryValuationByCategory('store-1');
+        expect(groups.first.totalValueCents, 0,
+            reason: 'null cost_price must contribute 0, not the sell price');
+        expect(groups.first.totalQty, 10.0);
+      });
+
+      test('store-scoped — does not leak across stores', () async {
+        await seedCategory('cat-1', storeId: 'store-1');
+        await seedCategory('cat-1-other', storeId: 'store-2');
+        await db.productsDao.insertProduct(
+          ProductsTableCompanion.insert(
+            id: 'p-1',
+            storeId: 'store-1',
+            name: 'A',
+            price: 1000,
+            costPrice: const Value(500),
+            stockQty: const Value(5),
+            categoryId: const Value('cat-1'),
+            createdAt: DateTime(2025, 1, 1),
+          ),
+        );
+        // Different store, different category id (per-store FK) —
+        // must not contribute to store-1's groups.
+        await db.productsDao.insertProduct(
+          ProductsTableCompanion.insert(
+            id: 'p-2',
+            storeId: 'store-2',
+            name: 'B',
+            price: 1000,
+            costPrice: const Value(999),
+            stockQty: const Value(99),
+            categoryId: const Value('cat-1-other'),
+            createdAt: DateTime(2025, 1, 1),
+          ),
+        );
+
+        final groups = await db.productsDao
+            .getInventoryValuationByCategory('store-1');
+        expect(groups, hasLength(1));
+        expect(groups.first.totalValueCents, 2500);
+      });
+    });
   });
 }

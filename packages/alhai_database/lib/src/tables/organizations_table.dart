@@ -49,6 +49,10 @@ class SubscriptionsTable extends Table {
   TextColumn get orgId => text()();
   TextColumn get plan => text()();
   TextColumn get status => text().withDefault(const Constant('active'))();
+  // P1-4 (2026-04-26): subscription billing amount kept as RealColumn.
+  // Out of cashier scope — no callers in apps/cashier or alhai_pos read
+  // this column. Belongs to admin/billing infrastructure; migrate to int
+  // cents when the admin billing module gets its own pass.
   RealColumn get amount => real().withDefault(const Constant(0))();
   TextColumn get currency => text().withDefault(const Constant('SAR'))();
   TextColumn get billingCycle =>
