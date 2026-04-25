@@ -14100,6 +14100,32 @@ class AppLocalizationsEn extends AppLocalizations {
       'Exchange requires at least one new item. For a pure refund, please use the Returns screen (which links the refund to the original sale).';
 
   @override
+  String get selectOriginalSaleTitle => 'Select Original Sale';
+
+  @override
+  String get originalSaleLabel => 'Original sale';
+
+  @override
+  String get originalSaleRequired =>
+      'Pick the original sale before confirming the exchange';
+
+  @override
+  String get changeOriginalSale => 'Change';
+
+  @override
+  String get searchByReceiptNumber => 'Search by receipt number…';
+
+  @override
+  String recentSalesLastNDays(int days) {
+    return 'Sales — last $days days';
+  }
+
+  @override
+  String noEligibleSalesFound(int days) {
+    return 'No eligible sales in the last $days days';
+  }
+
+  @override
   String get splitReceiptTitle => 'Split Receipt';
 
   @override

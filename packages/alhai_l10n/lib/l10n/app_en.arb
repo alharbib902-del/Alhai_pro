@@ -7277,6 +7277,27 @@
   "itemsToReturn": "Items to Return",
   "newItemsToAdd": "New Items to Add",
   "exchangeRequiresNewItem": "Exchange requires at least one new item. For a pure refund, please use the Returns screen (which links the refund to the original sale).",
+  "selectOriginalSaleTitle": "Select Original Sale",
+  "originalSaleLabel": "Original sale",
+  "originalSaleRequired": "Pick the original sale before confirming the exchange",
+  "changeOriginalSale": "Change",
+  "searchByReceiptNumber": "Search by receipt number…",
+  "recentSalesLastNDays": "Sales — last {days} days",
+  "@recentSalesLastNDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "noEligibleSalesFound": "No eligible sales in the last {days} days",
+  "@noEligibleSalesFound": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
   "splitReceiptTitle": "Split Receipt",
   "paymentBreakdown": "Payment Breakdown",
   "zatcaQrTitle": "ZATCA QR",

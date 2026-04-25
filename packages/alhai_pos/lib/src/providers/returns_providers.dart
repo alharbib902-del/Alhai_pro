@@ -85,12 +85,15 @@ final returnDetailProvider = FutureProvider.autoDispose
 
 /// إنشاء مرتجع جديد
 ///
-/// Sprint 1 / P0-14 + P0-15:
+/// Sprint 1 / P0-14 + P0-15 (+ Wave 3b-2a):
 /// * **Max-refund check (P0-14):** before any DB write we sum existing
 ///   refunds for [saleId] and refuse if the new refund would push the
 ///   total above the original sale total. Without this guard, a 1000 SAR
 ///   sale could be refunded as 500 + 500 + 500 — direct money loss and a
-///   ZATCA credit-note inconsistency once Wave 3b lands.
+///   ZATCA credit-note inconsistency. The check is now unconditional;
+///   the temporary `skipMaxRefundCheck` exchange escape hatch was
+///   removed in Wave 3b-2a once exchange_screen started anchoring to
+///   the customer's original sale.
 /// * **Atomicity (P0-15):** the previous version inserted the return,
 ///   then return_items, then looped through products restocking +
 ///   recording movements — without a transaction. If updateStock failed
@@ -113,14 +116,6 @@ Future<String> createReturn(
   String? notes,
   String? createdBy,
   required List<ReturnItemsTableCompanion> items,
-  // Sprint 1 / P0-14 escape hatch: today exchange_screen creates a NEW
-  // sale and then a return whose FK points at that new sale (instead of
-  // the customer's original purchase). The new sale's total is often
-  // smaller than the refund amount (customer keeps part of the money),
-  // so the max-refund guard would falsely reject every exchange. Wave 3b
-  // will fix exchange_screen to link the return to the original sale,
-  // at which point this flag should be removed and the guard always on.
-  bool skipMaxRefundCheck = false,
 }) async {
   final storeId = ref.read(currentStoreIdProvider);
   if (storeId == null) throw Exception('لا يوجد متجر محدد');
@@ -132,29 +127,27 @@ Future<String> createReturn(
   // Done outside any transaction since we want to fail FAST without
   // touching DB write state. Reading the sale + summing prior refunds
   // is a couple of indexed lookups.
-  if (!skipMaxRefundCheck) {
-    final originalSale = await db.salesDao.getSaleById(saleId);
-    if (originalSale == null) {
-      throw const InvalidRefundException(
-        'Original sale not found. The receipt may have been deleted or '
-        'never synced to this device.',
-      );
-    }
-    final previouslyRefundedCents =
-        await db.returnsDao.sumRefundedCentsBySaleId(saleId);
-    final remainingCents = originalSale.total - previouslyRefundedCents;
-    if (newRefundCents > remainingCents) {
-      final remainingSar = remainingCents / 100.0;
-      final priorSar = previouslyRefundedCents / 100.0;
-      final originalSar = originalSale.total / 100.0;
-      throw InvalidRefundException(
-        'Refund $totalRefund SAR exceeds remaining refundable '
-        '$remainingSar SAR (original $originalSar SAR, prior refunds '
-        '$priorSar SAR).',
-        originalTotalCents: originalSale.total,
-        previouslyRefundedCents: previouslyRefundedCents,
-      );
-    }
+  final originalSale = await db.salesDao.getSaleById(saleId);
+  if (originalSale == null) {
+    throw const InvalidRefundException(
+      'Original sale not found. The receipt may have been deleted or '
+      'never synced to this device.',
+    );
+  }
+  final previouslyRefundedCents =
+      await db.returnsDao.sumRefundedCentsBySaleId(saleId);
+  final remainingCents = originalSale.total - previouslyRefundedCents;
+  if (newRefundCents > remainingCents) {
+    final remainingSar = remainingCents / 100.0;
+    final priorSar = previouslyRefundedCents / 100.0;
+    final originalSar = originalSale.total / 100.0;
+    throw InvalidRefundException(
+      'Refund $totalRefund SAR exceeds remaining refundable '
+      '$remainingSar SAR (original $originalSar SAR, prior refunds '
+      '$priorSar SAR).',
+      originalTotalCents: originalSale.total,
+      previouslyRefundedCents: previouslyRefundedCents,
+    );
   }
 
   final id = _uuid.v4();

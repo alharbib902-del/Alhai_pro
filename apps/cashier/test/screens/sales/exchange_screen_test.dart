@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:alhai_database/alhai_database.dart';
 
 import '../../helpers/mock_database.dart';
 import '../../helpers/test_helpers.dart';
@@ -121,6 +123,72 @@ void main() {
       expect(find.byIcon(Icons.assignment_return_rounded), findsOneWidget);
       // New items section icon
       expect(find.byIcon(Icons.add_shopping_cart_rounded), findsOneWidget);
+    });
+
+    // ─── Wave 3b-2a: original-sale anchor picker ─────────────────────
+    testWidgets('renders the original-sale picker CTA when none selected', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(1920, 1080);
+      tester.view.devicePixelRatio = 1.0;
+
+      suppressOverflowErrors();
+
+      await tester.pumpWidget(createTestWidget(const ExchangeScreen()));
+      await tester.pumpAndSettle();
+
+      // l10n.selectOriginalSaleTitle (ar) — also used as CTA text.
+      expect(
+        find.text(
+          'اختر '
+          'الفاتورة '
+          'الأصلية',
+        ),
+        findsOneWidget,
+      );
+      // Picker icon visible on the CTA card.
+      expect(find.byIcon(Icons.receipt_long_rounded), findsOneWidget);
+    });
+
+    testWidgets('opens picker bottom sheet and shows empty state', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(1920, 1080);
+      tester.view.devicePixelRatio = 1.0;
+      suppressOverflowErrors();
+
+      // Pattern follows payment_reports_screen_test: stub the DAO mocks
+      // BEFORE wiring them into setupMockDatabase so the picker's two
+      // DB calls (getSalesByDateRange + getAllReturns) resolve to empty.
+      // setupTestGetIt swaps the registration in place — no teardown
+      // needed (and tearDownTestGetIt's getIt.reset() is async, so
+      // calling it inline races the next register).
+      final salesDao = MockSalesDao();
+      final returnsDao = MockReturnsDao();
+      when(
+        () => salesDao.getSalesByDateRange(
+          any(),
+          any(),
+          any(),
+          limit: any(named: 'limit'),
+        ),
+      ).thenAnswer((_) async => <SalesTableData>[]);
+      when(
+        () => returnsDao.getAllReturns(any(), limit: any(named: 'limit')),
+      ).thenAnswer((_) async => <ReturnsTableData>[]);
+      db = setupMockDatabase(salesDao: salesDao, returnsDao: returnsDao);
+      setupTestGetIt(mockDb: db);
+
+      await tester.pumpWidget(createTestWidget(const ExchangeScreen()));
+      await tester.pumpAndSettle();
+
+      final cta = find.byIcon(Icons.receipt_long_rounded);
+      expect(cta, findsOneWidget);
+      await tester.tap(cta, warnIfMissed: false);
+      await tester.pumpAndSettle();
+
+      // Empty-state icon belongs only to the picker bottom sheet.
+      expect(find.byIcon(Icons.inbox_outlined), findsOneWidget);
     });
   });
 }

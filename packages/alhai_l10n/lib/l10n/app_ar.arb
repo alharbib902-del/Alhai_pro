@@ -7137,6 +7137,27 @@
   "itemsToReturn": "عناصر للإرجاع",
   "newItemsToAdd": "عناصر جديدة للإضافة",
   "exchangeRequiresNewItem": "الاستبدال يتطلب إضافة عنصر جديد واحد على الأقل. للاسترداد البحت، استخدم شاشة المرتجعات التي تربط الاسترداد بفاتورة البيع الأصلية.",
+  "selectOriginalSaleTitle": "اختر الفاتورة الأصلية",
+  "originalSaleLabel": "الفاتورة الأصلية",
+  "originalSaleRequired": "اختر الفاتورة الأصلية قبل تأكيد الاستبدال",
+  "changeOriginalSale": "تغيير",
+  "searchByReceiptNumber": "ابحث برقم الإيصال…",
+  "recentSalesLastNDays": "مبيعات آخر {days} يوم",
+  "@recentSalesLastNDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "noEligibleSalesFound": "لا توجد مبيعات مؤهَّلة في آخر {days} يوم",
+  "@noEligibleSalesFound": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
   "splitReceiptTitle": "إيصال الدفع المجزأ",
   "paymentBreakdown": "تفاصيل الدفع",
   "zatcaQrTitle": "رمز QR للفوترة الإلكترونية",

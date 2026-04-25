@@ -14091,6 +14091,32 @@ class AppLocalizationsBn extends AppLocalizations {
       'الاستبدال يتطلب إضافة عنصر جديد واحد على الأقل. للاسترداد البحت، استخدم شاشة المرتجعات التي تربط الاسترداد بفاتورة البيع الأصلية.';
 
   @override
+  String get selectOriginalSaleTitle => 'اختر الفاتورة الأصلية';
+
+  @override
+  String get originalSaleLabel => 'الفاتورة الأصلية';
+
+  @override
+  String get originalSaleRequired =>
+      'اختر الفاتورة الأصلية قبل تأكيد الاستبدال';
+
+  @override
+  String get changeOriginalSale => 'تغيير';
+
+  @override
+  String get searchByReceiptNumber => 'ابحث برقم الإيصال…';
+
+  @override
+  String recentSalesLastNDays(int days) {
+    return 'مبيعات آخر $days يوم';
+  }
+
+  @override
+  String noEligibleSalesFound(int days) {
+    return 'لا توجد مبيعات مؤهَّلة في آخر $days يوم';
+  }
+
+  @override
   String get splitReceiptTitle => 'إيصال الدفع المجزأ';
 
   @override

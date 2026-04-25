@@ -26150,6 +26150,48 @@ abstract class AppLocalizations {
   /// **'الاستبدال يتطلب إضافة عنصر جديد واحد على الأقل. للاسترداد البحت، استخدم شاشة المرتجعات التي تربط الاسترداد بفاتورة البيع الأصلية.'**
   String get exchangeRequiresNewItem;
 
+  /// No description provided for @selectOriginalSaleTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر الفاتورة الأصلية'**
+  String get selectOriginalSaleTitle;
+
+  /// No description provided for @originalSaleLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الفاتورة الأصلية'**
+  String get originalSaleLabel;
+
+  /// No description provided for @originalSaleRequired.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر الفاتورة الأصلية قبل تأكيد الاستبدال'**
+  String get originalSaleRequired;
+
+  /// No description provided for @changeOriginalSale.
+  ///
+  /// In ar, this message translates to:
+  /// **'تغيير'**
+  String get changeOriginalSale;
+
+  /// No description provided for @searchByReceiptNumber.
+  ///
+  /// In ar, this message translates to:
+  /// **'ابحث برقم الإيصال…'**
+  String get searchByReceiptNumber;
+
+  /// No description provided for @recentSalesLastNDays.
+  ///
+  /// In ar, this message translates to:
+  /// **'مبيعات آخر {days} يوم'**
+  String recentSalesLastNDays(int days);
+
+  /// No description provided for @noEligibleSalesFound.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد مبيعات مؤهَّلة في آخر {days} يوم'**
+  String noEligibleSalesFound(int days);
+
   /// No description provided for @splitReceiptTitle.
   ///
   /// In ar, this message translates to:

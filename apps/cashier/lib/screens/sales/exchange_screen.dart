@@ -34,11 +34,38 @@ import 'package:alhai_design_system/alhai_design_system.dart'
 // alhai_design_system is re-exported via alhai_shared_ui
 
 // ============================================================================
+// Constants
+// ============================================================================
+
+/// Wave 3b-2a return-window policy. Sales older than this can't anchor a
+/// new exchange. Hard-coded for now; promote to TaxSettings/StoreSettings
+/// in a later wave when the admin wants per-store policies.
+const int _kReturnPolicyDays = 30;
+
+/// Hard cap on rows shown in the original-sale picker. The DAO returns
+/// up to 5000 within the date range; client-side trimming keeps the
+/// bottom sheet snappy on low-end Android.
+const int _kPickerMaxResults = 50;
+
+/// Marker that identifies a sale row that was itself created by a
+/// previous exchange (see `_submitExchange.notes`). Used as a recursion
+/// guard so the picker won't let the cashier "exchange against an
+/// exchange" — the audit trail of nested exchanges is unreadable, and
+/// the ZATCA credit-note chain only has meaning when refInvoiceId
+/// points at a real customer purchase.
+///
+/// Heuristic by design: a future migration should add a typed
+/// `sales.sale_type` column ('sale' | 'exchange' | 'credit_note') so
+/// this stops depending on a free-text prefix.
+const String _kExchangeSaleNotePrefix = 'Exchange sale —';
+
+// ============================================================================
 // State
 // ============================================================================
 
 @immutable
 class _ExchangeState {
+  final SalesTableData? originalSale;
   final List<ProductsTableData> returnSearchResults;
   final List<ProductsTableData> newSearchResults;
   final List<_ExchangeItem> returnItems;
@@ -46,6 +73,7 @@ class _ExchangeState {
   final bool isSubmitting;
 
   const _ExchangeState({
+    this.originalSale,
     this.returnSearchResults = const [],
     this.newSearchResults = const [],
     this.returnItems = const [],
@@ -54,12 +82,14 @@ class _ExchangeState {
   });
 
   _ExchangeState copyWith({
+    SalesTableData? originalSale,
     List<ProductsTableData>? returnSearchResults,
     List<ProductsTableData>? newSearchResults,
     List<_ExchangeItem>? returnItems,
     List<_ExchangeItem>? newItems,
     bool? isSubmitting,
   }) => _ExchangeState(
+    originalSale: originalSale ?? this.originalSale,
     returnSearchResults: returnSearchResults ?? this.returnSearchResults,
     newSearchResults: newSearchResults ?? this.newSearchResults,
     returnItems: returnItems ?? this.returnItems,
@@ -78,6 +108,14 @@ class _ExchangeState {
 
 class _ExchangeNotifier extends StateNotifier<_ExchangeState> {
   _ExchangeNotifier() : super(const _ExchangeState());
+
+  void setOriginalSale(SalesTableData sale) =>
+      state = state.copyWith(originalSale: sale);
+
+  /// Resets state including originalSale. Used after a successful submit
+  /// — copyWith's nullable-default pattern can't unset originalSale, so
+  /// we replace state wholesale.
+  void resetAll() => state = const _ExchangeState();
 
   void setReturnSearchResults(List<ProductsTableData> list) =>
       state = state.copyWith(returnSearchResults: list);
@@ -145,11 +183,6 @@ class _ExchangeNotifier extends StateNotifier<_ExchangeState> {
   }
 
   void setSubmitting(bool v) => state = state.copyWith(isSubmitting: v);
-
-  void clearAllItems() => state = state.copyWith(
-    returnItems: const [],
-    newItems: const [],
-  );
 }
 
 final _exchangeProvider =
@@ -266,8 +299,15 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
             padding: EdgeInsets.all(
               isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
             ),
-            child: isWideScreen
-                ? Row(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _buildOriginalSaleCard(isDark, l10n, s),
+                SizedBox(
+                  height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
+                ),
+                if (isWideScreen)
+                  Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(child: _buildReturnSection(isDark, l10n, s)),
@@ -275,7 +315,8 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
                       Expanded(child: _buildNewItemsSection(isDark, l10n, s)),
                     ],
                   )
-                : Column(
+                else
+                  Column(
                     children: [
                       _buildReturnSection(isDark, l10n, s),
                       SizedBox(
@@ -286,6 +327,8 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
                       _buildNewItemsSection(isDark, l10n, s),
                     ],
                   ),
+              ],
+            ),
           ),
         ),
         _buildBottomBar(isDark, l10n, s),
@@ -296,6 +339,215 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
   String _getDateSubtitle(AppLocalizations l10n) {
     final now = DateTime.now();
     return '${now.day}/${now.month}/${now.year} \u2022 ${l10n.mainBranch}';
+  }
+
+  /// Header card for the original-sale anchor. Empty state = full-width
+  /// CTA. Selected state = receipt summary chip with a "change" affordance.
+  ///
+  /// Wave 3b-2a context: every refund (the return half of an exchange)
+  /// must FK to the customer's original sale, not the just-created
+  /// exchange-output sale. The card is the only entry point for that
+  /// linkage from this screen.
+  Widget _buildOriginalSaleCard(
+    bool isDark,
+    AppLocalizations l10n,
+    _ExchangeState s,
+  ) {
+    final selected = s.originalSale;
+    if (selected == null) {
+      return InkWell(
+        onTap: () => _pickOriginalSale(l10n),
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          padding: const EdgeInsets.all(AlhaiSpacing.md),
+          decoration: BoxDecoration(
+            color: AppColors.primary.withValues(alpha: 0.06),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: AppColors.primary.withValues(alpha: 0.4),
+              width: 1.5,
+              style: BorderStyle.solid,
+            ),
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(AlhaiSpacing.sm),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(
+                  Icons.receipt_long_rounded,
+                  color: AppColors.primary,
+                  size: 22,
+                ),
+              ),
+              const SizedBox(width: AlhaiSpacing.md),
+              Expanded(
+                child: Text(
+                  l10n.selectOriginalSaleTitle,
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.primary,
+                  ),
+                ),
+              ),
+              const Icon(
+                Icons.arrow_forward_ios_rounded,
+                size: 16,
+                color: AppColors.primary,
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    final receipt = selected.receiptNo;
+    final totalSar = selected.total / 100.0;
+    final dateStr =
+        '${selected.createdAt.day}/${selected.createdAt.month}/${selected.createdAt.year}';
+    final customerLine = selected.customerName?.trim().isNotEmpty == true
+        ? selected.customerName!
+        : l10n.cashCustomer;
+
+    return Container(
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
+      decoration: BoxDecoration(
+        color: AppColors.getSurface(isDark),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.success.withValues(alpha: 0.4)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(AlhaiSpacing.sm),
+            decoration: BoxDecoration(
+              color: AppColors.success.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: const Icon(
+              Icons.check_circle_rounded,
+              color: AppColors.success,
+              size: 22,
+            ),
+          ),
+          const SizedBox(width: AlhaiSpacing.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.originalSaleLabel,
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.getTextMuted(isDark),
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  '$receipt \u2022 ${CurrencyFormatter.formatWithContext(context, totalSar)}',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.getTextPrimary(isDark),
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  '$customerLine \u2022 $dateStr',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: AppColors.getTextSecondary(isDark),
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+          TextButton.icon(
+            onPressed: () => _pickOriginalSale(l10n),
+            icon: const Icon(Icons.swap_horiz_rounded, size: 18),
+            label: Text(l10n.changeOriginalSale),
+            style: TextButton.styleFrom(
+              foregroundColor: AppColors.primary,
+              padding: const EdgeInsets.symmetric(
+                horizontal: AlhaiSpacing.sm,
+                vertical: AlhaiSpacing.xs,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Modal bottom sheet \u2014 recent eligible sales + receipt-number filter.
+  /// Eligibility (applied client-side once the data is loaded):
+  ///   * status \u2208 {'completed', 'paid'} \u2014 voided/refunded stay out.
+  ///   * createdAt within `_kReturnPolicyDays` of now.
+  ///   * notes does NOT begin with `_kExchangeSaleNotePrefix`
+  ///     (recursion guard \u2014 see constant docstring).
+  ///   * sumRefundedCents < total (skip fully-refunded sales).
+  Future<void> _pickOriginalSale(AppLocalizations l10n) async {
+    final storeId = ref.read(currentStoreIdProvider);
+    if (storeId == null) return;
+
+    final now = DateTime.now();
+    final start = now.subtract(const Duration(days: _kReturnPolicyDays));
+
+    // Pull both feeds up-front. Parallel-await: sales and the small return
+    // ledger of the same store. The aggregated refund map costs one pass.
+    final salesFuture = _db.salesDao.getSalesByDateRange(storeId, start, now);
+    final returnsFuture = _db.returnsDao.getAllReturns(storeId);
+    final results = await Future.wait([salesFuture, returnsFuture]);
+    final allSales = results[0] as List<SalesTableData>;
+    final allReturns = results[1] as List<ReturnsTableData>;
+
+    final refundedBySaleId = <String, int>{};
+    for (final r in allReturns) {
+      refundedBySaleId.update(
+        r.saleId,
+        (prev) => prev + r.totalRefund,
+        ifAbsent: () => r.totalRefund,
+      );
+    }
+
+    bool eligible(SalesTableData s) {
+      if (s.status != 'completed' && s.status != 'paid') return false;
+      final notes = s.notes;
+      if (notes != null && notes.startsWith(_kExchangeSaleNotePrefix)) {
+        return false;
+      }
+      final refunded = refundedBySaleId[s.id] ?? 0;
+      if (refunded >= s.total) return false;
+      return true;
+    }
+
+    final eligibleSales = allSales.where(eligible).toList()
+      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    final initial = eligibleSales.take(_kPickerMaxResults).toList();
+
+    if (!mounted) return;
+
+    final picked = await showModalBottomSheet<SalesTableData>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => _OriginalSalePickerSheet(
+        all: initial,
+        l10n: l10n,
+        policyDays: _kReturnPolicyDays,
+      ),
+    );
+
+    if (picked != null && mounted) {
+      ref.read(_exchangeProvider.notifier).setOriginalSale(picked);
+    }
   }
 
   Widget _buildReturnSection(
@@ -672,6 +924,11 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
         ? AppColors.success
         : (diff > 0 ? AppColors.warning : AppColors.success);
     final hasItems = s.returnItems.isNotEmpty || s.newItems.isNotEmpty;
+    // Wave 3b-2a: when there are returnItems, the picker has to be
+    // satisfied first. Disabling the button up-front beats letting the
+    // user tap and then read the same fact from a dialog.
+    final missingAnchor =
+        s.returnItems.isNotEmpty && s.originalSale == null;
 
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
@@ -734,7 +991,7 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
             const SizedBox(width: AlhaiSpacing.md),
             Expanded(
               child: FilledButton.icon(
-                onPressed: s.isSubmitting || !hasItems
+                onPressed: s.isSubmitting || !hasItems || missingAnchor
                     ? null
                     : () => _submitExchange(l10n),
                 icon: s.isSubmitting
@@ -838,6 +1095,30 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
       return;
     }
 
+    // Wave 3b-2a: returnItems force a real anchor sale. The return's FK
+    // now lands on the customer's original purchase, not the just-created
+    // exchange-output sale, so the picker is mandatory whenever the
+    // exchange involves a refund leg. (Pure-new-items happens only via
+    // the "no returnItems" branch, where no anchor is needed.)
+    final originalSale = snap.originalSale;
+    if (returnItemsSnap.isNotEmpty && originalSale == null) {
+      notifier.setSubmitting(false);
+      await showDialog<void>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text(l10n.errorOccurred),
+          content: Text(l10n.originalSaleRequired),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: Text(l10n.close),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
     String? createdSaleId;
 
     try {
@@ -883,6 +1164,11 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
       // (وهو ما ندرجه كمبلغ مستلم للبيع). إن كان سالباً أو صفر فالبيع
       // مدفوع كاملاً من رصيد المرتجع — نضعه cash بنفس قيمة البيع لتجنب
       // تسجيل credit debt.
+      // Inherit customer identity from the picked original sale so the
+      // new exchange-output sale shows up in the same customer's history
+      // (and any AR / loyalty pipeline keyed off customerId continues
+      // to work). Falls back to null when the original was a walk-in or
+      // when there's no return leg at all.
       final saleResult = await saleService.createSale(
         storeId: storeId,
         cashierId: user?.id ?? '',
@@ -895,12 +1181,13 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
         amountReceived: newGrandTotal,
         changeAmount: 0,
         cashAmount: newGrandTotal,
-        customerId: null,
-        customerName: null,
+        customerId: originalSale?.customerId,
+        customerName: originalSale?.customerName,
         notes: returnItemsSnap.isNotEmpty
             ? 'Exchange sale — linked to return of '
                   '${returnItemsSnap.length} item(s), offset '
-                  '${returnTotal.toStringAsFixed(2)} SAR'
+                  '${returnTotal.toStringAsFixed(2)} SAR '
+                  '(originalSaleId=${originalSale?.id})'
             : null,
       );
       createdSaleId = saleResult.saleId;
@@ -929,26 +1216,29 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
           );
         }).toList();
 
+        // Wave 3b-2a: anchor the return to the customer's ORIGINAL sale
+        // (picked via _OriginalSalePickerSheet), not the just-created
+        // exchange-output sale. This is what makes the max-refund guard
+        // in createReturn meaningful — the guard now compares against the
+        // real prior purchase, and the ZATCA credit-note (issued inside
+        // createReturn) references the right invoice on the portal.
+        // `originalSale` is non-null here: enforced by the pre-flight
+        // guard above when returnItems are present.
         await createReturn(
           ref,
-          saleId: createdSaleId,
+          saleId: originalSale!.id,
+          customerId: originalSale.customerId,
+          customerName: originalSale.customerName,
           reason: 'exchange',
           totalRefund: returnTotalWithVat,
           refundMethod: 'cash',
           notes:
               'Exchange transaction — offsetting new items '
               '${newTotal.toStringAsFixed(2)} SAR '
-              '(diff=${balanceDiff.toStringAsFixed(2)} SAR)',
+              '(diff=${balanceDiff.toStringAsFixed(2)} SAR, '
+              'newSaleId=$createdSaleId)',
           createdBy: user?.id,
           items: returnItemCompanions,
-          // Sprint 1 / P0-14 escape hatch: exchange currently links the
-          // return to the just-created sale (createdSaleId), not the
-          // customer's original purchase. The new sale's total is often
-          // smaller than the refund amount, so the max-refund guard
-          // would falsely reject every exchange. Wave 3b reworks this
-          // flow to pick + reference the original sale; the bypass
-          // disappears at that point.
-          skipMaxRefundCheck: true,
         );
       }
 
@@ -990,7 +1280,7 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
         context,
         '${l10n.exchangeSuccessMsg}$diffMsg',
       );
-      notifier.clearAllItems();
+      notifier.resetAll();
     } catch (e, stack) {
       // ملاحظة على استراتيجية الأخطاء: لا يمكن لفّ createSale + createReturn
       // في transaction واحد لأن كليهما يُدير transactions داخلية مستقلة +
@@ -1031,6 +1321,247 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
         ref.read(_exchangeProvider.notifier).setSubmitting(false);
       }
     }
+  }
+}
+
+// ============================================================================
+// Original-sale picker bottom sheet (Wave 3b-2a)
+// ============================================================================
+
+/// Stateless-from-the-outside picker. Receives a pre-filtered list of
+/// eligible sales (parent applied recursion / status / refund-window
+/// guards) and lets the cashier pick one. Returns the picked
+/// [SalesTableData] via [Navigator.pop], or null if dismissed.
+class _OriginalSalePickerSheet extends StatefulWidget {
+  final List<SalesTableData> all;
+  final AppLocalizations l10n;
+  final int policyDays;
+
+  const _OriginalSalePickerSheet({
+    required this.all,
+    required this.l10n,
+    required this.policyDays,
+  });
+
+  @override
+  State<_OriginalSalePickerSheet> createState() =>
+      _OriginalSalePickerSheetState();
+}
+
+class _OriginalSalePickerSheetState extends State<_OriginalSalePickerSheet> {
+  final _filterController = TextEditingController();
+  String _filter = '';
+
+  @override
+  void dispose() {
+    _filterController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final filter = _filter.trim().toLowerCase();
+    final visible = filter.isEmpty
+        ? widget.all
+        : widget.all.where((s) {
+            if (s.receiptNo.toLowerCase().contains(filter)) return true;
+            final cn = s.customerName?.toLowerCase();
+            return cn != null && cn.contains(filter);
+          }).toList();
+
+    return DraggableScrollableSheet(
+      initialChildSize: 0.7,
+      maxChildSize: 0.95,
+      minChildSize: 0.4,
+      expand: false,
+      builder: (ctx, scrollController) => Container(
+        decoration: BoxDecoration(
+          color: AppColors.getSurface(isDark),
+          borderRadius: const BorderRadius.vertical(
+            top: Radius.circular(20),
+          ),
+        ),
+        child: Column(
+          children: [
+            Container(
+              width: 40,
+              height: 4,
+              margin: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
+              decoration: BoxDecoration(
+                color: AppColors.getTextMuted(isDark),
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AlhaiSpacing.md,
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      widget.l10n.selectOriginalSaleTitle,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.getTextPrimary(isDark),
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () => Navigator.of(ctx).pop(),
+                    icon: const Icon(Icons.close_rounded),
+                    tooltip: widget.l10n.close,
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AlhaiSpacing.md,
+                vertical: AlhaiSpacing.xs,
+              ),
+              child: TextField(
+                controller: _filterController,
+                onChanged: (v) => setState(() => _filter = v),
+                decoration: InputDecoration(
+                  hintText: widget.l10n.searchByReceiptNumber,
+                  prefixIcon: const Icon(Icons.search_rounded),
+                  filled: true,
+                  fillColor: AppColors.getSurfaceVariant(isDark),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsetsDirectional.only(
+                start: AlhaiSpacing.md,
+                end: AlhaiSpacing.md,
+                top: AlhaiSpacing.sm,
+                bottom: AlhaiSpacing.xs,
+              ),
+              child: Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: Text(
+                  widget.l10n.recentSalesLastNDays(widget.policyDays),
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.getTextSecondary(isDark),
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              child: visible.isEmpty
+                  ? Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(AlhaiSpacing.lg),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.inbox_outlined,
+                              size: 48,
+                              color: AppColors.getTextMuted(isDark),
+                            ),
+                            const SizedBox(height: AlhaiSpacing.sm),
+                            Text(
+                              widget.l10n.noEligibleSalesFound(
+                                widget.policyDays,
+                              ),
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: AppColors.getTextSecondary(isDark),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  : ListView.separated(
+                      controller: scrollController,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AlhaiSpacing.md,
+                        vertical: AlhaiSpacing.xs,
+                      ),
+                      itemCount: visible.length,
+                      separatorBuilder: (_, __) =>
+                          const SizedBox(height: AlhaiSpacing.xs),
+                      itemBuilder: (_, i) => _buildSaleTile(visible[i], isDark),
+                    ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSaleTile(SalesTableData sale, bool isDark) {
+    final totalSar = sale.total / 100.0;
+    final dateStr =
+        '${sale.createdAt.day}/${sale.createdAt.month}/${sale.createdAt.year}';
+    final time =
+        '${sale.createdAt.hour.toString().padLeft(2, '0')}:${sale.createdAt.minute.toString().padLeft(2, '0')}';
+    final customer = sale.customerName?.trim().isNotEmpty == true
+        ? sale.customerName!
+        : widget.l10n.cashCustomer;
+    return InkWell(
+      onTap: () => Navigator.of(context).pop(sale),
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.all(AlhaiSpacing.md),
+        decoration: BoxDecoration(
+          color: AppColors.getSurfaceVariant(isDark),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: AppColors.getBorder(isDark).withValues(alpha: 0.4),
+          ),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    sale.receiptNo,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.getTextPrimary(isDark),
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    '$customer • $dateStr $time',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: AppColors.getTextSecondary(isDark),
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+            Text(
+              CurrencyFormatter.formatWithContext(context, totalSar),
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w800,
+                color: AppColors.primary,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
