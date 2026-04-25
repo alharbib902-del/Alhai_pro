@@ -4046,6 +4046,48 @@ class $ShiftsTableTable extends ShiftsTable
   late final GeneratedColumn<DateTime> syncedAt = GeneratedColumn<DateTime>(
       'synced_at', aliasedName, true,
       type: DriftSqlType.dateTime, requiredDuringInsert: false);
+  static const VerificationMeta _openingInvoiceCountMeta =
+      const VerificationMeta('openingInvoiceCount');
+  @override
+  late final GeneratedColumn<int> openingInvoiceCount = GeneratedColumn<int>(
+      'opening_invoice_count', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
+  static const VerificationMeta _openingLastPihMeta =
+      const VerificationMeta('openingLastPih');
+  @override
+  late final GeneratedColumn<String> openingLastPih = GeneratedColumn<String>(
+      'opening_last_pih', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _openingTimestampUtcMeta =
+      const VerificationMeta('openingTimestampUtc');
+  @override
+  late final GeneratedColumn<String> openingTimestampUtc =
+      GeneratedColumn<String>('opening_timestamp_utc', aliasedName, true,
+          type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _closingInvoiceCountMeta =
+      const VerificationMeta('closingInvoiceCount');
+  @override
+  late final GeneratedColumn<int> closingInvoiceCount = GeneratedColumn<int>(
+      'closing_invoice_count', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
+  static const VerificationMeta _closingLastPihMeta =
+      const VerificationMeta('closingLastPih');
+  @override
+  late final GeneratedColumn<String> closingLastPih = GeneratedColumn<String>(
+      'closing_last_pih', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _closingTimestampUtcMeta =
+      const VerificationMeta('closingTimestampUtc');
+  @override
+  late final GeneratedColumn<String> closingTimestampUtc =
+      GeneratedColumn<String>('closing_timestamp_utc', aliasedName, true,
+          type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _pendingZatcaAtCloseMeta =
+      const VerificationMeta('pendingZatcaAtClose');
+  @override
+  late final GeneratedColumn<int> pendingZatcaAtClose = GeneratedColumn<int>(
+      'pending_zatca_at_close', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -4066,7 +4108,14 @@ class $ShiftsTableTable extends ShiftsTable
         notes,
         openedAt,
         closedAt,
-        syncedAt
+        syncedAt,
+        openingInvoiceCount,
+        openingLastPih,
+        openingTimestampUtc,
+        closingInvoiceCount,
+        closingLastPih,
+        closingTimestampUtc,
+        pendingZatcaAtClose
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -4183,6 +4232,48 @@ class $ShiftsTableTable extends ShiftsTable
       context.handle(_syncedAtMeta,
           syncedAt.isAcceptableOrUnknown(data['synced_at']!, _syncedAtMeta));
     }
+    if (data.containsKey('opening_invoice_count')) {
+      context.handle(
+          _openingInvoiceCountMeta,
+          openingInvoiceCount.isAcceptableOrUnknown(
+              data['opening_invoice_count']!, _openingInvoiceCountMeta));
+    }
+    if (data.containsKey('opening_last_pih')) {
+      context.handle(
+          _openingLastPihMeta,
+          openingLastPih.isAcceptableOrUnknown(
+              data['opening_last_pih']!, _openingLastPihMeta));
+    }
+    if (data.containsKey('opening_timestamp_utc')) {
+      context.handle(
+          _openingTimestampUtcMeta,
+          openingTimestampUtc.isAcceptableOrUnknown(
+              data['opening_timestamp_utc']!, _openingTimestampUtcMeta));
+    }
+    if (data.containsKey('closing_invoice_count')) {
+      context.handle(
+          _closingInvoiceCountMeta,
+          closingInvoiceCount.isAcceptableOrUnknown(
+              data['closing_invoice_count']!, _closingInvoiceCountMeta));
+    }
+    if (data.containsKey('closing_last_pih')) {
+      context.handle(
+          _closingLastPihMeta,
+          closingLastPih.isAcceptableOrUnknown(
+              data['closing_last_pih']!, _closingLastPihMeta));
+    }
+    if (data.containsKey('closing_timestamp_utc')) {
+      context.handle(
+          _closingTimestampUtcMeta,
+          closingTimestampUtc.isAcceptableOrUnknown(
+              data['closing_timestamp_utc']!, _closingTimestampUtcMeta));
+    }
+    if (data.containsKey('pending_zatca_at_close')) {
+      context.handle(
+          _pendingZatcaAtCloseMeta,
+          pendingZatcaAtClose.isAcceptableOrUnknown(
+              data['pending_zatca_at_close']!, _pendingZatcaAtCloseMeta));
+    }
     return context;
   }
 
@@ -4230,6 +4321,20 @@ class $ShiftsTableTable extends ShiftsTable
           .read(DriftSqlType.dateTime, data['${effectivePrefix}closed_at']),
       syncedAt: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}synced_at']),
+      openingInvoiceCount: attachedDatabase.typeMapping.read(
+          DriftSqlType.int, data['${effectivePrefix}opening_invoice_count']),
+      openingLastPih: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}opening_last_pih']),
+      openingTimestampUtc: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}opening_timestamp_utc']),
+      closingInvoiceCount: attachedDatabase.typeMapping.read(
+          DriftSqlType.int, data['${effectivePrefix}closing_invoice_count']),
+      closingLastPih: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}closing_last_pih']),
+      closingTimestampUtc: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}closing_timestamp_utc']),
+      pendingZatcaAtClose: attachedDatabase.typeMapping.read(
+          DriftSqlType.int, data['${effectivePrefix}pending_zatca_at_close']),
     );
   }
 
@@ -4259,6 +4364,40 @@ class ShiftsTableData extends DataClass implements Insertable<ShiftsTableData> {
   final DateTime openedAt;
   final DateTime? closedAt;
   final DateTime? syncedAt;
+
+  /// Number of invoices issued by the store at the moment this shift
+  /// opened. The opening counter for the next shift's "invoices issued
+  /// during this shift" calculation = closingInvoiceCount of THIS shift.
+  final int? openingInvoiceCount;
+
+  /// `zatca_hash` (PIH — Previous Invoice Hash) of the most recent
+  /// invoice when the shift opened. Used by the ZATCA chain validator
+  /// to confirm continuity across shift boundaries.
+  final String? openingLastPih;
+
+  /// UTC ISO-8601 timestamp captured when the shift opened — separate
+  /// from `openedAt` (which is local time) so audit / Z-Report tooling
+  /// has a timezone-unambiguous reference even if the device clock skew
+  /// changes between open and close.
+  final String? openingTimestampUtc;
+
+  /// Number of invoices issued by the store at the moment this shift
+  /// closed. (closingInvoiceCount − openingInvoiceCount) = invoices
+  /// physically issued during this shift.
+  final int? closingInvoiceCount;
+
+  /// `zatca_hash` of the most recent invoice when the shift closed.
+  /// Will become the next shift's openingLastPih.
+  final String? closingLastPih;
+
+  /// UTC ISO-8601 timestamp at close — see [openingTimestampUtc].
+  final String? closingTimestampUtc;
+
+  /// Number of invoices still in `zatca_offline_queue` when the shift
+  /// closed (not yet sent to the gateway). Surfacing this on the
+  /// Z-Report alerts the cashier that some receipts shown in this
+  /// shift's totals are pending ZATCA acknowledgement.
+  final int? pendingZatcaAtClose;
   const ShiftsTableData(
       {required this.id,
       this.orgId,
@@ -4278,7 +4417,14 @@ class ShiftsTableData extends DataClass implements Insertable<ShiftsTableData> {
       this.notes,
       required this.openedAt,
       this.closedAt,
-      this.syncedAt});
+      this.syncedAt,
+      this.openingInvoiceCount,
+      this.openingLastPih,
+      this.openingTimestampUtc,
+      this.closingInvoiceCount,
+      this.closingLastPih,
+      this.closingTimestampUtc,
+      this.pendingZatcaAtClose});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -4316,6 +4462,27 @@ class ShiftsTableData extends DataClass implements Insertable<ShiftsTableData> {
     }
     if (!nullToAbsent || syncedAt != null) {
       map['synced_at'] = Variable<DateTime>(syncedAt);
+    }
+    if (!nullToAbsent || openingInvoiceCount != null) {
+      map['opening_invoice_count'] = Variable<int>(openingInvoiceCount);
+    }
+    if (!nullToAbsent || openingLastPih != null) {
+      map['opening_last_pih'] = Variable<String>(openingLastPih);
+    }
+    if (!nullToAbsent || openingTimestampUtc != null) {
+      map['opening_timestamp_utc'] = Variable<String>(openingTimestampUtc);
+    }
+    if (!nullToAbsent || closingInvoiceCount != null) {
+      map['closing_invoice_count'] = Variable<int>(closingInvoiceCount);
+    }
+    if (!nullToAbsent || closingLastPih != null) {
+      map['closing_last_pih'] = Variable<String>(closingLastPih);
+    }
+    if (!nullToAbsent || closingTimestampUtc != null) {
+      map['closing_timestamp_utc'] = Variable<String>(closingTimestampUtc);
+    }
+    if (!nullToAbsent || pendingZatcaAtClose != null) {
+      map['pending_zatca_at_close'] = Variable<int>(pendingZatcaAtClose);
     }
     return map;
   }
@@ -4355,6 +4522,27 @@ class ShiftsTableData extends DataClass implements Insertable<ShiftsTableData> {
       syncedAt: syncedAt == null && nullToAbsent
           ? const Value.absent()
           : Value(syncedAt),
+      openingInvoiceCount: openingInvoiceCount == null && nullToAbsent
+          ? const Value.absent()
+          : Value(openingInvoiceCount),
+      openingLastPih: openingLastPih == null && nullToAbsent
+          ? const Value.absent()
+          : Value(openingLastPih),
+      openingTimestampUtc: openingTimestampUtc == null && nullToAbsent
+          ? const Value.absent()
+          : Value(openingTimestampUtc),
+      closingInvoiceCount: closingInvoiceCount == null && nullToAbsent
+          ? const Value.absent()
+          : Value(closingInvoiceCount),
+      closingLastPih: closingLastPih == null && nullToAbsent
+          ? const Value.absent()
+          : Value(closingLastPih),
+      closingTimestampUtc: closingTimestampUtc == null && nullToAbsent
+          ? const Value.absent()
+          : Value(closingTimestampUtc),
+      pendingZatcaAtClose: pendingZatcaAtClose == null && nullToAbsent
+          ? const Value.absent()
+          : Value(pendingZatcaAtClose),
     );
   }
 
@@ -4381,6 +4569,18 @@ class ShiftsTableData extends DataClass implements Insertable<ShiftsTableData> {
       openedAt: serializer.fromJson<DateTime>(json['openedAt']),
       closedAt: serializer.fromJson<DateTime?>(json['closedAt']),
       syncedAt: serializer.fromJson<DateTime?>(json['syncedAt']),
+      openingInvoiceCount:
+          serializer.fromJson<int?>(json['openingInvoiceCount']),
+      openingLastPih: serializer.fromJson<String?>(json['openingLastPih']),
+      openingTimestampUtc:
+          serializer.fromJson<String?>(json['openingTimestampUtc']),
+      closingInvoiceCount:
+          serializer.fromJson<int?>(json['closingInvoiceCount']),
+      closingLastPih: serializer.fromJson<String?>(json['closingLastPih']),
+      closingTimestampUtc:
+          serializer.fromJson<String?>(json['closingTimestampUtc']),
+      pendingZatcaAtClose:
+          serializer.fromJson<int?>(json['pendingZatcaAtClose']),
     );
   }
   @override
@@ -4406,6 +4606,13 @@ class ShiftsTableData extends DataClass implements Insertable<ShiftsTableData> {
       'openedAt': serializer.toJson<DateTime>(openedAt),
       'closedAt': serializer.toJson<DateTime?>(closedAt),
       'syncedAt': serializer.toJson<DateTime?>(syncedAt),
+      'openingInvoiceCount': serializer.toJson<int?>(openingInvoiceCount),
+      'openingLastPih': serializer.toJson<String?>(openingLastPih),
+      'openingTimestampUtc': serializer.toJson<String?>(openingTimestampUtc),
+      'closingInvoiceCount': serializer.toJson<int?>(closingInvoiceCount),
+      'closingLastPih': serializer.toJson<String?>(closingLastPih),
+      'closingTimestampUtc': serializer.toJson<String?>(closingTimestampUtc),
+      'pendingZatcaAtClose': serializer.toJson<int?>(pendingZatcaAtClose),
     };
   }
 
@@ -4428,7 +4635,14 @@ class ShiftsTableData extends DataClass implements Insertable<ShiftsTableData> {
           Value<String?> notes = const Value.absent(),
           DateTime? openedAt,
           Value<DateTime?> closedAt = const Value.absent(),
-          Value<DateTime?> syncedAt = const Value.absent()}) =>
+          Value<DateTime?> syncedAt = const Value.absent(),
+          Value<int?> openingInvoiceCount = const Value.absent(),
+          Value<String?> openingLastPih = const Value.absent(),
+          Value<String?> openingTimestampUtc = const Value.absent(),
+          Value<int?> closingInvoiceCount = const Value.absent(),
+          Value<String?> closingLastPih = const Value.absent(),
+          Value<String?> closingTimestampUtc = const Value.absent(),
+          Value<int?> pendingZatcaAtClose = const Value.absent()}) =>
       ShiftsTableData(
         id: id ?? this.id,
         orgId: orgId.present ? orgId.value : this.orgId,
@@ -4450,6 +4664,25 @@ class ShiftsTableData extends DataClass implements Insertable<ShiftsTableData> {
         openedAt: openedAt ?? this.openedAt,
         closedAt: closedAt.present ? closedAt.value : this.closedAt,
         syncedAt: syncedAt.present ? syncedAt.value : this.syncedAt,
+        openingInvoiceCount: openingInvoiceCount.present
+            ? openingInvoiceCount.value
+            : this.openingInvoiceCount,
+        openingLastPih:
+            openingLastPih.present ? openingLastPih.value : this.openingLastPih,
+        openingTimestampUtc: openingTimestampUtc.present
+            ? openingTimestampUtc.value
+            : this.openingTimestampUtc,
+        closingInvoiceCount: closingInvoiceCount.present
+            ? closingInvoiceCount.value
+            : this.closingInvoiceCount,
+        closingLastPih:
+            closingLastPih.present ? closingLastPih.value : this.closingLastPih,
+        closingTimestampUtc: closingTimestampUtc.present
+            ? closingTimestampUtc.value
+            : this.closingTimestampUtc,
+        pendingZatcaAtClose: pendingZatcaAtClose.present
+            ? pendingZatcaAtClose.value
+            : this.pendingZatcaAtClose,
       );
   ShiftsTableData copyWithCompanion(ShiftsTableCompanion data) {
     return ShiftsTableData(
@@ -4486,6 +4719,27 @@ class ShiftsTableData extends DataClass implements Insertable<ShiftsTableData> {
       openedAt: data.openedAt.present ? data.openedAt.value : this.openedAt,
       closedAt: data.closedAt.present ? data.closedAt.value : this.closedAt,
       syncedAt: data.syncedAt.present ? data.syncedAt.value : this.syncedAt,
+      openingInvoiceCount: data.openingInvoiceCount.present
+          ? data.openingInvoiceCount.value
+          : this.openingInvoiceCount,
+      openingLastPih: data.openingLastPih.present
+          ? data.openingLastPih.value
+          : this.openingLastPih,
+      openingTimestampUtc: data.openingTimestampUtc.present
+          ? data.openingTimestampUtc.value
+          : this.openingTimestampUtc,
+      closingInvoiceCount: data.closingInvoiceCount.present
+          ? data.closingInvoiceCount.value
+          : this.closingInvoiceCount,
+      closingLastPih: data.closingLastPih.present
+          ? data.closingLastPih.value
+          : this.closingLastPih,
+      closingTimestampUtc: data.closingTimestampUtc.present
+          ? data.closingTimestampUtc.value
+          : this.closingTimestampUtc,
+      pendingZatcaAtClose: data.pendingZatcaAtClose.present
+          ? data.pendingZatcaAtClose.value
+          : this.pendingZatcaAtClose,
     );
   }
 
@@ -4510,32 +4764,47 @@ class ShiftsTableData extends DataClass implements Insertable<ShiftsTableData> {
           ..write('notes: $notes, ')
           ..write('openedAt: $openedAt, ')
           ..write('closedAt: $closedAt, ')
-          ..write('syncedAt: $syncedAt')
+          ..write('syncedAt: $syncedAt, ')
+          ..write('openingInvoiceCount: $openingInvoiceCount, ')
+          ..write('openingLastPih: $openingLastPih, ')
+          ..write('openingTimestampUtc: $openingTimestampUtc, ')
+          ..write('closingInvoiceCount: $closingInvoiceCount, ')
+          ..write('closingLastPih: $closingLastPih, ')
+          ..write('closingTimestampUtc: $closingTimestampUtc, ')
+          ..write('pendingZatcaAtClose: $pendingZatcaAtClose')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(
-      id,
-      orgId,
-      storeId,
-      terminalId,
-      cashierId,
-      cashierName,
-      openingCash,
-      closingCash,
-      expectedCash,
-      difference,
-      totalSales,
-      totalSalesAmount,
-      totalRefunds,
-      totalRefundsAmount,
-      status,
-      notes,
-      openedAt,
-      closedAt,
-      syncedAt);
+  int get hashCode => Object.hashAll([
+        id,
+        orgId,
+        storeId,
+        terminalId,
+        cashierId,
+        cashierName,
+        openingCash,
+        closingCash,
+        expectedCash,
+        difference,
+        totalSales,
+        totalSalesAmount,
+        totalRefunds,
+        totalRefundsAmount,
+        status,
+        notes,
+        openedAt,
+        closedAt,
+        syncedAt,
+        openingInvoiceCount,
+        openingLastPih,
+        openingTimestampUtc,
+        closingInvoiceCount,
+        closingLastPih,
+        closingTimestampUtc,
+        pendingZatcaAtClose
+      ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -4558,7 +4827,14 @@ class ShiftsTableData extends DataClass implements Insertable<ShiftsTableData> {
           other.notes == this.notes &&
           other.openedAt == this.openedAt &&
           other.closedAt == this.closedAt &&
-          other.syncedAt == this.syncedAt);
+          other.syncedAt == this.syncedAt &&
+          other.openingInvoiceCount == this.openingInvoiceCount &&
+          other.openingLastPih == this.openingLastPih &&
+          other.openingTimestampUtc == this.openingTimestampUtc &&
+          other.closingInvoiceCount == this.closingInvoiceCount &&
+          other.closingLastPih == this.closingLastPih &&
+          other.closingTimestampUtc == this.closingTimestampUtc &&
+          other.pendingZatcaAtClose == this.pendingZatcaAtClose);
 }
 
 class ShiftsTableCompanion extends UpdateCompanion<ShiftsTableData> {
@@ -4581,6 +4857,13 @@ class ShiftsTableCompanion extends UpdateCompanion<ShiftsTableData> {
   final Value<DateTime> openedAt;
   final Value<DateTime?> closedAt;
   final Value<DateTime?> syncedAt;
+  final Value<int?> openingInvoiceCount;
+  final Value<String?> openingLastPih;
+  final Value<String?> openingTimestampUtc;
+  final Value<int?> closingInvoiceCount;
+  final Value<String?> closingLastPih;
+  final Value<String?> closingTimestampUtc;
+  final Value<int?> pendingZatcaAtClose;
   final Value<int> rowid;
   const ShiftsTableCompanion({
     this.id = const Value.absent(),
@@ -4602,6 +4885,13 @@ class ShiftsTableCompanion extends UpdateCompanion<ShiftsTableData> {
     this.openedAt = const Value.absent(),
     this.closedAt = const Value.absent(),
     this.syncedAt = const Value.absent(),
+    this.openingInvoiceCount = const Value.absent(),
+    this.openingLastPih = const Value.absent(),
+    this.openingTimestampUtc = const Value.absent(),
+    this.closingInvoiceCount = const Value.absent(),
+    this.closingLastPih = const Value.absent(),
+    this.closingTimestampUtc = const Value.absent(),
+    this.pendingZatcaAtClose = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   ShiftsTableCompanion.insert({
@@ -4624,6 +4914,13 @@ class ShiftsTableCompanion extends UpdateCompanion<ShiftsTableData> {
     required DateTime openedAt,
     this.closedAt = const Value.absent(),
     this.syncedAt = const Value.absent(),
+    this.openingInvoiceCount = const Value.absent(),
+    this.openingLastPih = const Value.absent(),
+    this.openingTimestampUtc = const Value.absent(),
+    this.closingInvoiceCount = const Value.absent(),
+    this.closingLastPih = const Value.absent(),
+    this.closingTimestampUtc = const Value.absent(),
+    this.pendingZatcaAtClose = const Value.absent(),
     this.rowid = const Value.absent(),
   })  : id = Value(id),
         storeId = Value(storeId),
@@ -4650,6 +4947,13 @@ class ShiftsTableCompanion extends UpdateCompanion<ShiftsTableData> {
     Expression<DateTime>? openedAt,
     Expression<DateTime>? closedAt,
     Expression<DateTime>? syncedAt,
+    Expression<int>? openingInvoiceCount,
+    Expression<String>? openingLastPih,
+    Expression<String>? openingTimestampUtc,
+    Expression<int>? closingInvoiceCount,
+    Expression<String>? closingLastPih,
+    Expression<String>? closingTimestampUtc,
+    Expression<int>? pendingZatcaAtClose,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -4673,6 +4977,18 @@ class ShiftsTableCompanion extends UpdateCompanion<ShiftsTableData> {
       if (openedAt != null) 'opened_at': openedAt,
       if (closedAt != null) 'closed_at': closedAt,
       if (syncedAt != null) 'synced_at': syncedAt,
+      if (openingInvoiceCount != null)
+        'opening_invoice_count': openingInvoiceCount,
+      if (openingLastPih != null) 'opening_last_pih': openingLastPih,
+      if (openingTimestampUtc != null)
+        'opening_timestamp_utc': openingTimestampUtc,
+      if (closingInvoiceCount != null)
+        'closing_invoice_count': closingInvoiceCount,
+      if (closingLastPih != null) 'closing_last_pih': closingLastPih,
+      if (closingTimestampUtc != null)
+        'closing_timestamp_utc': closingTimestampUtc,
+      if (pendingZatcaAtClose != null)
+        'pending_zatca_at_close': pendingZatcaAtClose,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -4697,6 +5013,13 @@ class ShiftsTableCompanion extends UpdateCompanion<ShiftsTableData> {
       Value<DateTime>? openedAt,
       Value<DateTime?>? closedAt,
       Value<DateTime?>? syncedAt,
+      Value<int?>? openingInvoiceCount,
+      Value<String?>? openingLastPih,
+      Value<String?>? openingTimestampUtc,
+      Value<int?>? closingInvoiceCount,
+      Value<String?>? closingLastPih,
+      Value<String?>? closingTimestampUtc,
+      Value<int?>? pendingZatcaAtClose,
       Value<int>? rowid}) {
     return ShiftsTableCompanion(
       id: id ?? this.id,
@@ -4718,6 +5041,13 @@ class ShiftsTableCompanion extends UpdateCompanion<ShiftsTableData> {
       openedAt: openedAt ?? this.openedAt,
       closedAt: closedAt ?? this.closedAt,
       syncedAt: syncedAt ?? this.syncedAt,
+      openingInvoiceCount: openingInvoiceCount ?? this.openingInvoiceCount,
+      openingLastPih: openingLastPih ?? this.openingLastPih,
+      openingTimestampUtc: openingTimestampUtc ?? this.openingTimestampUtc,
+      closingInvoiceCount: closingInvoiceCount ?? this.closingInvoiceCount,
+      closingLastPih: closingLastPih ?? this.closingLastPih,
+      closingTimestampUtc: closingTimestampUtc ?? this.closingTimestampUtc,
+      pendingZatcaAtClose: pendingZatcaAtClose ?? this.pendingZatcaAtClose,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -4782,6 +5112,29 @@ class ShiftsTableCompanion extends UpdateCompanion<ShiftsTableData> {
     if (syncedAt.present) {
       map['synced_at'] = Variable<DateTime>(syncedAt.value);
     }
+    if (openingInvoiceCount.present) {
+      map['opening_invoice_count'] = Variable<int>(openingInvoiceCount.value);
+    }
+    if (openingLastPih.present) {
+      map['opening_last_pih'] = Variable<String>(openingLastPih.value);
+    }
+    if (openingTimestampUtc.present) {
+      map['opening_timestamp_utc'] =
+          Variable<String>(openingTimestampUtc.value);
+    }
+    if (closingInvoiceCount.present) {
+      map['closing_invoice_count'] = Variable<int>(closingInvoiceCount.value);
+    }
+    if (closingLastPih.present) {
+      map['closing_last_pih'] = Variable<String>(closingLastPih.value);
+    }
+    if (closingTimestampUtc.present) {
+      map['closing_timestamp_utc'] =
+          Variable<String>(closingTimestampUtc.value);
+    }
+    if (pendingZatcaAtClose.present) {
+      map['pending_zatca_at_close'] = Variable<int>(pendingZatcaAtClose.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -4810,6 +5163,13 @@ class ShiftsTableCompanion extends UpdateCompanion<ShiftsTableData> {
           ..write('openedAt: $openedAt, ')
           ..write('closedAt: $closedAt, ')
           ..write('syncedAt: $syncedAt, ')
+          ..write('openingInvoiceCount: $openingInvoiceCount, ')
+          ..write('openingLastPih: $openingLastPih, ')
+          ..write('openingTimestampUtc: $openingTimestampUtc, ')
+          ..write('closingInvoiceCount: $closingInvoiceCount, ')
+          ..write('closingLastPih: $closingLastPih, ')
+          ..write('closingTimestampUtc: $closingTimestampUtc, ')
+          ..write('pendingZatcaAtClose: $pendingZatcaAtClose, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -45845,6 +46205,13 @@ typedef $$ShiftsTableTableCreateCompanionBuilder = ShiftsTableCompanion
   required DateTime openedAt,
   Value<DateTime?> closedAt,
   Value<DateTime?> syncedAt,
+  Value<int?> openingInvoiceCount,
+  Value<String?> openingLastPih,
+  Value<String?> openingTimestampUtc,
+  Value<int?> closingInvoiceCount,
+  Value<String?> closingLastPih,
+  Value<String?> closingTimestampUtc,
+  Value<int?> pendingZatcaAtClose,
   Value<int> rowid,
 });
 typedef $$ShiftsTableTableUpdateCompanionBuilder = ShiftsTableCompanion
@@ -45868,6 +46235,13 @@ typedef $$ShiftsTableTableUpdateCompanionBuilder = ShiftsTableCompanion
   Value<DateTime> openedAt,
   Value<DateTime?> closedAt,
   Value<DateTime?> syncedAt,
+  Value<int?> openingInvoiceCount,
+  Value<String?> openingLastPih,
+  Value<String?> openingTimestampUtc,
+  Value<int?> closingInvoiceCount,
+  Value<String?> closingLastPih,
+  Value<String?> closingTimestampUtc,
+  Value<int?> pendingZatcaAtClose,
   Value<int> rowid,
 });
 
@@ -45958,6 +46332,34 @@ class $$ShiftsTableTableFilterComposer
 
   ColumnFilters<DateTime> get syncedAt => $composableBuilder(
       column: $table.syncedAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get openingInvoiceCount => $composableBuilder(
+      column: $table.openingInvoiceCount,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get openingLastPih => $composableBuilder(
+      column: $table.openingLastPih,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get openingTimestampUtc => $composableBuilder(
+      column: $table.openingTimestampUtc,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get closingInvoiceCount => $composableBuilder(
+      column: $table.closingInvoiceCount,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get closingLastPih => $composableBuilder(
+      column: $table.closingLastPih,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get closingTimestampUtc => $composableBuilder(
+      column: $table.closingTimestampUtc,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get pendingZatcaAtClose => $composableBuilder(
+      column: $table.pendingZatcaAtClose,
+      builder: (column) => ColumnFilters(column));
 
   Expression<bool> salesTableRefs(
       Expression<bool> Function($$SalesTableTableFilterComposer f) f) {
@@ -46050,6 +46452,34 @@ class $$ShiftsTableTableOrderingComposer
 
   ColumnOrderings<DateTime> get syncedAt => $composableBuilder(
       column: $table.syncedAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get openingInvoiceCount => $composableBuilder(
+      column: $table.openingInvoiceCount,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get openingLastPih => $composableBuilder(
+      column: $table.openingLastPih,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get openingTimestampUtc => $composableBuilder(
+      column: $table.openingTimestampUtc,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get closingInvoiceCount => $composableBuilder(
+      column: $table.closingInvoiceCount,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get closingLastPih => $composableBuilder(
+      column: $table.closingLastPih,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get closingTimestampUtc => $composableBuilder(
+      column: $table.closingTimestampUtc,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get pendingZatcaAtClose => $composableBuilder(
+      column: $table.pendingZatcaAtClose,
+      builder: (column) => ColumnOrderings(column));
 }
 
 class $$ShiftsTableTableAnnotationComposer
@@ -46118,6 +46548,27 @@ class $$ShiftsTableTableAnnotationComposer
   GeneratedColumn<DateTime> get syncedAt =>
       $composableBuilder(column: $table.syncedAt, builder: (column) => column);
 
+  GeneratedColumn<int> get openingInvoiceCount => $composableBuilder(
+      column: $table.openingInvoiceCount, builder: (column) => column);
+
+  GeneratedColumn<String> get openingLastPih => $composableBuilder(
+      column: $table.openingLastPih, builder: (column) => column);
+
+  GeneratedColumn<String> get openingTimestampUtc => $composableBuilder(
+      column: $table.openingTimestampUtc, builder: (column) => column);
+
+  GeneratedColumn<int> get closingInvoiceCount => $composableBuilder(
+      column: $table.closingInvoiceCount, builder: (column) => column);
+
+  GeneratedColumn<String> get closingLastPih => $composableBuilder(
+      column: $table.closingLastPih, builder: (column) => column);
+
+  GeneratedColumn<String> get closingTimestampUtc => $composableBuilder(
+      column: $table.closingTimestampUtc, builder: (column) => column);
+
+  GeneratedColumn<int> get pendingZatcaAtClose => $composableBuilder(
+      column: $table.pendingZatcaAtClose, builder: (column) => column);
+
   Expression<T> salesTableRefs<T extends Object>(
       Expression<T> Function($$SalesTableTableAnnotationComposer a) f) {
     final $$SalesTableTableAnnotationComposer composer = $composerBuilder(
@@ -46182,6 +46633,13 @@ class $$ShiftsTableTableTableManager extends RootTableManager<
             Value<DateTime> openedAt = const Value.absent(),
             Value<DateTime?> closedAt = const Value.absent(),
             Value<DateTime?> syncedAt = const Value.absent(),
+            Value<int?> openingInvoiceCount = const Value.absent(),
+            Value<String?> openingLastPih = const Value.absent(),
+            Value<String?> openingTimestampUtc = const Value.absent(),
+            Value<int?> closingInvoiceCount = const Value.absent(),
+            Value<String?> closingLastPih = const Value.absent(),
+            Value<String?> closingTimestampUtc = const Value.absent(),
+            Value<int?> pendingZatcaAtClose = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               ShiftsTableCompanion(
@@ -46204,6 +46662,13 @@ class $$ShiftsTableTableTableManager extends RootTableManager<
             openedAt: openedAt,
             closedAt: closedAt,
             syncedAt: syncedAt,
+            openingInvoiceCount: openingInvoiceCount,
+            openingLastPih: openingLastPih,
+            openingTimestampUtc: openingTimestampUtc,
+            closingInvoiceCount: closingInvoiceCount,
+            closingLastPih: closingLastPih,
+            closingTimestampUtc: closingTimestampUtc,
+            pendingZatcaAtClose: pendingZatcaAtClose,
             rowid: rowid,
           ),
           createCompanionCallback: ({
@@ -46226,6 +46691,13 @@ class $$ShiftsTableTableTableManager extends RootTableManager<
             required DateTime openedAt,
             Value<DateTime?> closedAt = const Value.absent(),
             Value<DateTime?> syncedAt = const Value.absent(),
+            Value<int?> openingInvoiceCount = const Value.absent(),
+            Value<String?> openingLastPih = const Value.absent(),
+            Value<String?> openingTimestampUtc = const Value.absent(),
+            Value<int?> closingInvoiceCount = const Value.absent(),
+            Value<String?> closingLastPih = const Value.absent(),
+            Value<String?> closingTimestampUtc = const Value.absent(),
+            Value<int?> pendingZatcaAtClose = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               ShiftsTableCompanion.insert(
@@ -46248,6 +46720,13 @@ class $$ShiftsTableTableTableManager extends RootTableManager<
             openedAt: openedAt,
             closedAt: closedAt,
             syncedAt: syncedAt,
+            openingInvoiceCount: openingInvoiceCount,
+            openingLastPih: openingLastPih,
+            openingTimestampUtc: openingTimestampUtc,
+            closingInvoiceCount: closingInvoiceCount,
+            closingLastPih: closingLastPih,
+            closingTimestampUtc: closingTimestampUtc,
+            pendingZatcaAtClose: pendingZatcaAtClose,
             rowid: rowid,
           ),
           withReferenceMapper: (p0) => p0

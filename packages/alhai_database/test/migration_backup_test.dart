@@ -13,7 +13,7 @@ void main() {
       final db = AppDatabase.forTesting(NativeDatabase.memory());
 
       // The database should open at the current schema version
-      expect(db.schemaVersion, 46);
+      expect(db.schemaVersion, 47);
 
       // The backup service should be available
       expect(db.backupService, isNotNull);

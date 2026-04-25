@@ -74,6 +74,13 @@ class ShiftsDao extends DatabaseAccessor<AppDatabase> with _$ShiftsDaoMixin {
     required int totalRefunds,
     required double totalRefundsAmount,
     String? notes,
+    // Sprint 1 / P0-06: ZATCA chain snapshot at close. All four are
+    // nullable so a caller that hasn't been updated yet keeps working
+    // (the columns remain NULL, treated by readers as "legacy shift").
+    int? closingInvoiceCount,
+    String? closingLastPih,
+    String? closingTimestampUtc,
+    int? pendingZatcaAtClose,
   }) {
     return (update(shiftsTable)..where((s) => s.id.equals(id))).write(
       ShiftsTableCompanion(
@@ -89,6 +96,20 @@ class ShiftsDao extends DatabaseAccessor<AppDatabase> with _$ShiftsDaoMixin {
         status: const Value('closed'),
         notes: Value(notes),
         closedAt: Value(DateTime.now()),
+        // ZATCA chain snapshot — Value.absent() when null so the columns
+        // truly stay untouched (vs being explicitly written to NULL).
+        closingInvoiceCount: closingInvoiceCount != null
+            ? Value(closingInvoiceCount)
+            : const Value.absent(),
+        closingLastPih: closingLastPih != null
+            ? Value(closingLastPih)
+            : const Value.absent(),
+        closingTimestampUtc: closingTimestampUtc != null
+            ? Value(closingTimestampUtc)
+            : const Value.absent(),
+        pendingZatcaAtClose: pendingZatcaAtClose != null
+            ? Value(pendingZatcaAtClose)
+            : const Value.absent(),
       ),
     );
   }

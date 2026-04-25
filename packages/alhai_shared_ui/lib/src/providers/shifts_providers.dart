@@ -4,6 +4,7 @@
 library;
 
 import 'package:alhai_auth/alhai_auth.dart';
+import 'package:drift/drift.dart' show OrderingTerm, Variable;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
@@ -13,6 +14,66 @@ import 'package:get_it/get_it.dart';
 AuditLogDao get _auditDao => GetIt.I<AppDatabase>().auditLogDao;
 
 const _uuid = Uuid();
+
+// ============================================================================
+// ZATCA CHAIN SNAPSHOT HELPER (Sprint 1 / P0-06 + P0-07)
+// ============================================================================
+
+/// Snapshot of the ZATCA invoice chain at a point in time, used to anchor
+/// shift open/close to a verifiable position on the chain. See the
+/// `shifts_table.dart` column comments for the audit motivation.
+class _ZatcaChainSnapshot {
+  /// Total invoices issued by the store at this moment.
+  final int invoiceCount;
+
+  /// `zatca_hash` of the most recent invoice (the next invoice's PIH).
+  /// Null when the store has issued no invoices yet.
+  final String? lastPih;
+
+  /// UTC ISO-8601 timestamp captured at snapshot time.
+  final String timestampUtc;
+
+  const _ZatcaChainSnapshot({
+    required this.invoiceCount,
+    required this.lastPih,
+    required this.timestampUtc,
+  });
+}
+
+/// Capture a ZATCA chain snapshot for the given store. Pure read-only —
+/// safe to call inside transactions or in either open / close flow.
+/// Returns zeros / null when the store has no invoices yet (typical for
+/// a brand-new store opening its first shift).
+Future<_ZatcaChainSnapshot> _captureZatcaChainSnapshot(
+  AppDatabase db,
+  String storeId,
+) async {
+  // Count of invoices for the store. customSelect avoids loading the
+  // entire invoices table — important for stores with thousands of rows.
+  final countResult = await db.customSelect(
+    'SELECT COUNT(*) AS c FROM invoices WHERE store_id = ?',
+    variables: [Variable.withString(storeId)],
+  ).getSingle();
+  final int invoiceCount = countResult.read<int>('c');
+
+  // Most recent invoice's zatca_hash (the PIH the next invoice will chain
+  // from). Limit 1 so we don't pull entire history.
+  String? lastPih;
+  if (invoiceCount > 0) {
+    final lastInvoice = await ((db.select(db.invoicesTable)
+          ..where((i) => i.storeId.equals(storeId))
+          ..orderBy([(i) => OrderingTerm.desc(i.createdAt)])
+          ..limit(1))
+        .getSingleOrNull());
+    lastPih = lastInvoice?.zatcaHash;
+  }
+
+  return _ZatcaChainSnapshot(
+    invoiceCount: invoiceCount,
+    lastPih: lastPih,
+    timestampUtc: DateTime.now().toUtc().toIso8601String(),
+  );
+}
 
 // ============================================================================
 // READ PROVIDERS
@@ -106,6 +167,11 @@ final openShiftActionProvider =
         if (existing != null) throw Exception('يوجد وردية مفتوحة بالفعل');
 
         final id = _uuid.v4();
+        // Sprint 1 / P0-07: capture the ZATCA chain position so the
+        // subsequent shift_close can compute (closing − opening) =
+        // invoices issued during this shift, and so a chain auditor can
+        // verify openingLastPih == previous shift's closingLastPih.
+        final openingSnapshot = await _captureZatcaChainSnapshot(db, storeId);
         await db.shiftsDao.openShift(
           ShiftsTableCompanion(
             id: Value(id),
@@ -117,6 +183,9 @@ final openShiftActionProvider =
             openingCash: Value((openingCash * 100).round()),
             status: const Value('open'),
             openedAt: Value(DateTime.now()),
+            openingInvoiceCount: Value(openingSnapshot.invoiceCount),
+            openingLastPih: Value(openingSnapshot.lastPih),
+            openingTimestampUtc: Value(openingSnapshot.timestampUtc),
           ),
         );
 
@@ -180,6 +249,21 @@ final closeShiftActionProvider =
         String? notes,
       }) async {
         final db = GetIt.I<AppDatabase>();
+        // Sprint 1 / P0-06: snapshot the ZATCA chain + pending-queue size
+        // before closing. The Z-Report reconciliation reads these to
+        // surface "N invoices still pending gateway acknowledgement" so a
+        // cashier doesn't think the shift is fully cleared when it isn't.
+        final storeIdForSnapshot = ref.read(currentStoreIdProvider);
+        _ZatcaChainSnapshot? closingSnapshot;
+        int? pendingZatcaCount;
+        if (storeIdForSnapshot != null && storeIdForSnapshot.isNotEmpty) {
+          closingSnapshot = await _captureZatcaChainSnapshot(
+            db,
+            storeIdForSnapshot,
+          );
+          pendingZatcaCount = await db.zatcaOfflineQueueDao
+              .getPendingCount(storeId: storeIdForSnapshot);
+        }
         await db.shiftsDao.closeShift(
           id: shiftId,
           closingCash: closingCash,
@@ -190,6 +274,10 @@ final closeShiftActionProvider =
           totalRefunds: totalRefunds,
           totalRefundsAmount: totalRefundsAmount,
           notes: notes,
+          closingInvoiceCount: closingSnapshot?.invoiceCount,
+          closingLastPih: closingSnapshot?.lastPih,
+          closingTimestampUtc: closingSnapshot?.timestampUtc,
+          pendingZatcaAtClose: pendingZatcaCount,
         );
 
         // Sprint 1 / P0-10: every monetary field in this payload is SAR on

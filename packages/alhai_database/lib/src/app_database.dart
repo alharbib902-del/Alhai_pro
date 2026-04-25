@@ -137,7 +137,7 @@ class AppDatabase extends _$AppDatabase {
   late final DatabaseBackupService backupService = DatabaseBackupService(this);
 
   @override
-  int get schemaVersion => 46;
+  int get schemaVersion => 47;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -1081,6 +1081,49 @@ class AppDatabase extends _$AppDatabase {
           '[Migration v46] Seeded default tax settings '
           '(tax_rate=1500bps, tax_enabled=true, tax_inclusive=true) '
           'for stores without existing rows.',
+        );
+
+      case 47:
+        // Sprint 1 / P0-06 + P0-07: ZATCA chain snapshots on shifts.
+        //
+        // Adds 7 nullable columns to `shifts` so each shift records its
+        // position on the ZATCA invoice chain at open + close time.
+        // Without these, a Z-Report can't tell which invoices belong to
+        // which shift once an offline-queued invoice submits late, and an
+        // auditor can't detect chain breaks across shift boundaries
+        // (openingLastPih on shift N+1 must equal closingLastPih on
+        // shift N).
+        //
+        // All existing rows get NULL — the application treats absent
+        // snapshots as "legacy shift, fall back to the old reconciliation
+        // path" so this migration is non-breaking. Going forward,
+        // openShift / closeShift populate these fields by querying the
+        // current invoice count + last zatca_hash for the store.
+        await customStatement(
+          'ALTER TABLE shifts ADD COLUMN opening_invoice_count INTEGER',
+        );
+        await customStatement(
+          'ALTER TABLE shifts ADD COLUMN opening_last_pih TEXT',
+        );
+        await customStatement(
+          'ALTER TABLE shifts ADD COLUMN opening_timestamp_utc TEXT',
+        );
+        await customStatement(
+          'ALTER TABLE shifts ADD COLUMN closing_invoice_count INTEGER',
+        );
+        await customStatement(
+          'ALTER TABLE shifts ADD COLUMN closing_last_pih TEXT',
+        );
+        await customStatement(
+          'ALTER TABLE shifts ADD COLUMN closing_timestamp_utc TEXT',
+        );
+        await customStatement(
+          'ALTER TABLE shifts ADD COLUMN pending_zatca_at_close INTEGER',
+        );
+        debugPrint(
+          '[Migration v47] Added ZATCA chain snapshot columns to shifts '
+          '(opening + closing invoice_count / last_pih / timestamp_utc, '
+          'plus pending_zatca_at_close).',
         );
 
       default:

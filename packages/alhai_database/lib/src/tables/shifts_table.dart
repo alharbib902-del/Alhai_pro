@@ -35,6 +35,54 @@ class ShiftsTable extends Table {
   DateTimeColumn get closedAt => dateTime().nullable()();
   DateTimeColumn get syncedAt => dateTime().nullable()();
 
+  // ═══════════ ZATCA Chain Snapshots (Sprint 1 / P0-06 + P0-07) ═══════════
+  //
+  // These nullable columns capture the position of the ZATCA invoice chain
+  // at the moment the shift opens and closes. Z-Report reconciliation needs
+  // them to answer "which invoices belong to this shift?" without relying
+  // on `invoices.shift_id` (which only links *new* invoices, not late-
+  // arriving offline-queue submissions). They also let an audit detect
+  // chain breaks across shifts: openingLastPih on shift N+1 must equal
+  // closingLastPih on shift N — any divergence flags a missing invoice.
+  //
+  // All migrated rows (pre-v47 shifts) leave these NULL; readers must
+  // tolerate the absence and fall back to the legacy "no snapshot"
+  // reconciliation path.
+
+  /// Number of invoices issued by the store at the moment this shift
+  /// opened. The opening counter for the next shift's "invoices issued
+  /// during this shift" calculation = closingInvoiceCount of THIS shift.
+  IntColumn get openingInvoiceCount => integer().nullable()();
+
+  /// `zatca_hash` (PIH — Previous Invoice Hash) of the most recent
+  /// invoice when the shift opened. Used by the ZATCA chain validator
+  /// to confirm continuity across shift boundaries.
+  TextColumn get openingLastPih => text().nullable()();
+
+  /// UTC ISO-8601 timestamp captured when the shift opened — separate
+  /// from `openedAt` (which is local time) so audit / Z-Report tooling
+  /// has a timezone-unambiguous reference even if the device clock skew
+  /// changes between open and close.
+  TextColumn get openingTimestampUtc => text().nullable()();
+
+  /// Number of invoices issued by the store at the moment this shift
+  /// closed. (closingInvoiceCount − openingInvoiceCount) = invoices
+  /// physically issued during this shift.
+  IntColumn get closingInvoiceCount => integer().nullable()();
+
+  /// `zatca_hash` of the most recent invoice when the shift closed.
+  /// Will become the next shift's openingLastPih.
+  TextColumn get closingLastPih => text().nullable()();
+
+  /// UTC ISO-8601 timestamp at close — see [openingTimestampUtc].
+  TextColumn get closingTimestampUtc => text().nullable()();
+
+  /// Number of invoices still in `zatca_offline_queue` when the shift
+  /// closed (not yet sent to the gateway). Surfacing this on the
+  /// Z-Report alerts the cashier that some receipts shown in this
+  /// shift's totals are pending ZATCA acknowledgement.
+  IntColumn get pendingZatcaAtClose => integer().nullable()();
+
   @override
   Set<Column> get primaryKey => {id};
 }
