@@ -103,6 +103,40 @@ class TransactionsDao extends DatabaseAccessor<AppDatabase>
     );
   }
 
+  /// P0-27 deferred: record a supplier payable obligation created by
+  /// receiving a purchase order. Mirrors [recordInvoice] for the
+  /// payables side — same `type='invoice'` semantic ("a debt was
+  /// booked"), but the `referenceType` is `'purchase'` and the account
+  /// id is the supplier's payable row.
+  ///
+  /// All amounts in SAR doubles; converted to int cents at the wire.
+  Future<int> recordSupplierPayable({
+    required String id,
+    required String storeId,
+    required String accountId,
+    required double amount,
+    required double balanceAfter,
+    required String purchaseId,
+    String? description,
+    String? createdBy,
+  }) {
+    return insertTransaction(
+      TransactionsTableCompanion.insert(
+        id: id,
+        storeId: storeId,
+        accountId: accountId,
+        type: 'invoice',
+        amount: (amount * 100).round(),
+        balanceAfter: (balanceAfter * 100).round(),
+        referenceId: Value(purchaseId),
+        referenceType: const Value('purchase'),
+        description: Value(description),
+        createdBy: Value(createdBy),
+        createdAt: DateTime.now(),
+      ),
+    );
+  }
+
   /// تسجيل دفعة من العميل
   /// [amount], [balanceAfter] are SAR (double); stored as int cents.
   Future<int> recordPayment({

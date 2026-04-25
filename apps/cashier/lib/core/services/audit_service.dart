@@ -401,6 +401,39 @@ class AuditService {
         'استلام مشتريات${purchaseNumber != null ? ' #$purchaseNumber' : ''} - $itemCount صنف',
   );
 
+  /// P0-27 deferred: Log creation of a supplier payable obligation
+  /// when a purchase order is received unpaid. Mirrors how
+  /// [logTransaction] captures customer debt — same review tooling
+  /// can surface payables produced by receives.
+  Future<void> logSupplierPayableCreated({
+    required String storeId,
+    required String userId,
+    required String userName,
+    required String purchaseId,
+    String? purchaseNumber,
+    required String supplierAccountId,
+    required String supplierName,
+    required double amountSar,
+    required double balanceAfterSar,
+  }) => _append(
+    storeId: storeId,
+    userId: userId,
+    userName: userName,
+    action: AuditAction.paymentRecord,
+    entityType: 'purchase',
+    entityId: purchaseId,
+    newValue: {
+      'purchaseId': purchaseId,
+      if (purchaseNumber != null) 'purchaseNumber': purchaseNumber,
+      'supplierAccountId': supplierAccountId,
+      'supplierName': supplierName,
+      'amountSar': amountSar,
+      'balanceAfterSar': balanceAfterSar,
+    },
+    description:
+        'دين مستحق للمورد $supplierName بمبلغ ${amountSar.toStringAsFixed(2)} ر.س${purchaseNumber != null ? ' (طلب شراء #$purchaseNumber)' : ''}',
+  );
+
   // ============================================================================
   // CUSTOMER OPERATIONS
   // ============================================================================

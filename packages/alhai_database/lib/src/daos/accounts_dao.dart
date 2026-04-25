@@ -87,6 +87,72 @@ class AccountsDao extends DatabaseAccessor<AppDatabase>
         .getSingleOrNull();
   }
 
+  /// P0-27 deferred: lookup the supplier's payable account.
+  ///
+  /// Mirrors [getCustomerAccount] for the payables side. Receiving a
+  /// purchase order needs to credit the supplier's `accounts` row;
+  /// callers should pair this with [getOrCreateSupplierPayable] when
+  /// the supplier hasn't been booked yet.
+  Future<AccountsTableData?> getSupplierAccount(
+    String supplierId,
+    String storeId,
+  ) {
+    return (select(accountsTable)..where(
+          (a) =>
+              a.supplierId.equals(supplierId) &
+              a.storeId.equals(storeId) &
+              a.type.equals('payable') &
+              a.deletedAt.isNull(),
+        ))
+        .getSingleOrNull();
+  }
+
+  /// P0-27 deferred: get the supplier's payable account, creating one
+  /// on first receive.
+  ///
+  /// Suppliers don't always have an account row up-front — the cashier
+  /// may book a PO from a brand-new supplier. Auto-creating here means
+  /// the receiving flow doesn't need to teach the cashier to first
+  /// open a Suppliers screen and seed the account, AND the per-store
+  /// uniqueness on `(supplierId, type='payable')` keeps the row count
+  /// stable across repeated receives.
+  ///
+  /// Returns the existing row if one exists; otherwise inserts and
+  /// returns the new row. Inside a Drift transaction the read+insert
+  /// is serialised, so two concurrent first-receives can't double-
+  /// create.
+  Future<AccountsTableData> getOrCreateSupplierPayable({
+    required String supplierId,
+    required String storeId,
+    required String supplierName,
+    String? orgId,
+    String? phone,
+  }) async {
+    final existing = await getSupplierAccount(supplierId, storeId);
+    if (existing != null) return existing;
+
+    final id = 'pay_${supplierId}_$storeId';
+    await insertAccount(
+      AccountsTableCompanion.insert(
+        id: id,
+        orgId: Value(orgId),
+        storeId: storeId,
+        type: 'payable',
+        supplierId: Value(supplierId),
+        name: supplierName,
+        phone: Value(phone),
+        createdAt: DateTime.now(),
+      ),
+    );
+    final created = await getAccountById(id);
+    if (created == null) {
+      throw StateError(
+        'getOrCreateSupplierPayable: account inserted but readback failed for $id',
+      );
+    }
+    return created;
+  }
+
   /// إدراج حساب
   Future<int> insertAccount(AccountsTableCompanion account) {
     return into(accountsTable).insert(account);

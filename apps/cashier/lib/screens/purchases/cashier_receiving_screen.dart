@@ -670,6 +670,12 @@ class _CashierReceivingScreenState
       return;
     }
 
+    // P0-27 deferred: optional payable snapshot. Set inside the tx if
+    // the receive booked a supplier obligation; replayed to the audit
+    // log after commit. Stays null when the PO was prepaid (or has no
+    // supplier link), so we don't write an empty audit row.
+    _SupplierPayableSnapshot? payableSnap;
+
     try {
       final receivedItems = await _db.transaction(() async {
         // 1. Mark purchase as received — DAO has an optimistic
@@ -722,6 +728,51 @@ class _CashierReceivingScreenState
             receivedQty: item.qty,
           );
         }
+
+        // P0-27 deferred: book the supplier payable. Skipped when:
+        //   - PO was prepaid (paymentStatus='paid') — no debt to book
+        //   - PO has no supplier link (supplierId null) — happens for
+        //     legacy PO rows; we log a warning rather than refuse the
+        //     receive, since blocking a stock movement on a legacy
+        //     issue would be worse than missing the payable row.
+        // The payable update is in the same transaction as the stock
+        // movements, so a partial-failure rolls everything back —
+        // never half-stocked + half-paid.
+        final supplierId = purchase.supplierId;
+        if (supplierId != null &&
+            supplierId.isNotEmpty &&
+            purchase.paymentStatus != 'paid') {
+          final supplierName =
+              purchase.supplierName ?? 'مورد غير محدد';
+          final payable = await _db.accountsDao.getOrCreateSupplierPayable(
+            supplierId: supplierId,
+            storeId: storeId,
+            supplierName: supplierName,
+            orgId: purchase.orgId,
+          );
+          // total is already int cents; convert to SAR for the helper.
+          final amountSar = purchase.total / 100.0;
+          await _db.accountsDao.addToBalance(payable.id, amountSar);
+          final fresh = await _db.accountsDao.getAccountById(payable.id);
+          final balanceAfterSar = (fresh?.balance ?? 0) / 100.0;
+          await _db.transactionsDao.recordSupplierPayable(
+            id: const Uuid().v4(),
+            storeId: storeId,
+            accountId: payable.id,
+            amount: amountSar,
+            balanceAfter: balanceAfterSar,
+            purchaseId: purchase.id,
+            description: 'استلام طلب شراء #${purchase.purchaseNumber}',
+            createdBy: user?.id,
+          );
+          payableSnap = _SupplierPayableSnapshot(
+            accountId: payable.id,
+            supplierName: supplierName,
+            amountSar: amountSar,
+            balanceAfterSar: balanceAfterSar,
+          );
+        }
+
         return items;
       });
 
@@ -734,6 +785,24 @@ class _CashierReceivingScreenState
         purchaseNumber: purchase.purchaseNumber,
         itemCount: receivedItems.length,
       );
+
+      // P0-27 deferred: emit a second audit row for the payable
+      // booking when one was created. Keeps the supplier-payable
+      // event reviewable independent of the stock receive itself.
+      final snap = payableSnap;
+      if (snap != null) {
+        auditService.logSupplierPayableCreated(
+          storeId: storeId,
+          userId: user?.id ?? 'unknown',
+          userName: user?.name ?? 'unknown',
+          purchaseId: purchase.id,
+          purchaseNumber: purchase.purchaseNumber,
+          supplierAccountId: snap.accountId,
+          supplierName: snap.supplierName,
+          amountSar: snap.amountSar,
+          balanceAfterSar: snap.balanceAfterSar,
+        );
+      }
 
       if (!mounted) return;
 
@@ -769,4 +838,21 @@ class _CashierReceivingScreenState
       if (mounted) setState(() => _receivingId = null);
     }
   }
+}
+
+/// P0-27 deferred: snapshot of a supplier payable booked during a
+/// purchase receive. Captured inside the DB transaction so the audit
+/// log replayed AFTER commit reflects the value the row actually
+/// settled at — not whatever the cached PO total said.
+class _SupplierPayableSnapshot {
+  final String accountId;
+  final String supplierName;
+  final double amountSar;
+  final double balanceAfterSar;
+  const _SupplierPayableSnapshot({
+    required this.accountId,
+    required this.supplierName,
+    required this.amountSar,
+    required this.balanceAfterSar,
+  });
 }

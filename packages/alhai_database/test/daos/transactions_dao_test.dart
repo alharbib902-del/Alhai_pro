@@ -163,5 +163,34 @@ void main() {
       final total = await db.transactionsDao.getTotalPayments('acc-1');
       expect(total, 300.0);
     });
+
+    // ─── P0-27 deferred: supplier payable transaction ──────────────
+    test(
+      'recordSupplierPayable persists with type=invoice + reference=purchase',
+      () async {
+        await db.transactionsDao.recordSupplierPayable(
+          id: 'tx-pay-1',
+          storeId: 'store-1',
+          accountId: 'acc-1',
+          amount: 250.50,
+          balanceAfter: 750.50,
+          purchaseId: 'pur-xyz',
+          description: 'استلام طلب شراء #PO-9001',
+          createdBy: 'user-1',
+        );
+
+        final txns =
+            await db.transactionsDao.getAccountTransactions('acc-1');
+        expect(txns, hasLength(1));
+        final tx = txns.first;
+        expect(tx.type, 'invoice');
+        expect(tx.amount, 25050); // 250.50 SAR as cents
+        expect(tx.balanceAfter, 75050);
+        expect(tx.referenceType, 'purchase');
+        expect(tx.referenceId, 'pur-xyz');
+        expect(tx.description, 'استلام طلب شراء #PO-9001');
+        expect(tx.createdBy, 'user-1');
+      },
+    );
   });
 }

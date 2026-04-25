@@ -136,5 +136,88 @@ void main() {
       final account = await db.accountsDao.getAccountById('acc-1');
       expect(account!.syncedAt, isNotNull);
     });
+
+    // ─── P0-27 deferred: supplier payable helpers ────────────────────
+    group('supplier payable', () {
+      test('getSupplierAccount returns null when none exists', () async {
+        final result =
+            await db.accountsDao.getSupplierAccount('sup-1', 'store-1');
+        expect(result, isNull);
+      });
+
+      test(
+        'getOrCreateSupplierPayable creates the account on first call',
+        () async {
+          final created = await db.accountsDao.getOrCreateSupplierPayable(
+            supplierId: 'sup-1',
+            storeId: 'store-1',
+            supplierName: 'مورد تجريبي',
+          );
+
+          expect(created.id, 'pay_sup-1_store-1');
+          expect(created.type, 'payable');
+          expect(created.supplierId, 'sup-1');
+          expect(created.name, 'مورد تجريبي');
+          expect(created.balance, 0);
+        },
+      );
+
+      test(
+        'getOrCreateSupplierPayable returns existing account on second call',
+        () async {
+          final first = await db.accountsDao.getOrCreateSupplierPayable(
+            supplierId: 'sup-1',
+            storeId: 'store-1',
+            supplierName: 'مورد',
+          );
+          final second = await db.accountsDao.getOrCreateSupplierPayable(
+            supplierId: 'sup-1',
+            storeId: 'store-1',
+            supplierName: 'مورد آخر — تجاهَل', // different name
+          );
+
+          expect(second.id, first.id);
+          // Existing row's name preserved — getOrCreate doesn't update.
+          expect(second.name, 'مورد');
+        },
+      );
+
+      test(
+        'getSupplierAccount only returns rows where type=payable',
+        () async {
+          // Insert a receivable row for sup-1 (an unusual but valid
+          // case — a supplier who's also a customer for some reason).
+          // The supplier-payable lookup must skip it.
+          await db.accountsDao.insertAccount(
+            AccountsTableCompanion.insert(
+              id: 'acc-recv-sup-1',
+              storeId: 'store-1',
+              type: 'receivable',
+              supplierId: const Value('sup-1'),
+              name: 'مورد كعميل',
+              createdAt: DateTime(2025, 1, 1),
+            ),
+          );
+
+          final result =
+              await db.accountsDao.getSupplierAccount('sup-1', 'store-1');
+          expect(result, isNull);
+        },
+      );
+
+      test('getSupplierAccount scoped by storeId', () async {
+        await db.accountsDao.getOrCreateSupplierPayable(
+          supplierId: 'sup-1',
+          storeId: 'store-1',
+          supplierName: 'مورد',
+        );
+
+        final wrongStore = await db.accountsDao.getSupplierAccount(
+          'sup-1',
+          'store-2',
+        );
+        expect(wrongStore, isNull);
+      });
+    });
   });
 }
