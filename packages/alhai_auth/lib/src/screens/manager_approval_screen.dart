@@ -13,6 +13,36 @@ import '../providers/auth_providers.dart';
 /// وضع الشاشة: إعداد أو تحقق أو حوار موافقة
 enum ManagerApprovalMode { setup, verify, dialog }
 
+/// P0-1 (round 2): roles allowed to grant a manager approval.
+///
+/// Kept as a constant Set + top-level [isAuthorizedManagerRole] check
+/// (instead of inlining the comparison in `_verifyPin`) so:
+///   1. Unit tests can exercise every role string without driving the
+///      whole screen + PinService + DB stack.
+///   2. Adding/removing a role updates one place — the rest of the
+///      file (which has the security-critical control flow) doesn't
+///      need re-review when the allowed set changes.
+///
+/// Comparison is case-insensitive on the raw role string from
+/// `users.role`. Historical data has mixed casing ("Admin", "OWNER",
+/// "store_owner") because the column was free-text before the role
+/// enum was added — normalise here so legacy rows stay authorised.
+@visibleForTesting
+const kManagerRoles = <String>{
+  'manager',
+  'admin',
+  'owner',
+  'superadmin',
+  'store_owner',
+};
+
+/// True iff [role] (case-insensitive) is in [kManagerRoles]. Pure —
+/// no I/O, no statics, fully unit-testable.
+bool isAuthorizedManagerRole(String? role) {
+  if (role == null || role.isEmpty) return false;
+  return kManagerRoles.contains(role.toLowerCase());
+}
+
 /// شاشة موافقة المشرف بـ PIN
 ///
 /// يمكن استخدامها كشاشة كاملة أو كحوار (dialog) عبر [showApprovalDialog].
@@ -518,22 +548,24 @@ class _ManagerApprovalScreenState extends ConsumerState<ManagerApprovalScreen> {
         return;
       }
 
-      // P0-1 fix: PinService is the ONLY security gate. Pre-fix the
-      // primary path was a plaintext compare against `users.pin` —
-      // that bypassed PBKDF2 and the lockout counter, so an attacker
-      // could brute-force PINs as fast as the device disk allows.
-      // Now every attempt — successful or failed — runs through
-      // PinService, which:
-      //   1. Refuses immediately if the lockout window is active.
-      //   2. Compares the PBKDF2-salted hash in constant time.
-      //   3. Increments the failure counter on miss + locks at 5.
+      // P0-1 (round 2): two independent gates must BOTH pass before we
+      // grant approval and write the audit row.
       //
-      // The legacy `db.usersDao.verifyPin(storeId, _pin)` plaintext
-      // lookup is now only a SECONDARY audit-identification step
-      // that runs ONLY after PinService says "approved" — its result
-      // never gates approval, only fills in `userName` on the audit
-      // row. If no matching DB row is found we still record the
-      // approval, attributed to the currently-logged-in operator.
+      // Gate 1 — PinService.verifyPin: device-level rate limiting.
+      // PBKDF2 + lockout (5 attempts / 15min). Runs on EVERY attempt
+      // so brute-force is throttled regardless of who's pressing keys.
+      // CAVEAT: PinService is ALSO used by `foreground_lock_gate.dart`
+      // as the device unlock PIN. So passing this gate alone proves
+      // only "this device's owner pressed keys", NOT "a manager
+      // approved this action". The cashier on shift typically knows
+      // the device PIN — that's correct for unlocking the app, but
+      // would be a privilege-escalation hole for manager approval.
+      //
+      // Gate 2 — DB lookup + role check: the entered PIN must match a
+      // `users` row in this store AND that row's role must be in the
+      // managerial set. No fallback to currentUser — currentUser is
+      // typically the cashier who triggered the flow, not the manager
+      // approving it.
       final result = await PinService.verifyPin(_pin);
       if (!mounted) return;
 
@@ -558,33 +590,45 @@ class _ManagerApprovalScreenState extends ConsumerState<ManagerApprovalScreen> {
         return;
       }
 
-      // PIN verified. Try to identify which DB user record matches
-      // (for richer audit attribution). This is best-effort — a null
-      // result means "device PIN matched but no per-user record" and
-      // we fall back to the currently-logged-in operator.
+      // Gate 1 passed. Now Gate 2: the PIN must identify a real user
+      // record in this store with a managerial role. Both branches
+      // below are REJECTIONS — neither writes the approval audit, so
+      // a non-manager who happens to know the device PIN still can't
+      // grant approval.
       final matchingUser = await db.usersDao.verifyPin(storeId, _pin);
-      final currentUser = ref.read(currentUserProvider);
-      final approverId = matchingUser?.id ?? currentUser?.id ?? 'unknown';
-      final approverName =
-          matchingUser?.name ?? currentUser?.name ?? 'manager';
+      if (matchingUser == null) {
+        if (!mounted) return;
+        setState(() {
+          _isLoading = false;
+          _pin = '';
+          _error = 'رمز PIN غير صحيح أو المستخدم ليس مديراً';
+        });
+        return;
+      }
 
-      // P0-1 fix: write the approval through the hash-chained audit
-      // path, NOT the legacy `auditLogDao.log` direct insert. The
-      // legacy path bypassed `__meta__` content+previous hashes, so
-      // any tampering of an approval row went undetected by
-      // `verifyChain`. Use `appendLogWithHashChain` directly here
-      // because alhai_auth can't depend on the cashier app's
-      // AuditService wrapper without a layer inversion.
+      if (!isAuthorizedManagerRole(matchingUser.role)) {
+        if (!mounted) return;
+        setState(() {
+          _isLoading = false;
+          _pin = '';
+          _error = 'هذا المستخدم ليس لديه صلاحيات المدير';
+        });
+        return;
+      }
+
+      // Both gates passed → grant approval. Write the audit row through
+      // the hash-chained path so any tampering is detectable via
+      // `auditLogDao.verifyChain`. Approver identity is the matched
+      // manager record, NEVER the currentUser fallback.
       try {
         await db.auditLogDao.appendLogWithHashChain(
           storeId: storeId,
-          userId: approverId,
-          userName: approverName,
+          userId: matchingUser.id,
+          userName: matchingUser.name,
           action: AuditAction.settingsChange,
           payload: {
             'approvalAction': widget.action ?? 'unspecified',
-            'pinSource':
-                matchingUser != null ? 'user_record' : 'device_pin_only',
+            'approverRole': matchingUser.role,
           },
           entityType: 'manager_approval',
           description:
