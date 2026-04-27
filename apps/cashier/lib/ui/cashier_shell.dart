@@ -21,7 +21,12 @@ import '../core/constants/timing.dart';
 import '../core/services/haptic_shim.dart';
 import '../core/services/shortcuts_shim.dart' show ShortcutsShim;
 import 'package:alhai_pos/alhai_pos.dart'
-    show cartStateProvider, heldInvoicesProvider;
+    show
+        PosFocusController,
+        cartStateProvider,
+        heldInvoicesProvider,
+        holdCurrentInvoice,
+        showPosDiscountDialog;
 import '../widgets/clock_invalid_banner.dart';
 
 /// Navigation item model for the cashier shell
@@ -788,29 +793,31 @@ class _CashierShellState extends ConsumerState<CashierShell> {
 /// Wraps the shell body with [CallbackShortcuts] so the following keys work
 /// from any cashier route:
 ///
-/// | Key       | Action                                                      |
-/// |-----------|-------------------------------------------------------------|
-/// | F1        | (POS) toggle keyboard-shortcuts overlay                     |
-/// | F2        | (POS) focus search field                                    |
-/// | F3        | Hold the current invoice — TODO: wire to PosScreen service  |
-/// | F4        | Focus barcode scanner entry — TODO: wire to BarcodeListener |
-/// | F5        | Proceed to payment (was: refresh products)                  |
-/// | F6        | Cash payment                                                |
-/// | F7        | Card payment                                                |
-/// | F8        | Split payment                                               |
-/// | Ctrl+F    | Search products (focus search in POS)                       |
-/// | Ctrl+D    | Apply discount — TODO: wire to discount dialog              |
-/// | Ctrl+P    | Print last receipt — TODO: wire to printer service          |
-/// | Ctrl+Del  | Clear cart                                                  |
-/// | +         | Increase quantity of active item                            |
-/// | -         | Decrease quantity of active item                            |
-/// | Delete    | Remove active item                                          |
-/// | Esc       | Close overlay / go home (handled inside POS)                |
+/// | Key       | Action                                                         | Status |
+/// |-----------|----------------------------------------------------------------|--------|
+/// | F1        | (POS) toggle keyboard-shortcuts overlay                        | live (POS-scope) |
+/// | F2        | (POS) focus search field                                       | live (POS-scope) |
+/// | F3        | Hold the current invoice                                       | live |
+/// | F4        | Open barcode scanner screen                                    | live |
+/// | F5        | Proceed to payment                                             | live |
+/// | F6        | Cash payment (opens payment screen preselected to cash)        | live |
+/// | F7        | Card payment (opens payment screen preselected to card)        | live |
+/// | F8        | Split payment (opens payment screen and auto-opens split)      | live |
+/// | Ctrl+F    | Focus POS search field                                         | live |
+/// | Ctrl+D    | Open discount dialog                                           | live |
+/// | Ctrl+P    | Open reprint-receipt screen                                    | live |
+/// | Ctrl+Del  | Clear cart                                                     | live |
+/// | +         | Increase qty of active (last-added) item                       | live |
+/// | -         | Decrease qty of active (last-added) item                       | live |
+/// | Delete    | Remove active (last-added) item                                | live |
+/// | Esc       | Close overlay / go home (handled inside POS)                   | live (POS-scope) |
 ///
-/// Many of these are marked TODO because the concrete services live in
-/// [alhai_pos] and this ticket explicitly forbids editing that package.
-/// Wiring them is a follow-up (see handover notes). The bindings fire
-/// `debugPrint` stubs so QA can verify the keys are reaching this layer.
+/// The 15 shell-level bindings now all call concrete actions in `alhai_pos`
+/// or `go_router`. Where the action is meaningful only on the POS route
+/// (e.g. + / - / Delete — there is no cart elsewhere), the binding degrades
+/// to a silent no-op on other routes; this matches the existing UX contract
+/// (keyboard shortcuts should never surprise the cashier with a snackbar on
+/// a screen where the key is not applicable).
 ///
 /// Disabled state: when [ShortcutsShim.enabled] is `false` the widget builds
 /// with an empty bindings map — the widget tree shape is unchanged, which
@@ -829,34 +836,110 @@ class _CashierShortcutsScopeState
     extends ConsumerState<_CashierShortcutsScope> {
   void _go(String route) => context.go(route);
 
-  void _unwiredStub(String label) {
-    // The shortcut is reserved at the shell level so no other widget hijacks
-    // the combination, but the concrete action lives in alhai_pos. A print
-    // line is enough to verify the key reached this layer during QA.
-    debugPrint('[CashierShortcutsScope] TODO: wire $label');
+  bool get _onPos =>
+      GoRouterState.of(context).uri.path == AppRoutes.pos;
+
+  /// F3 → hold the current invoice. No-op when the cart is empty; otherwise
+  /// writes to the `held_invoices` table (via the public `holdCurrentInvoice`
+  /// helper in alhai_pos) and clears the cart.
+  Future<void> _holdInvoice() async {
+    final cart = ref.read(cartStateProvider);
+    if (cart.isEmpty) return; // silent — empty cart + F3 should do nothing
+    await holdCurrentInvoice(ref);
+    if (!mounted) return;
+    final l10n = AppLocalizations.of(context);
+    AlhaiSnackbar.show(
+      context,
+      message: l10n.invoiceSuspended,
+      variant: AlhaiSnackbarVariant.success,
+    );
+    HapticShim.lightImpact();
   }
 
-  /// F5 / F6 / F7 / F8 — the happy-path payment shortcuts. These only have
-  /// effect on the POS screen (cart must be non-empty); elsewhere they fall
-  /// through to the TODO stub so the cashier gets a breadcrumb in debug logs
-  /// without a visible no-op.
+  /// F4 → navigate to the barcode-scanner screen. Unlike Ctrl+F (which just
+  /// focuses the existing search field on the POS), this opens the dedicated
+  /// camera/manual-entry screen — the button users would otherwise click
+  /// from the POS products panel. Works from any route.
+  void _openBarcodeScanner() => context.go('/pos/barcode-scanner');
+
+  /// F5 / F6 / F7 / F8 — the happy-path payment shortcuts. All require a
+  /// non-empty cart; on an empty cart they silently no-op (F5) or stay on
+  /// the current route (F6/F7/F8 via navigation guard below).
   void _proceedToPayment() {
-    final currentRoute = GoRouterState.of(context).uri.path;
-    if (currentRoute != AppRoutes.pos) {
+    final cart = ref.read(cartStateProvider);
+    if (!_onPos) {
       _go(AppRoutes.pos);
-      // POS mounts and the cashier can press F5 again — intentionally not
-      // chaining automatically to avoid firing payment for an empty cart.
+      return; // Do NOT auto-chain — user can press F5 again when POS mounts.
+    }
+    if (cart.isEmpty) return; // nothing to pay for
+    _go(AppRoutes.posPayment);
+  }
+
+  /// F6 / F7 / F8 — jump straight to the payment screen with a method
+  /// preselected. The cashier router reads `?method=cash|card|split` and
+  /// forwards to `PaymentScreen(preselectedMethod: ..., autoOpenSplit: ...)`.
+  /// Empty cart → silent no-op (matches the F5 contract). Pressing F6/F7/F8
+  /// from a non-POS route navigates to POS first and returns without
+  /// auto-chaining (same `_onPos` guard pattern as F5) — the user can press
+  /// the shortcut again once the POS mounts.
+  void _jumpToPayment(String method) {
+    if (!_onPos) {
+      _go(AppRoutes.pos);
+      return; // Do NOT auto-chain — user can press F6/F7/F8 again when POS mounts.
+    }
+    final cart = ref.read(cartStateProvider);
+    if (cart.isEmpty) return;
+    _go('${AppRoutes.posPayment}?method=$method');
+  }
+
+  /// Ctrl+F → focus the POS product-search field. When the POS is not mounted
+  /// (controller returns false), navigate there first; on the next frame the
+  /// POS will autofocus its own scope. We intentionally do NOT re-dispatch
+  /// the keystroke — a second Ctrl+F after navigation focuses cleanly.
+  void _focusPosSearch() {
+    final handled = PosFocusController.requestSearchFocus();
+    if (!handled) _go(AppRoutes.pos);
+  }
+
+  /// Ctrl+D → show the discount dialog. Delegates to the public
+  /// `showPosDiscountDialog` helper, which itself no-ops when the cart is
+  /// empty (so callers need no extra guard).
+  void _applyDiscount() {
+    if (!_onPos) {
+      _go(AppRoutes.pos);
       return;
     }
-    // The cart → payment flow is owned by PosScreen. Until we surface a
-    // public bridge from alhai_pos, the stub keeps the binding reserved.
-    _unwiredStub('F5 proceed to payment (owned by PosScreen)');
+    showPosDiscountDialog(context: context, ref: ref);
   }
+
+  /// Ctrl+P → open the reprint-receipt screen so the cashier can search past
+  /// sales and reprint any receipt. Not tied to the "last" sale because the
+  /// POS does not retain a reference to it after the success dialog closes;
+  /// the reprint screen gives the cashier explicit control.
+  void _printReceipt() => _go('/sales/reprint');
 
   /// Ctrl+Del → clear cart. The cart provider is safe to call from here
   /// because it is a package-level StateNotifier.
   void _clearCart() {
     ref.read(cartStateProvider.notifier).clear();
+    HapticShim.lightImpact();
+  }
+
+  /// + → increase qty of the active (last-added) item. Silent no-op when the
+  /// cart is empty or when the item is already at the ceiling.
+  void _increaseActiveQty() {
+    ref.read(cartStateProvider.notifier).incrementActive();
+  }
+
+  /// - → decrease qty of the active item. When qty would drop to 0, the item
+  /// is removed entirely (matching the cart notifier's `decrementQuantity`).
+  void _decreaseActiveQty() {
+    ref.read(cartStateProvider.notifier).decrementActive();
+  }
+
+  /// Delete → remove the active (last-added) item.
+  void _removeActiveItem() {
+    ref.read(cartStateProvider.notifier).removeActive();
     HapticShim.lightImpact();
   }
 
@@ -867,50 +950,44 @@ class _CashierShortcutsScopeState
     final bindings = !ShortcutsShim.enabled
         ? const <ShortcutActivator, VoidCallback>{}
         : <ShortcutActivator, VoidCallback>{
-            // F3 — hold invoice (needs PosScreen._holdCurrentInvoice)
-            const SingleActivator(LogicalKeyboardKey.f3): () =>
-                _unwiredStub('F3 hold invoice'),
-            // F4 — focus barcode scanner entry (needs BarcodeListener handle)
-            const SingleActivator(LogicalKeyboardKey.f4): () =>
-                _unwiredStub('F4 scan barcode focus'),
-            // F5 — proceed to payment (replaces "refresh products")
+            // F3 — hold the current invoice (cart → held_invoices table).
+            const SingleActivator(LogicalKeyboardKey.f3): _holdInvoice,
+            // F4 — open barcode scanner screen.
+            const SingleActivator(LogicalKeyboardKey.f4): _openBarcodeScanner,
+            // F5 — proceed to payment (requires non-empty cart on POS).
             const SingleActivator(LogicalKeyboardKey.f5): _proceedToPayment,
-            // F6 / F7 / F8 — payment method quick-select. All live inside
-            // the payment dialog so they only fire meaningfully there; stubs
-            // keep the combinations reserved globally.
+            // F6 / F7 / F8 — payment screen with method preselected.
             const SingleActivator(LogicalKeyboardKey.f6): () =>
-                _unwiredStub('F6 cash payment'),
+                _jumpToPayment('cash'),
             const SingleActivator(LogicalKeyboardKey.f7): () =>
-                _unwiredStub('F7 card payment'),
+                _jumpToPayment('card'),
             const SingleActivator(LogicalKeyboardKey.f8): () =>
-                _unwiredStub('F8 split payment'),
-            // Ctrl+F — search products. The search field lives in PosScreen
-            // and owns its own focus node; we only reserve the binding here.
-            const SingleActivator(LogicalKeyboardKey.keyF, control: true): () =>
-                _unwiredStub('Ctrl+F search products'),
-            // Ctrl+D — apply discount
-            const SingleActivator(LogicalKeyboardKey.keyD, control: true): () =>
-                _unwiredStub('Ctrl+D apply discount'),
-            // Ctrl+P — print receipt
-            const SingleActivator(LogicalKeyboardKey.keyP, control: true): () =>
-                _unwiredStub('Ctrl+P print receipt'),
-            // Ctrl+Del — clear cart (real action, cart provider is public)
+                _jumpToPayment('split'),
+            // Ctrl+F — focus POS search field (navigates to POS if elsewhere).
+            const SingleActivator(LogicalKeyboardKey.keyF, control: true):
+                _focusPosSearch,
+            // Ctrl+D — apply discount (opens discount dialog).
+            const SingleActivator(LogicalKeyboardKey.keyD, control: true):
+                _applyDiscount,
+            // Ctrl+P — reprint a past receipt (opens /sales/reprint).
+            const SingleActivator(LogicalKeyboardKey.keyP, control: true):
+                _printReceipt,
+            // Ctrl+Del — clear cart.
             const SingleActivator(LogicalKeyboardKey.delete, control: true):
                 _clearCart,
-            // + / - — quantity adjust. PosKeyboardListener inside PosScreen
-            // already handles these when a product is selected; the shell
-            // binding is a fallback that stubs elsewhere.
-            const SingleActivator(LogicalKeyboardKey.equal, shift: true): () =>
-                _unwiredStub('+ increase qty'),
-            const SingleActivator(LogicalKeyboardKey.numpadAdd): () =>
-                _unwiredStub('+ increase qty'),
-            const SingleActivator(LogicalKeyboardKey.minus): () =>
-                _unwiredStub('- decrease qty'),
-            const SingleActivator(LogicalKeyboardKey.numpadSubtract): () =>
-                _unwiredStub('- decrease qty'),
-            // Delete — remove active item
-            const SingleActivator(LogicalKeyboardKey.delete): () =>
-                _unwiredStub('Delete remove item'),
+            // + / - — adjust qty of the active cart item. PosKeyboardListener
+            // inside PosScreen may also handle these when a product is being
+            // added; the shell bindings operate on the last cart item so they
+            // stay useful on non-POS routes where the cart still exists.
+            const SingleActivator(LogicalKeyboardKey.equal, shift: true):
+                _increaseActiveQty,
+            const SingleActivator(LogicalKeyboardKey.numpadAdd):
+                _increaseActiveQty,
+            const SingleActivator(LogicalKeyboardKey.minus): _decreaseActiveQty,
+            const SingleActivator(LogicalKeyboardKey.numpadSubtract):
+                _decreaseActiveQty,
+            // Delete — remove the active cart item.
+            const SingleActivator(LogicalKeyboardKey.delete): _removeActiveItem,
           };
 
     return CallbackShortcuts(

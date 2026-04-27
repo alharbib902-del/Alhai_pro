@@ -5,6 +5,27 @@ All notable changes to the Cashier POS app.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Changed
+- **Ctrl+P now opens the reprint-receipt screen** (`/sales/reprint`)
+  instead of being a no-op debug stub. Previously the binding only
+  printed `[CashierShortcutsScope] TODO: wire Ctrl+P print receipt` to
+  the console. Note: it does **not** auto-print the most-recent receipt
+  — the cashier lands on the reprint search screen and chooses which
+  past sale to reprint. Rationale: the POS does not retain a
+  "last sale" reference after the success dialog dismisses, so giving
+  the cashier explicit selection is safer than guessing. Earlier
+  planning notes labeled this "Print last receipt"; the shipped
+  behavior is reprint-by-search. (`apps/cashier/lib/ui/cashier_shell.dart`)
+- **F5 / F6 / F7 / F8 payment shortcuts now require POS context.**
+  When pressed from a non-POS route, the shortcut first navigates to
+  the POS screen; the cashier presses the same key again to actually
+  trigger the payment flow. F6 preselects cash, F7 preselects card,
+  F8 opens split-payment. An empty cart on POS is a silent no-op
+  (no error, no navigation). Previously these were unwired stubs that
+  only logged TODO messages. (`apps/cashier/lib/ui/cashier_shell.dart`)
+
 ## [1.3.0] - 2026-04-24
 
 ### Phase 5 — Perfection (10/10 goal)
